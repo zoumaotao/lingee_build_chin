@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>振兴 HelpDesk 客户沟通会议纪要（综合版）</title>
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-light: #e8f0fe;
+            --secondary: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.7;
+            color: var(--gray-800);
+            background: var(--gray-50);
+        }
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            overflow-y: auto;
+            padding: 20px 0;
+            z-index: 100;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+        }
+        .sidebar-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 20px;
+            margin-bottom: 12px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 8px 20px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar a:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        .sidebar a .num {
+            display: inline-block;
+            width: 24px;
+            font-weight: 600;
+            color: var(--gray-400);
+            font-size: 0.8rem;
+        }
+        .sidebar .back-link {
+            padding: 10px 20px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 16px;
+        }
+        .sidebar .back-link:hover {
+            background: var(--primary-light);
+            border-left-color: transparent;
+        }
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            margin-left: 260px;
+            padding: 40px 24px;
+        }
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #1a56db 0%, #7c3aed 100%);
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 48px;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .header .meta {
+            margin-top: 24px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary);
+        }
+        .section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin: 24px 0 12px;
+        }
+        .section h4 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin: 16px 0 8px;
+        }
+        .section p {
+            margin-bottom: 12px;
+            color: var(--gray-700);
+        }
+        .section ul, .section ol {
+            margin: 8px 0 16px 24px;
+            color: var(--gray-700);
+        }
+        .section li { margin-bottom: 6px; }
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border: 1px solid var(--gray-200);
+        }
+        th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        tr:nth-child(even) { background: var(--gray-50); }
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .tag-phase1 { background: #eff6ff; color: var(--primary); }
+        .tag-phase2 { background: #ecfdf5; color: var(--secondary); }
+        .tag-phase3 { background: #fffbeb; color: var(--warning); }
+        .tag-risk { background: #fef2f2; color: var(--danger); }
+        .tag-done { background: #ecfdf5; color: var(--secondary); }
+        .tag-todo { background: var(--gray-100); color: var(--gray-600); }
+        /* Highlight box */
+        .highlight {
+            padding: 20px 24px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        .highlight-blue { background: #eff6ff; border-left: 4px solid var(--primary); }
+        .highlight-green { background: #ecfdf5; border-left: 4px solid var(--secondary); }
+        .highlight-yellow { background: #fffbeb; border-left: 4px solid var(--warning); }
+        .highlight-red { background: #fef2f2; border-left: 4px solid var(--danger); }
+        /* Flow diagram */
+        .flow {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 8px;
+        }
+        .flow-step {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .flow-arrow {
+            color: var(--gray-300);
+            font-size: 1.2rem;
+        }
+        /* Card grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .card {
+            padding: 20px;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            background: var(--gray-50);
+        }
+        .card-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+        .card-body {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: var(--gray-50);
+            border-radius: 10px;
+            border: 1px solid var(--gray-200);
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+        /* Consensus list */
+        .consensus-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .consensus-list li {
+            padding: 16px 20px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+            font-size: 0.95rem;
+        }
+        .consensus-list li strong {
+            color: var(--gray-900);
+        }
+        /* Print */
+        @media print {
+            body { background: white; }
+            .container { padding: 0; margin-left: 0; }
+            .section { box-shadow: none; border: 1px solid var(--gray-200); }
+            .header { border-radius: 0; }
+            .sidebar { display: none; }
+        }
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .container { margin-left: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar">
+    <a href="振兴HelpDesk项目计划书.html" class="back-link">← 返回项目计划书</a>
+    <div class="sidebar-title">会议纪要</div>
+    <a href="#sec1"><span class="num">1</span> 整体反馈</a>
+    <a href="#sec2"><span class="num">2</span> 推进节奏（三阶段）</a>
+    <a href="#sec3"><span class="num">3</span> 演示反馈</a>
+    <a href="#sec4"><span class="num">4</span> Build 平台能力</a>
+    <a href="#sec5"><span class="num">5</span> 扩展场景</a>
+    <a href="#sec6"><span class="num">6</span> 行动项</a>
+    <a href="#sec7"><span class="num">7</span> 风险与关注</a>
+    <a href="#sec8"><span class="num">8</span> 关键共识</a>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>振兴 HelpDesk 客户沟通会议纪要</h1>
+        <div class="subtitle">综合版 — 多次会议要点汇总</div>
+        <div class="meta">
+            <span>🕐 时间：近两天多次会议</span>
+            <span>📋 状态：会议结论已达成，进入落地执行阶段</span>
+        </div>
+    </div>
+
+    <!-- Meta Info Card -->
+    <div class="section" style="padding: 24px 40px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 0.9rem;">
+            <div><strong>参与方（客户）：</strong>Chris、Julian</div>
+            <div><strong>参与方（金蝶）：</strong>邹茂桃、高翔、杨君炎、龙冠卿、刘顺等</div>
+            <div><strong>会议形式：</strong>线下会议（统一使用高翔电脑收音）</div>
+            <div><strong>备注：</strong>元宝纪要中发言人归属可能存在偏差</div>
+        </div>
+    </div>
+
+    <!-- Section 1: 整体反馈 -->
+    <div class="section" id="sec1">
+        <h2>1. 整体反馈</h2>
+        <div class="highlight highlight-green">
+            <p><strong>客户对整体能力和展现效果比较满意，认可方案方向。</strong></p>
+            <p>核心任务：补齐标品能力缺口 + 快速推进客户侧需求落地。</p>
+        </div>
+    </div>
+
+    <!-- Section 2: 推进节奏 -->
+    <div class="section" id="sec2">
+        <h2>2. 推进节奏（三阶段）</h2>
+
+        <!-- Phase 1 -->
+        <h3><span class="tag tag-phase1">Phase 1</span> 8月7日 — HelpDesk 1.0（聚焦 IT 领域）</h3>
+        <p><strong>目标：</strong>在灵基 Build 构建 HelpDesk 1.0，包含灵基智能体与苍穹应用，快速上线验证。</p>
+        
+        <h4>标品需补齐能力</h4>
+        <table>
+            <thead>
+                <tr><th>分类</th><th>编号</th><th>需求内容</th></tr>
+            </thead>
+            <tbody>
+                <tr><td rowspan="2">MCP APPS</td><td>1.1</td><td>支持 Build 租户级的 MCP APPS</td></tr>
+                <tr><td>1.2</td><td>支持将 MCP APPS 中填写的内容作为 Session 上下文管理</td></tr>
+                <tr><td rowspan="2">DC</td><td>2.1</td><td>灵基 DC 完成海外部署（新加坡）</td></tr>
+                <tr><td>2.2</td><td>支持对灵基 DC 中的知识进行权限管理</td></tr>
+                <tr><td rowspan="2">其他</td><td>3.1</td><td>支持灵基到苍穹的单点登录（SSO）</td></tr>
+                <tr><td>3.2</td><td>支持收取灵基智能体连接的 MCP Server 的自定义格式消息</td></tr>
+            </tbody>
+        </table>
+
+        <div class="highlight highlight-yellow">
+            <p><strong>⚠️ 注意（3.1 SSO）：</strong>灵基用户不一定有ERP账号，SSO方案需重新考虑。</p>
+        </div>
+
+        <h4>3.2 场景详述 — 工单全链路</h4>
+        <div class="flow">
+            <span class="flow-step">用户在灵基问询</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">智能体答案未解决</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">自动触发提交工单</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">后台自动分配工单</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">通知推送给处理人</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">处理人在灵基处理</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">回复送达提问人</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">提问人评价打分</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">推送后台记录</span>
+        </div>
+
+        <div class="highlight highlight-blue">
+            <p><strong>核心要求：</strong></p>
+            <ul>
+                <li>后台分配工单后，需通过 MCP Server 向处理人推送工单消息（自定义格式）</li>
+                <li>处理人的回复需通过灵基实时送达提问人</li>
+                <li>提问人的评价打分结果需回传后台系统记录</li>
+                <li>整个链路中，用户和处理人均不离开灵基</li>
+            </ul>
+        </div>
+
+        <!-- Phase 2 -->
+        <h3 style="margin-top: 40px;"><span class="tag tag-phase2">Phase 2</span> 8月15日 — HelpDesk 2.0（扩大领域）</h3>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value">1000+</div>
+                <div class="stat-label">服务员工数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">20-30</div>
+                <div class="stat-label">处理人</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">4</div>
+                <div class="stat-label">业务领域（IT/HR/行政/财务）</div>
+            </div>
+        </div>
+
+        <p>考虑接入 WhatsApp 作为入口渠道。</p>
+
+        <h4>后台需求（来自 Julian）</h4>
+        <table>
+            <thead>
+                <tr><th>#</th><th>需求</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>基于分类/服务请求的 SLA 考核</td><td>按工单分类设定不同 SLA 标准</td></tr>
+                <tr><td>2</td><td>基于分类自动分配工单</td><td>轮询机制（Round-robin）</td></tr>
+                <tr><td>3</td><td>工单看板仪表盘</td><td>已解决/未解决、SLA超时统计</td></tr>
+                <tr><td>4</td><td>区分不同 Helpdesk 业务线</td><td>Tech GBS / People GBS / BP</td></tr>
+                <tr><td>5</td><td>工单完成后评分系统</td><td>1-5星评分</td></tr>
+                <tr><td>6</td><td>经理可重新分配工单</td><td>管理权限</td></tr>
+                <tr><td>7</td><td>附件类型限制</td><td>PDF / JPG</td></tr>
+                <tr><td>8</td><td>工单提交后自动回复提单人</td><td>SMTP邮件通知</td></tr>
+                <tr><td>9</td><td>SLA 超时自动回复或关闭工单</td><td>超时自动化处理</td></tr>
+            </tbody>
+        </table>
+
+        <h4>SLA 逻辑</h4>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">Agent 侧</div>
+                <div class="card-body">遵循 Helpdesk Category 文档中的 SLA 标准</div>
+            </div>
+            <div class="card">
+                <div class="card-title">提单人侧</div>
+                <div class="card-body">超时无回复 → 自动关闭；Agent要求补充后无回复 → 自动关闭</div>
+            </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <h3 style="margin-top: 40px;"><span class="tag tag-phase3">Phase 3</span> 8月30日 — SharePoint 同步</h3>
+        
+        <h4>客户三大关注</h4>
+        <table>
+            <thead>
+                <tr><th>#</th><th>关注点</th><th>详情</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>数据安全保障</td><td>SharePoint全云，灵基DC安全等级需不低于它</td></tr>
+                <tr><td>2</td><td>成本保障</td><td>2TB内容，Token消耗顾虑，MCP费用客户承担</td></tr>
+                <tr><td>3</td><td>数据时效性保障</td><td>保持数据一致性</td></tr>
+            </tbody>
+        </table>
+
+        <h4>技术结论</h4>
+        <div class="highlight highlight-blue">
+            <ul>
+                <li><strong>Chris驳回全量同步</strong>，倾向20-30%高频文档或RAG模式</li>
+                <li>短期：手动上传IT域PDF（20-25份）</li>
+                <li>长期：MCP自动增量同步</li>
+                <li>知识沉淀在灵基，归档可选写回SharePoint</li>
+                <li>建议DC专项跟进（@何舟）</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 3: 演示反馈 -->
+    <div class="section" id="sec3">
+        <h2>3. 演示反馈</h2>
+        
+        <h4>演示内容流程</h4>
+        <div class="flow">
+            <span class="flow-step">问询IT问题</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">知识库解答</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">未解决弹卡片</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">确认提单</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">成功状态</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">后台处理</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step">邮件通知</span>
+        </div>
+
+        <h4>客户认可</h4>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">✅ 端到端闭环</div>
+                <div class="card-body">从用户提问到问题解决的完整链路</div>
+            </div>
+            <div class="card">
+                <div class="card-title">✅ 交互式卡片</div>
+                <div class="card-body">富UI交互体验，非纯文本</div>
+            </div>
+            <div class="card">
+                <div class="card-title">✅ 三天搭建速度</div>
+                <div class="card-body">快速验证能力得到认可</div>
+            </div>
+        </div>
+
+        <h4>补充需求</h4>
+        <ul>
+            <li>处理人工作台迁入灵基</li>
+            <li>工单双向通信</li>
+            <li>知识回写</li>
+        </ul>
+    </div>
+
+    <!-- Section 4: Build 平台能力 -->
+    <div class="section" id="sec4">
+        <h2>4. Build 平台能力</h2>
+
+        <h4>客户期望</h4>
+        <ul>
+            <li>端到端闭环管理</li>
+            <li>应用托管 / SSO</li>
+            <li>遵循企业技术标准</li>
+            <li>同一项目视图协同开发</li>
+        </ul>
+
+        <div class="highlight highlight-red">
+            <p><strong>客户强调：</strong>必须尽快投产，不接受"演示能跑实际不行"。先验证1000 license，遵循企业参数。</p>
+        </div>
+
+        <h4>POC 发现标品问题汇总</h4>
+        <table>
+            <thead>
+                <tr><th>领域</th><th>问题数</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>MCP APPS</td><td>6 项</td></tr>
+                <tr><td>DC / 知识</td><td>3 项</td></tr>
+                <tr><td>身份与权限</td><td>3 项</td></tr>
+                <tr><td>多语言</td><td>4 项</td></tr>
+                <tr><td>开发体验</td><td>11 项</td></tr>
+                <tr><td>模型稳定性</td><td>2 项</td></tr>
+                <tr><td><strong>合计</strong></td><td><strong>29 项</strong></td></tr>
+            </tbody>
+        </table>
+        <p>👉 详情参见：<a href="灵基Build生产化问题清单.html" style="color: var(--primary);">灵基Build生产化问题清单</a></p>
+    </div>
+
+    <!-- Section 5: 扩展场景 -->
+    <div class="section" id="sec5">
+        <h2>5. 扩展场景</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">🏗️ 建材助手</div>
+                <div class="card-body">子公司CEO知识中心</div>
+            </div>
+            <div class="card">
+                <div class="card-title">📊 项目指挥中心</div>
+                <div class="card-body">12月前搭建，覆盖拿地到VP全流程</div>
+            </div>
+            <div class="card">
+                <div class="card-title">💰 费用报销 Agent</div>
+                <div class="card-body">负责人：胡磊</div>
+            </div>
+            <div class="card">
+                <div class="card-title">📈 销售 APP</div>
+                <div class="card-body">竞争者分析能力</div>
+            </div>
+            <div class="card">
+                <div class="card-title">🔗 联合明源云</div>
+                <div class="card-body">打通数据集成</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 6: 行动项 -->
+    <div class="section" id="sec6">
+        <h2>6. 行动项</h2>
+        <table>
+            <thead>
+                <tr><th>#</th><th>行动项</th><th>负责人</th><th>截止日期</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>MCP APPS 租户级 + 上下文</td><td>待分配</td><td><span class="tag tag-phase1">8.7前</span></td></tr>
+                <tr><td>2</td><td>DC 海外部署</td><td>待分配</td><td><span class="tag tag-phase1">8.7前</span></td></tr>
+                <tr><td>3</td><td>DC 知识权限</td><td>待分配</td><td><span class="tag tag-phase1">8.7前</span></td></tr>
+                <tr><td>4</td><td>SSO 打通</td><td>待分配</td><td><span class="tag tag-phase1">8.7前</span></td></tr>
+                <tr><td>5</td><td>MCP Server 消息</td><td>待分配</td><td><span class="tag tag-phase1">8.7前</span></td></tr>
+                <tr><td>6</td><td>HelpDesk 2.0</td><td>待分配</td><td><span class="tag tag-phase2">8.15前</span></td></tr>
+                <tr><td>7</td><td>IT 知识库上传</td><td>邹茂桃</td><td><span class="tag tag-phase2">8.15前</span></td></tr>
+                <tr><td>8</td><td>SharePoint 方案</td><td>何舟</td><td><span class="tag tag-phase3">8.30前</span></td></tr>
+                <tr><td>9</td><td>测试样例 + 会议</td><td>何舟 / 邹茂桃</td><td>方案完成后</td></tr>
+                <tr><td>10</td><td>SLA 文档</td><td>Julian</td><td>待定</td></tr>
+                <tr><td>11</td><td>SharePoint API 权限</td><td>Julian</td><td>待定</td></tr>
+                <tr><td>12</td><td>报销 Agent 会议</td><td>胡磊</td><td>待定</td></tr>
+                <tr><td>13</td><td>明源云 MCP</td><td>杨君炎</td><td>待定</td></tr>
+                <tr><td>14</td><td>IM 整合调研</td><td>高翔</td><td>待定</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 7: 风险与关注 -->
+    <div class="section" id="sec7">
+        <h2>7. 风险与关注</h2>
+        <table>
+            <thead>
+                <tr><th>#</th><th>风险</th><th>影响</th><th>缓解措施</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>2TB 同步成本</td><td>Token/存储超预期</td><td>分级方案</td></tr>
+                <tr><td>2</td><td>数据时效性</td><td>AI质量下降</td><td>增量同步 + 延迟SLA</td></tr>
+                <tr><td>3</td><td>SharePoint API 审批</td><td>耗时</td><td>提前沟通 + 白皮书</td></tr>
+                <tr><td>4</td><td>海外部署</td><td>基础设施</td><td>确认新加坡资源</td></tr>
+                <tr><td>5</td><td>SSO 复杂度</td><td>身份差异</td><td>提前评估</td></tr>
+                <tr><td>6</td><td>产品成熟度</td><td>不接受演示≠实际</td><td>UAT 验证</td></tr>
+                <tr><td>7</td><td>跨语言沟通</td><td>理解偏差</td><td>降速 + 书面确认</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 8: 关键共识 -->
+    <div class="section" id="sec8">
+        <h2>8. 关键共识</h2>
+        <ul class="consensus-list">
+            <li><strong>灵基定位：</strong>唯一工作台，取代邮件</li>
+            <li><strong>知识流转：</strong>SharePoint → DC → AI处理 → 新知识沉淀</li>
+            <li><strong>分阶段：</strong>先手动上传跑通IT域，再自动化</li>
+            <li><strong>后台工单：</strong>基于UAT开发，复用Demo</li>
+            <li><strong>开发基于Build：</strong>智能体/技能/MCP/应用均在Build</li>
+            <li><strong>客户关注结果：</strong>Chris不管过程只要最终能回答问题</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>

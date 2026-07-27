@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵基 Build 生产化问题清单</title>
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-light: #e8f0fe;
+            --secondary: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.7;
+            color: var(--gray-800);
+            background: var(--gray-50);
+        }
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            overflow-y: auto;
+            padding: 20px 0;
+            z-index: 100;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+        }
+        .sidebar-back {
+            display: block;
+            padding: 8px 20px 16px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 12px;
+            transition: color 0.2s;
+        }
+        .sidebar-back:hover { color: var(--danger); }
+        .sidebar-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 20px;
+            margin-bottom: 12px;
+        }
+        .sidebar a.nav-link {
+            display: block;
+            padding: 8px 20px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar a.nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        .sidebar a .num {
+            display: inline-block;
+            width: 24px;
+            font-weight: 600;
+            color: var(--gray-400);
+            font-size: 0.8rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            margin-left: 260px;
+            padding: 40px 24px;
+        }
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #1a56db 0%, #7c3aed 100%);
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 48px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .header .meta {
+            margin-top: 24px;
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            flex-wrap: wrap;
+        }
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary);
+        }
+        .section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin: 24px 0 12px;
+        }
+        .section p {
+            margin-bottom: 12px;
+            color: var(--gray-700);
+        }
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border: 1px solid var(--gray-200);
+        }
+        th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        tr:nth-child(even) { background: var(--gray-50); }
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .tag-p0 { background: #fef2f2; color: var(--danger); }
+        .tag-p1 { background: #fffbeb; color: var(--warning); }
+        .tag-p2 { background: #ecfdf5; color: var(--secondary); }
+        .tag-p3 { background: var(--gray-100); color: var(--gray-600); }
+        /* Status */
+        .status-unsolved { color: var(--danger); font-weight: 600; }
+        .status-solved { color: var(--secondary); font-weight: 600; }
+        /* Highlight box */
+        .highlight {
+            padding: 20px 24px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        .highlight-blue { background: #eff6ff; border-left: 4px solid var(--primary); }
+        .highlight-green { background: #ecfdf5; border-left: 4px solid var(--secondary); }
+        .highlight-yellow { background: #fffbeb; border-left: 4px solid var(--warning); }
+        .highlight-red { background: #fef2f2; border-left: 4px solid var(--danger); }
+        .highlight-red strong { color: var(--danger); }
+        /* Issue Cards */
+        .issue-card {
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 20px;
+            background: var(--gray-50);
+            transition: box-shadow 0.2s;
+        }
+        .issue-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .issue-card.critical {
+            border-left: 4px solid var(--danger);
+        }
+        .issue-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .issue-card-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--gray-900);
+        }
+        .issue-card-title .issue-num {
+            color: var(--primary);
+            margin-right: 8px;
+        }
+        .issue-card-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+        .issue-card-body dt {
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 2px;
+        }
+        .issue-card-body dd {
+            color: var(--gray-700);
+            margin-bottom: 12px;
+        }
+        .issue-card-footer {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: var(--gray-50);
+            border-radius: 10px;
+            border: 1px solid var(--gray-200);
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+        .stat-item.severe .stat-value { color: var(--danger); }
+        .stat-item.moderate .stat-value { color: var(--warning); }
+        /* Flow diagram */
+        .flow {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+        }
+        .flow-step {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .flow-step.broken {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: #fef2f2;
+        }
+        .flow-arrow {
+            color: var(--gray-300);
+            font-size: 1.2rem;
+        }
+        /* Priority Section */
+        .priority-group {
+            margin-bottom: 24px;
+        }
+        .priority-group h3 {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        /* Simple issue list (for i18n) */
+        .issue-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .issue-list li {
+            padding: 12px 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: var(--gray-50);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .issue-list li .issue-text {
+            font-size: 0.92rem;
+            color: var(--gray-700);
+        }
+        .issue-list li .issue-text .issue-num {
+            color: var(--primary);
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        .issue-list li .issue-meta {
+            font-size: 0.82rem;
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        /* Print */
+        @media print {
+            body { background: white; }
+            .container { padding: 0; margin-left: 0; }
+            .section { box-shadow: none; border: 1px solid var(--gray-200); }
+            .header { border-radius: 0; }
+            .sidebar { display: none; }
+        }
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .container { margin-left: auto; }
+            .issue-card-body { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar">
+    <a href="振兴HelpDesk项目计划书.html" class="sidebar-back">← 返回项目计划书</a>
+    <div class="sidebar-title">问题清单导航</div>
+    <a href="#sec1" class="nav-link"><span class="num">01</span>问题总览</a>
+    <a href="#sec2" class="nav-link"><span class="num">02</span>MCP APPS（6项）</a>
+    <a href="#sec3" class="nav-link"><span class="num">03</span>DC 知识平台（3项）</a>
+    <a href="#sec4" class="nav-link"><span class="num">04</span>部署与身份（2项）</a>
+    <a href="#sec5" class="nav-link"><span class="num">05</span>国际化（4项）</a>
+    <a href="#sec6" class="nav-link"><span class="num">06</span>开发范式（12项）</a>
+    <a href="#sec7" class="nav-link"><span class="num">07</span>优先级建议</a>
+</nav>
+
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+    <h1>灵基 Build 生产化问题清单</h1>
+    <div class="subtitle">推动标品能力补齐，使灵基 Build 具备生产级开发与交付能力</div>
+    <div class="meta">
+        <span>来源：振兴 HelpDesk POC</span>
+        <span>提出人：邹茂桃、刘景庞、吴宏超</span>
+        <span>共 28 项问题</span>
+    </div>
+</div>
+
+<!-- Section 1: 问题总览 -->
+<div class="section" id="sec1">
+    <h2>01 问题总览</h2>
+
+    <div class="stats">
+        <div class="stat-item severe">
+            <div class="stat-value">28</div>
+            <div class="stat-label">问题总数</div>
+        </div>
+        <div class="stat-item severe">
+            <div class="stat-value">4</div>
+            <div class="stat-label">P0 阻塞上线</div>
+        </div>
+        <div class="stat-item moderate">
+            <div class="stat-value">1</div>
+            <div class="stat-label">已解决</div>
+        </div>
+        <div class="stat-item severe">
+            <div class="stat-value">27</div>
+            <div class="stat-label">待解决</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>问题维度</th>
+                <th>数量</th>
+                <th>严重程度</th>
+                <th>核心缺口</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>MCP APPS 平台能力</td>
+                <td>6 项</td>
+                <td><span class="tag tag-p0">严重</span></td>
+                <td>APPS 交互层能力不足</td>
+            </tr>
+            <tr>
+                <td>DC 知识平台能力</td>
+                <td>3 项</td>
+                <td><span class="tag tag-p0">严重</span></td>
+                <td>海外可用 / 权限 / 写入缺口</td>
+            </tr>
+            <tr>
+                <td>应用部署与身份体系</td>
+                <td>2 项</td>
+                <td><span class="tag tag-p0">严重</span></td>
+                <td>部署路径单一 / 身份不适用</td>
+            </tr>
+            <tr>
+                <td>国际化与多语言</td>
+                <td>4 项</td>
+                <td><span class="tag tag-p1">中等</span></td>
+                <td>海外客户语言支持不达标</td>
+            </tr>
+            <tr>
+                <td>开发范式与工具链</td>
+                <td>12 项</td>
+                <td><span class="tag tag-p0">严重</span></td>
+                <td>端到端流程断裂</td>
+            </tr>
+            <tr>
+                <td>模型服务稳定性</td>
+                <td>2 项</td>
+                <td><span class="tag tag-p1">中等</span></td>
+                <td>死循环 / 加载卡死</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="highlight highlight-red">
+        <strong>核心结论：</strong>APPS 交互层能力不足 + DC 知识能力未就绪 + Build 开发范式端到端断裂 — 三者共同构成灵基 Build 从"演示工具"迈向"生产级开发平台"的根本障碍。
+    </div>
+</div>
+
+<!-- Section 2: MCP APPS -->
+<div class="section" id="sec2">
+    <h2>02 MCP APPS 平台能力（6项）</h2>
+
+    <!-- Issue #1 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#1</span>APPS 不支持租户级自定义开发与发布上架</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>仅标品预置组件，不支持自定义</dd>
+                <dt>标品应有能力</dt>
+                <dd>支持开发者自定义 APPS 组件并发布到租户</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>每个企业交互需求不同，不开放自定义则能力天花板极低</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：邹茂桃</span>
+            <span>对接人：崔艺露</span>
+        </div>
+    </div>
+
+    <!-- Issue #2 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#2</span>APPS 与 LLM 数据传递仅支持全量消息，缺乏上下文精简机制</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>用户选 100 条数据必须全量塞入对话</dd>
+                <dt>标品应有能力</dt>
+                <dd>对话展示精简提示，实际数据静默更新 LLM 上下文</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>Token 浪费 + 对话不可读 + 模型性能下降</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：刘景庞 | 对接人：崔艺露</span>
+            <span style="color: var(--warning);">对方已确认方案方向</span>
+        </div>
+    </div>
+
+    <!-- Issue #3 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#3</span>APPS 组件渲染性能差，偶发渲染失败</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>滚动后组件被释放，回来重新渲染慢 / 偶发白屏</dd>
+                <dt>标品应有能力</dt>
+                <dd>合理缓存 + 状态恢复</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>回看上文是高频操作</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：邹茂桃</span>
+            <span>对接人：崔艺露</span>
+        </div>
+    </div>
+
+    <!-- Issue #4 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#4</span>APPS 组件提交后不支持内容回显</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>提交后回看对话，已填内容消失</dd>
+                <dt>标品应有能力</dt>
+                <dd>数据持久化，回看可回显</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>表单提交 → 回看是基本闭环</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：邹茂桃</span>
+            <span>对接人：崔艺露</span>
+        </div>
+    </div>
+
+    <!-- Issue #5 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#5</span>APPS 支持获取灵基登录用户信息</span>
+            <span class="status-solved">✅ 已解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>此前无法获取用户身份</dd>
+                <dt>标品应有能力</dt>
+                <dd>可获取用户 ID / 姓名 / 邮箱 / 部门</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>几乎所有企业场景需要身份</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：刘景庞 | 对接人：卓成淾</span>
+            <span style="color: var(--secondary);">7.20 完成，生产未上线</span>
+        </div>
+    </div>
+
+    <!-- Issue #6 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#6</span>Agent 无法感知 MCP APP 组件的内部业务逻辑</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>Agent 仅知道入参出参和名称描述</dd>
+                <dt>标品应有能力</dt>
+                <dd>结构化组件能力描述（JSON Schema）</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>限制 AI 辅助开发上限</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：刘景庞</span>
+            <span>对接人：崔艺露</span>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: DC 知识平台 -->
+<div class="section" id="sec3">
+    <h2>03 DC 知识平台能力（3项）</h2>
+
+    <!-- Issue #7 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#7</span>DC 未完成海外部署</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>仅国内环境</dd>
+                <dt>标品应有能力</dt>
+                <dd>多区域部署（新加坡）</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>海外客户无法使用知识能力</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：邹茂桃 | 对接人：陶涛</span>
+            <span style="color: var(--warning);">预计 7.22</span>
+        </div>
+    </div>
+
+    <!-- Issue #8 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#8</span>DC 不支持第三方系统写入知识</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>无写入 API</dd>
+                <dt>标品应有能力</dt>
+                <dd>标准 API 写入指定智能体知识库</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>知识飞轮 / 自主进化的底层支撑</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：吴宏超 | 对接人：林志贤、何舟</span>
+            <span style="color: var(--warning);">8 月底初版</span>
+        </div>
+    </div>
+
+    <!-- Issue #9 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#9</span>Work 中知识检索存在越权</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>可检索到不属于自己权限的内容</dd>
+                <dt>标品应有能力</dt>
+                <dd>严格权限控制</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>企业级基本安全要求</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：邹茂桃</span>
+            <span>对接人：彭卫华</span>
+        </div>
+    </div>
+</div>
+
+<!-- Section 4: 部署与身份 -->
+<div class="section" id="sec4">
+    <h2>04 部署与身份体系（2项）</h2>
+
+    <!-- Issue #10 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#10</span>Build 开发的应用仅支持部署到苍穹</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>只能托管苍穹，苍穹有许可体系，灵基用户无苍穹账号</dd>
+                <dt>标品应有能力</dt>
+                <dd>支持多种部署目标（苍穹 / 灵基自身 / 客户云服务器），身份基于灵基用户体系</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>灵基适用场景不应限于 ERP 用户圈</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：邹茂桃、吴宏超</span>
+            <span>对接人：待定</span>
+        </div>
+    </div>
+
+    <!-- Issue #11 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#11</span>应用开发要求过多不相关文件权限</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>大量不相关权限请求</dd>
+                <dt>标品应有能力</dt>
+                <dd>最小权限原则</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>违反安全原则，企业客户会触发审批</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：邹茂桃</span>
+            <span>对接人：部伟</span>
+        </div>
+    </div>
+</div>
+
+<!-- Section 5: 国际化 -->
+<div class="section" id="sec5">
+    <h2>05 国际化与多语言（4项）</h2>
+
+    <ul class="issue-list">
+        <li>
+            <span class="issue-text"><span class="issue-num">#12</span>灵基客户端多语言翻译错误</span>
+            <span class="issue-meta">
+                <span>邹茂桃</span>
+                <span class="status-unsolved">❌</span>
+            </span>
+        </li>
+        <li>
+            <span class="issue-text"><span class="issue-num">#13</span>Build 板块 AI 输出中英夹杂（配置 English 仍夹杂中文）</span>
+            <span class="issue-meta">
+                <span>邹茂桃</span>
+                <span class="status-unsolved">❌</span>
+            </span>
+        </li>
+        <li>
+            <span class="issue-text"><span class="issue-num">#14</span>Web 端语言切换需反复操作三遍</span>
+            <span class="issue-meta">
+                <span>邹茂桃</span>
+                <span class="status-unsolved">❌</span>
+            </span>
+        </li>
+        <li>
+            <span class="issue-text"><span class="issue-num">#15</span>Work 板块全英配置下 AI 回复偶现中文</span>
+            <span class="issue-meta">
+                <span>邹茂桃</span>
+                <span class="status-unsolved">❌</span>
+            </span>
+        </li>
+    </ul>
+</div>
+
+<!-- Section 6: 开发范式 -->
+<div class="section" id="sec6">
+    <h2>06 开发范式与工具链（12项）</h2>
+
+    <!-- Issue #28 - Most Critical, shown first with highlight -->
+    <div class="issue-card critical">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#28</span>端到端开发流程完全断裂（最关键问题）</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="highlight highlight-red" style="margin: 0 0 16px;">
+            <strong>⚠️ 这是灵基 Build 走向生产级平台最根本的问题。</strong><br>
+            当前开发者需在 5+ 个工具 / 环境间反复切换，各环节零衔接。
+        </div>
+        <h3 style="font-size: 0.95rem; margin: 12px 0 8px; color: var(--gray-600);">当前碎片化流程</h3>
+        <div class="flow">
+            <span class="flow-step broken">产品设计 (Kiro)</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step broken">MCP APPS (本地IDE→KDM)</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step broken">Skill (Build→Console→Work)</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step broken">智能体 (Build→Console→Work)</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step broken">应用 (本地苍穹→Build→苍穹上线→配MCP)</span>
+            <span class="flow-arrow">→</span>
+            <span class="flow-step broken">联调 (Work)</span>
+        </div>
+        <div class="issue-card-body" style="margin-top: 16px;">
+            <dl>
+                <dt>标品应有能力</dt>
+                <dd><strong>终态：</strong>一站式工作空间<br><strong>初阶：</strong>各环节自动化衔接</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>Build 从"演示工具"走向"生产级开发平台"的根本问题</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>提出人：邹茂桃</span>
+            <span>对接人：高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #16 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#16</span>测试智能体必须先将技能上线</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">违反开发 → 测试 → 上线基本流程</p>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #17 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#17</span>构建同名 Skill 点击测试会静默覆盖线上 Skill</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">缺乏同名冲突处理机制，应沙箱隔离 + 上线时提醒</p>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #18 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#18</span>智能体 MCP Server 关联与知识挂载无法在 Build 中连贯完成</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">需在 Build / Console / Work 三处切换，角色职责混淆</p>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #19 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#19</span>智能体没有版本管理</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">无法查看历史 / 对比 / 回滚</p>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #20 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#20</span>智能体实例创建对苍穹有不明确依赖</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">需澄清是否合理，与 #10 同一架构耦合问题</p>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 杨刚</span>
+        </div>
+    </div>
+
+    <!-- Issue #21 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#21</span>智能体创建 Skill 后缺乏同步批量发布机制</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">需手动按顺序逐个发布</p>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #22 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#22</span>Build 中更换 Agent 的 Skill 后工作区未同步</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">对话操作不反映到实际文件</p>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #23 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#23</span>技能在智能体中被修改后无法同步上线</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">需手动复制回源文件再单独提交</p>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #24 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#24</span>智能体 / 技能文件修改后文件树无状态标记</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">无法识别哪些已修改 / 未提交</p>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #25 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#25</span>提交同名技能因名称重复失败</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <p style="color: var(--gray-700); font-size: 0.9rem;">修改后重新提交被当作新建</p>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #26 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#26</span>Build 使用 fast 模型时进入死循环</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #27 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#27</span>Build 使用 deep 模型时回复无限加载</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 高翔</span>
+        </div>
+    </div>
+</div>
+
+<!-- Section 7: 优先级建议 -->
+<div class="section" id="sec7">
+    <h2>07 优先级建议</h2>
+
+    <!-- P0 -->
+    <div class="priority-group">
+        <h3><span class="tag tag-p0">P0</span> 阻塞上线</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>问题</th>
+                    <th>维度</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#7</td>
+                    <td>DC 海外部署</td>
+                    <td>DC 知识平台</td>
+                </tr>
+                <tr>
+                    <td>#10</td>
+                    <td>应用部署与身份</td>
+                    <td>部署与身份</td>
+                </tr>
+                <tr>
+                    <td>#1</td>
+                    <td>APPS 自定义开发</td>
+                    <td>MCP APPS</td>
+                </tr>
+                <tr>
+                    <td>#2</td>
+                    <td>APPS 上下文精简</td>
+                    <td>MCP APPS</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- P1 -->
+    <div class="priority-group">
+        <h3><span class="tag tag-p1">P1</span> 影响交付质量</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>问题</th>
+                    <th>维度</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#8</td>
+                    <td>DC 知识回写</td>
+                    <td>DC 知识平台</td>
+                </tr>
+                <tr>
+                    <td>#9</td>
+                    <td>知识越权</td>
+                    <td>DC 知识平台</td>
+                </tr>
+                <tr>
+                    <td>#3</td>
+                    <td>APPS 渲染性能</td>
+                    <td>MCP APPS</td>
+                </tr>
+                <tr>
+                    <td>#4</td>
+                    <td>APPS 回显</td>
+                    <td>MCP APPS</td>
+                </tr>
+                <tr>
+                    <td>#12-15</td>
+                    <td>多语言问题（4项）</td>
+                    <td>国际化</td>
+                </tr>
+                <tr>
+                    <td>#17</td>
+                    <td>同名 Skill 覆盖</td>
+                    <td>开发范式</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- P2 -->
+    <div class="priority-group">
+        <h3><span class="tag tag-p2">P2</span> 影响开发效率</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>问题</th>
+                    <th>维度</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#28</td>
+                    <td>端到端开发流程断裂</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#16</td>
+                    <td>测试需先上线</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#19</td>
+                    <td>无版本管理</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#23</td>
+                    <td>技能修改不同步</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#26/27</td>
+                    <td>模型稳定性（死循环 / 无限加载）</td>
+                    <td>开发范式</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- P3 -->
+    <div class="priority-group">
+        <h3><span class="tag tag-p3">P3</span> 体验优化</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>问题</th>
+                    <th>维度</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#6</td>
+                    <td>Agent 感知 APP 逻辑</td>
+                    <td>MCP APPS</td>
+                </tr>
+                <tr>
+                    <td>#18</td>
+                    <td>MCP / 知识关联</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#20</td>
+                    <td>创建实例依赖苍穹</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#21</td>
+                    <td>批量发布</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#22</td>
+                    <td>工作区同步</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#24</td>
+                    <td>文件状态标记</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#25</td>
+                    <td>同名提交失败</td>
+                    <td>开发范式</td>
+                </tr>
+                <tr>
+                    <td>#11</td>
+                    <td>权限过多</td>
+                    <td>部署与身份</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="highlight highlight-blue">
+        <strong>建议推动策略：</strong>P0 问题需在当前迭代中明确解决时间线并跟踪；P1 问题可并行推进；P2/P3 问题作为中长期改善项持续跟进。
+    </div>
+</div>
+
+</div><!-- end container -->
+</body>
+</html>
