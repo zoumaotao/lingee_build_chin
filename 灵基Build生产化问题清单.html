@@ -362,7 +362,7 @@
     <a href="index.html" class="sidebar-back">← 返回项目计划书</a>
     <div class="sidebar-title">问题清单导航</div>
     <a href="#sec1" class="nav-link"><span class="num">01</span>问题总览</a>
-    <a href="#sec2" class="nav-link"><span class="num">02</span>MCP APPS（6项）</a>
+    <a href="#sec2" class="nav-link"><span class="num">02</span>MCP APPS（7项）</a>
     <a href="#sec3" class="nav-link"><span class="num">03</span>DC 知识平台（3项）</a>
     <a href="#sec4" class="nav-link"><span class="num">04</span>部署与身份（2项）</a>
     <a href="#sec5" class="nav-link"><span class="num">05</span>国际化（4项）</a>
@@ -416,7 +416,7 @@
         <tbody>
             <tr>
                 <td>MCP APPS 平台能力</td>
-                <td>6 项</td>
+                <td>7 项</td>
                 <td><span class="tag tag-p0">严重</span></td>
                 <td>APPS 交互层能力不足</td>
             </tr>
@@ -460,7 +460,7 @@
 
 <!-- Section 2: MCP APPS -->
 <div class="section" id="sec2">
-    <h2>02 MCP APPS 平台能力（6项）</h2>
+    <h2>02 MCP APPS 平台能力（7项）</h2>
 
     <!-- Issue #1 -->
     <div class="issue-card">
@@ -483,18 +483,43 @@
     <!-- Issue #2 -->
     <div class="issue-card">
         <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#2</span>APPS 与 LLM 数据传递仅支持全量消息，缺乏上下文精简机制</span>
+            <span class="issue-card-title"><span class="issue-num">#2</span>APPS 卡片中用户填写的内容不作为 LLM 上下文</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
         <div class="issue-card-body">
             <dl>
                 <dt>当前现状</dt>
-                <dd>用户选 100 条数据必须全量塞入对话</dd>
+                <dd>用户在 MCP APPS 组件（如表单卡片）中填写的内容，不会自动进入 LLM 的会话上下文。模型无法感知用户在卡片中填了什么</dd>
                 <dt>标品应有能力</dt>
-                <dd>对话展示精简提示，实际数据静默更新 LLM 上下文</dd>
+                <dd>用户在 APPS 组件中填写/选择/提交的内容应自动纳入 LLM 上下文，让模型能基于这些内容做后续对话（校验、补全、追问缺失字段等）</dd>
                 <dt>为什么是标品问题</dt>
-                <dd>Token 浪费 + 对话不可读 + 模型性能下降</dd>
+                <dd>APPS 是智能体与用户的交互层，卡片中的操作本质就是"用户输入"。模型感知不到则 APPS 沦为静态表单，失去 AI-Native 交互的意义</dd>
             </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 崔艺露</span>
+        </div>
+    </div>
+
+    <!-- Issue #2b -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#2b</span>APPS 与 LLM 数据传递仅支持全量消息，缺乏精简机制</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>即便 APPS 数据能传给 LLM，当前仅支持全量消息形式。用户选 100 条数据必须全量塞入对话，用户界面也会看到一大段数据</dd>
+                <dt>标品应有能力</dt>
+                <dd>对话展示精简提示（如"已选择100条"），实际数据以用户不感知的形式静默更新 LLM 上下文</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>Token 浪费 + 对话不可读 + 模型性能下降。这是 APPS 与 LLM 协作的基础通信机制</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 崔艺露</span>
+            <span style="color: var(--warning);">对方已确认方案方向</span>
         </div>
     </div>
 
