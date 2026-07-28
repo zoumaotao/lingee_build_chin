@@ -1175,42 +1175,57 @@
 <div class="section" id="sec6">
     <h2>06 标品匹配与差距分析</h2>
     
-    <h3>6.1 平台能力匹配度</h3>
+    <h3>6.1 平台能力匹配度（对照问题清单编号）</h3>
     <table>
-        <tr><th>需求能力</th><th>灵基标品现状</th><th>差距</th><th>优先级</th></tr>
-        <tr><td>智能体开发</td><td>✅ 灵基 Build 支持</td><td>开发流程断裂（详见问题清单）</td><td>-</td></tr>
-        <tr><td>知识检索</td><td>⚠️ DC 已打通但未海外部署</td><td>海外部署 + 权限管控</td><td><span class="tag tag-p0">P0</span></td></tr>
-        <tr><td>交互式卡片</td><td>⚠️ MCP APPS 基本能力有</td><td>不支持自定义 + 上下文管理</td><td><span class="tag tag-p0">P0</span></td></tr>
-        <tr><td>应用托管</td><td>⚠️ 仅支持苍穹</td><td>需支持非苍穹部署</td><td><span class="tag tag-p0">P0</span></td></tr>
-        <tr><td>消息推送</td><td>❌ 不支持</td><td>MCP Server 自定义格式消息</td><td><span class="tag tag-p0">P0</span></td></tr>
-        <tr><td>SSO</td><td>⚠️ 7.31 计划发布</td><td>灵基→苍穹 SSO，需考虑非 ERP 用户</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>知识回写</td><td>❌ DC 不支持第三方写入</td><td>需开放写入 API</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>多语言</td><td>⚠️ 存在多处 Bug</td><td>翻译错误 + AI 语言控制不稳</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><th>项目需求</th><th>灵基标品现状</th><th>差距（问题清单编号）</th><th>优先级</th></tr>
+        <tr><td>交互式卡片（自定义表单/工单卡）</td><td>⚠️ 仅标品预置组件</td><td>#1 不支持租户级自定义 APPS</td><td><span class="tag tag-p0">P0</span></td></tr>
+        <tr><td>APPS 数据传递给 LLM</td><td>⚠️ 卡片填写内容不入上下文</td><td>#2 卡片内容不作为上下文<br>#2b 全量消息无精简机制</td><td><span class="tag tag-p0">P0</span></td></tr>
+        <tr><td>APPS 渲染稳定性</td><td>❌ 偶发白屏/不回显</td><td>#3 渲染性能差<br>#4 提交后不回显</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>Agent 感知 APPS 逻辑</td><td>❌ 仅知入参出参</td><td>#6 无结构化能力描述</td><td><span class="tag tag-p3">P3</span></td></tr>
+        <tr><td>DC 海外可用</td><td>✅ 已完成</td><td>#7 已解决</td><td>—</td></tr>
+        <tr><td>知识回写（知识飞轮）</td><td>❌ 无写入 API</td><td>#8 DC 不支持第三方写入</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>知识权限管控</td><td>❌ 存在越权</td><td>#9 检索越权</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>应用部署（非 ERP 用户可用）</td><td>❌ 仅支持苍穹</td><td>#10 部署强绑苍穹<br>#20 实例创建依赖苍穹</td><td><span class="tag tag-p0">P0</span></td></tr>
+        <tr><td>多语言（海外客户）</td><td>❌ 多处 Bug</td><td>#12-#15 翻译错误/AI 中英夹杂/语言切换</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>消息中心（双向推送）</td><td>❌ 不支持</td><td>标品无此能力（项目计划书 4.4 节）</td><td><span class="tag tag-p0">P0</span></td></tr>
+        <tr><td>SSO 身份打通</td><td>⚠️ 计划中</td><td>灵基用户无 ERP 账号，SSO 方案需重新考虑</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>开发效率（端到端）</td><td>❌ 完全断裂</td><td>#28 端到端流程断裂<br>#16 测试需先上线<br>#17 同名覆盖<br>#19 无版本管理</td><td><span class="tag tag-p2">P2</span></td></tr>
+        <tr><td>团队协作</td><td>❌ 不支持</td><td>#30 无多人协同机制<br>#29 状态检测 Bug</td><td><span class="tag tag-p2">P2</span></td></tr>
+        <tr><td>技能发布流程</td><td>❌ 多处不通</td><td>#23 修改不同步<br>#25 同名提交失败<br>#21 缺乏批量发布</td><td><span class="tag tag-p2">P2</span></td></tr>
+        <tr><td>模型服务稳定性</td><td>❌ 偶发故障</td><td>#26 fast 死循环<br>#27 deep 无限加载</td><td><span class="tag tag-p2">P2</span></td></tr>
     </table>
 
-    <h3>6.2 需标品补齐的关键能力</h3>
+    <h3>6.2 按优先级汇总</h3>
     <div class="highlight highlight-red">
-        <strong>阻塞上线的 P0 项（必须在 8.7 前解决）：</strong>
+        <strong>P0 — 阻塞上线（必须在 8.7 前解决）：</strong>
         <ol>
-            <li>DC 海外部署（新加坡节点）</li>
-            <li>MCP APPS 支持租户级自定义开发与发布</li>
-            <li>MCP APPS 组件内容作为 Session 上下文管理</li>
-            <li>应用部署支持非苍穹环境</li>
-            <li>MCP Server 自定义格式消息推送</li>
+            <li><strong>#1</strong> MCP APPS 支持租户级自定义开发与发布</li>
+            <li><strong>#2 / #2b</strong> APPS 卡片内容作为上下文 + 精简传递机制</li>
+            <li><strong>#10 / #20</strong> 应用部署支持非苍穹环境，解除苍穹强依赖</li>
+            <li><strong>消息中心</strong> 灵基平台级消息推送能力（工单分配/答复/告警等双向推送）</li>
         </ol>
     </div>
     <div class="highlight highlight-yellow">
-        <strong>影响体验的 P1 项（建议 8.15 前解决）：</strong>
+        <strong>P1 — 影响交付质量（建议 8.15 前解决）：</strong>
         <ol>
-            <li>DC 知识回写 API</li>
-            <li>知识检索权限管控</li>
-            <li>APPS 渲染性能优化</li>
-            <li>APPS 提交内容回显</li>
-            <li>多语言 Bug 修复</li>
-            <li>灵基→苍穹 SSO</li>
+            <li><strong>#8</strong> DC 知识回写 API（知识飞轮基础）</li>
+            <li><strong>#9</strong> 知识检索权限管控（安全底线）</li>
+            <li><strong>#3 / #4</strong> APPS 渲染稳定性 + 提交内容回显</li>
+            <li><strong>#12-#15</strong> 多语言 Bug 修复</li>
+            <li><strong>SSO</strong> 灵基→苍穹身份方案（需考虑非 ERP 用户）</li>
         </ol>
     </div>
-    <p><em>完整问题清单（29 项）详见 <a href="灵基Build生产化问题清单.html" style="color:var(--primary);font-weight:500;">《灵基Build生产化问题清单》</a></em></p>
+    <div class="highlight highlight-green">
+        <strong>P2 — 影响开发效率（建议 8.30 前持续改善）：</strong>
+        <ol>
+            <li><strong>#28</strong> 端到端开发流程断裂</li>
+            <li><strong>#30</strong> 多人协同开发机制</li>
+            <li><strong>#16 / #17 / #19</strong> 测试流程/同名覆盖/版本管理</li>
+            <li><strong>#23 / #25 / #21 / #29</strong> 技能发布流程</li>
+            <li><strong>#26 / #27</strong> 模型服务稳定性</li>
+        </ol>
+    </div>
+    <p>👉 完整问题清单（31 项）详见 <a href="灵基Build生产化问题清单.html" style="color:var(--primary);font-weight:500;">《灵基Build生产化问题清单》</a></p>
 </div>
 
 <!-- Section 7: 项目计划 -->
