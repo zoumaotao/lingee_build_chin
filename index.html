@@ -598,105 +598,215 @@
       <text x="830" y="514" font-size="9" fill="#6b7280">外部数据源</text>
     </svg>
 
-    <h3>3.2 端到端时序图（员工提单→处理人答复→评价）</h3>
-    <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:900px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
+    <h3>3.2 端到端时序图（完整部件视角）</h3>
+    <svg viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1100px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
+      <defs><marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#374151"/></marker>
+      <marker id="arr-green" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#059669"/></marker>
+      <marker id="arr-orange" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#ea580c"/></marker></defs>
+
+      <!-- Lifeline headers -->
+      <rect x="15" y="8" width="70" height="38" rx="4" fill="#dbeafe" stroke="#3b82f6"/>
+      <text x="50" y="32" font-size="9" fill="#1e40af" text-anchor="middle" font-weight="600">员工</text>
+
+      <rect x="105" y="8" width="85" height="38" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
+      <text x="147" y="25" font-size="8" fill="#1e40af" text-anchor="middle" font-weight="600">灵基 Work</text>
+      <text x="147" y="38" font-size="7" fill="#6b7280" text-anchor="middle">APPS 渲染</text>
+
+      <rect x="210" y="8" width="105" height="38" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
+      <text x="262" y="25" font-size="8" fill="#1e40af" text-anchor="middle" font-weight="600">Helpdesk Assistant</text>
+      <text x="262" y="38" font-size="7" fill="#6b7280" text-anchor="middle">智能体+Skill</text>
+
+      <rect x="335" y="8" width="70" height="38" rx="4" fill="#fae8ff" stroke="#a78bfa"/>
+      <text x="370" y="25" font-size="8" fill="#6b21a8" text-anchor="middle" font-weight="600">DC</text>
+      <text x="370" y="38" font-size="7" fill="#6b7280" text-anchor="middle">知识检索</text>
+
+      <rect x="425" y="8" width="90" height="38" rx="4" fill="#fff7ed" stroke="#fb923c"/>
+      <text x="470" y="25" font-size="8" fill="#c2410c" text-anchor="middle" font-weight="600">MCP Server</text>
+      <text x="470" y="38" font-size="7" fill="#6b7280" text-anchor="middle">接口调用</text>
+
+      <rect x="535" y="8" width="100" height="38" rx="4" fill="#fff7ed" stroke="#fb923c"/>
+      <text x="585" y="25" font-size="8" fill="#c2410c" text-anchor="middle" font-weight="600">工单后台</text>
+      <text x="585" y="38" font-size="7" fill="#6b7280" text-anchor="middle">业务逻辑+分配</text>
+
+      <rect x="655" y="8" width="85" height="38" rx="4" fill="#ecfdf5" stroke="#10b981"/>
+      <text x="697" y="25" font-size="8" fill="#065f46" text-anchor="middle" font-weight="600">消息中心</text>
+      <text x="697" y="38" font-size="7" fill="#6b7280" text-anchor="middle">路由+推送</text>
+
+      <rect x="760" y="8" width="105" height="38" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
+      <text x="812" y="25" font-size="8" fill="#1e40af" text-anchor="middle" font-weight="600">Agent Workbench</text>
+      <text x="812" y="38" font-size="7" fill="#6b7280" text-anchor="middle">处理人智能体</text>
+
+      <rect x="885" y="8" width="70" height="38" rx="4" fill="#dbeafe" stroke="#3b82f6"/>
+      <text x="920" y="32" font-size="9" fill="#1e40af" text-anchor="middle" font-weight="600">处理人</text>
+
       <!-- Lifelines -->
-      <rect x="60" y="10" width="100" height="30" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
-      <text x="110" y="30" font-size="10" fill="#1e40af" text-anchor="middle" font-weight="600">员工</text>
-      <line x1="110" y1="40" x2="110" y2="580" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="50" y1="46" x2="50" y2="800" stroke="#3b82f6" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="147" y1="46" x2="147" y2="800" stroke="#3b82f6" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="262" y1="46" x2="262" y2="800" stroke="#3b82f6" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="370" y1="46" x2="370" y2="800" stroke="#a78bfa" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="470" y1="46" x2="470" y2="800" stroke="#fb923c" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="585" y1="46" x2="585" y2="800" stroke="#fb923c" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="697" y1="46" x2="697" y2="800" stroke="#10b981" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="812" y1="46" x2="812" y2="800" stroke="#3b82f6" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="920" y1="46" x2="920" y2="800" stroke="#3b82f6" stroke-width="0.8" stroke-dasharray="3"/>
 
-      <rect x="220" y="10" width="120" height="30" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
-      <text x="280" y="30" font-size="10" fill="#1e40af" text-anchor="middle" font-weight="600">Helpdesk Assistant</text>
-      <line x1="280" y1="40" x2="280" y2="580" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4"/>
+      <!-- Phase 1: 知识问答 -->
+      <rect x="5" y="60" width="1090" height="16" rx="2" fill="#f0fdf4" opacity="0.6"/>
+      <text x="15" y="72" font-size="7" fill="#065f46" font-weight="600">知识问答阶段</text>
 
-      <rect x="400" y="10" width="100" height="30" rx="4" fill="#ecfdf5" stroke="#10b981"/>
-      <text x="450" y="30" font-size="10" fill="#065f46" text-anchor="middle" font-weight="600">消息中心</text>
-      <line x1="450" y1="40" x2="450" y2="580" stroke="#10b981" stroke-width="1" stroke-dasharray="4"/>
+      <!-- ① 员工提问 -->
+      <line x1="50" y1="90" x2="145" y2="90" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="97" y="84" font-size="7.5" fill="#374151" text-anchor="middle">① 输入问题</text>
 
-      <rect x="560" y="10" width="120" height="30" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
-      <text x="620" y="30" font-size="10" fill="#92400e" text-anchor="middle" font-weight="600">后台工单服务</text>
-      <line x1="620" y1="40" x2="620" y2="580" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4"/>
+      <!-- ② Work→Assistant -->
+      <line x1="147" y1="105" x2="260" y2="105" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="203" y="99" font-size="7.5" fill="#374151" text-anchor="middle">② 转发给智能体</text>
 
-      <rect x="740" y="10" width="120" height="30" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
-      <text x="800" y="30" font-size="10" fill="#1e40af" text-anchor="middle" font-weight="600">处理人 Workbench</text>
-      <line x1="800" y1="40" x2="800" y2="580" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4"/>
+      <!-- ③ Assistant→DC 检索 -->
+      <line x1="262" y1="120" x2="368" y2="120" stroke="#6b21a8" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="315" y="114" font-size="7.5" fill="#6b21a8" text-anchor="middle">③ 检索知识库</text>
 
-      <!-- Messages -->
-      <!-- 1. 员工提问 -->
-      <line x1="110" y1="70" x2="280" y2="70" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="64" font-size="9" fill="#374151" text-anchor="middle">① 提问 IT 问题</text>
+      <!-- ④ DC返回结果 -->
+      <line x1="368" y1="135" x2="262" y2="135" stroke="#6b21a8" stroke-width="1" stroke-dasharray="3" marker-end="url(#arr)"/>
+      <text x="315" y="129" font-size="7.5" fill="#6b21a8" text-anchor="middle">④ 返回匹配内容+来源</text>
 
-      <!-- 2. 检索知识 -->
-      <rect x="250" y="80" width="60" height="20" rx="3" fill="#fae8ff" stroke="#d8b4fe"/>
-      <text x="280" y="94" font-size="8" fill="#6b21a8" text-anchor="middle">检索 DC</text>
+      <!-- ⑤ Assistant→Work 回答 -->
+      <line x1="262" y1="150" x2="149" y2="150" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="205" y="144" font-size="7.5" fill="#374151" text-anchor="middle">⑤ AI 回答+引用</text>
 
-      <!-- 3. 回答 -->
-      <line x1="280" y1="110" x2="110" y2="110" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="104" font-size="9" fill="#374151" text-anchor="middle">② AI 回答 + 引用来源</text>
+      <!-- ⑥ Work渲染APPS卡片给员工 -->
+      <line x1="147" y1="165" x2="52" y2="165" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="99" y="159" font-size="7.5" fill="#374151" text-anchor="middle">⑥ 渲染回答+解决判定卡</text>
 
-      <!-- 4. 未解决 -->
-      <line x1="110" y1="140" x2="280" y2="140" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="134" font-size="9" fill="#dc2626" text-anchor="middle">③ "仍未解决"</text>
+      <!-- ⑦ 员工选择未解决 -->
+      <line x1="50" y1="185" x2="145" y2="185" stroke="#dc2626" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="97" y="179" font-size="7.5" fill="#dc2626" text-anchor="middle">⑦ 点击"仍未解决"</text>
 
-      <!-- 5. 生成草稿 -->
-      <line x1="280" y1="170" x2="110" y2="170" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="164" font-size="9" fill="#374151" text-anchor="middle">④ 展示工单草稿确认卡</text>
+      <!-- Phase 2: 提单 -->
+      <rect x="5" y="200" width="1090" height="16" rx="2" fill="#eff6ff" opacity="0.6"/>
+      <text x="15" y="212" font-size="7" fill="#1e40af" font-weight="600">工单创建阶段</text>
 
-      <!-- 6. 确认 -->
-      <line x1="110" y1="200" x2="280" y2="200" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="194" font-size="9" fill="#374151" text-anchor="middle">⑤ 确认提交</text>
+      <!-- ⑧ Work→Assistant 触发提单 -->
+      <line x1="147" y1="230" x2="260" y2="230" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="203" y="224" font-size="7.5" fill="#374151" text-anchor="middle">⑧ 触发提单流程</text>
 
-      <!-- 7. 建单 -->
-      <line x1="280" y1="230" x2="620" y2="230" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="450" y="224" font-size="9" fill="#374151" text-anchor="middle">⑥ Create_Ticket（幂等）</text>
+      <!-- ⑨ Assistant→MCP 获取Schema -->
+      <line x1="262" y1="245" x2="468" y2="245" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="365" y="239" font-size="7.5" fill="#ea580c" text-anchor="middle">⑨ Get_Ticket_Schema</text>
 
-      <!-- 8. 返回工单号 -->
-      <line x1="620" y1="255" x2="280" y2="255" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)" stroke-dasharray="4"/>
-      <text x="450" y="249" font-size="9" fill="#374151" text-anchor="middle">⑦ 返回 ticketId + status</text>
+      <!-- ⑩ MCP返回Schema -->
+      <line x1="468" y1="260" x2="262" y2="260" stroke="#ea580c" stroke-width="1" stroke-dasharray="3" marker-end="url(#arr-orange)"/>
+      <text x="365" y="254" font-size="7.5" fill="#ea580c" text-anchor="middle">⑩ 返回分类/字段/规则</text>
 
-      <!-- 9. 展示成功卡 -->
-      <line x1="280" y1="280" x2="110" y2="280" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="274" font-size="9" fill="#059669" text-anchor="middle">⑧ 展示提交成功卡片</text>
+      <!-- ⑪ Assistant生成草稿→Work渲染 -->
+      <line x1="262" y1="278" x2="149" y2="278" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="205" y="272" font-size="7.5" fill="#374151" text-anchor="middle">⑪ 生成工单草稿</text>
 
-      <!-- 10. 自动分配 -->
-      <rect x="590" y="295" width="60" height="20" rx="3" fill="#fef3c7" stroke="#f59e0b"/>
-      <text x="620" y="309" font-size="8" fill="#92400e" text-anchor="middle">自动分配</text>
+      <!-- ⑫ Work渲染确认卡给员工 -->
+      <line x1="147" y1="293" x2="52" y2="293" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="99" y="287" font-size="7.5" fill="#374151" text-anchor="middle">⑫ 渲染草稿确认卡（APPS）</text>
 
-      <!-- 11. 推送给处理人 -->
-      <line x1="620" y1="325" x2="450" y2="325" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="535" y="319" font-size="9" fill="#065f46" text-anchor="middle">⑨ 投递分配事件</text>
+      <!-- ⑬ 员工确认 -->
+      <line x1="50" y1="313" x2="145" y2="313" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="97" y="307" font-size="7.5" fill="#059669" text-anchor="middle">⑬ 编辑确认提交</text>
 
-      <line x1="450" y1="345" x2="800" y2="345" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="625" y="339" font-size="9" fill="#065f46" text-anchor="middle">⑩ 推送新工单通知卡片</text>
+      <!-- ⑭ Work→Assistant 用户已确认 -->
+      <line x1="147" y1="328" x2="260" y2="328" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="203" y="322" font-size="7.5" fill="#374151" text-anchor="middle">⑭ 确认信号+表单数据</text>
 
-      <!-- 12. 处理人答复 -->
-      <line x1="800" y1="380" x2="620" y2="380" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="710" y="374" font-size="9" fill="#374151" text-anchor="middle">⑪ Reply_Ticket</text>
+      <!-- ⑮ Assistant→MCP 建单 -->
+      <line x1="262" y1="345" x2="468" y2="345" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="365" y="339" font-size="7.5" fill="#ea580c" text-anchor="middle">⑮ Create_Ticket(幂等)</text>
 
-      <!-- 13. 推送答复给提问人 -->
-      <line x1="620" y1="405" x2="450" y2="405" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="535" y="399" font-size="9" fill="#065f46" text-anchor="middle">⑫ 投递答复事件</text>
+      <!-- ⑯ MCP→后台 -->
+      <line x1="470" y1="360" x2="583" y2="360" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="526" y="354" font-size="7.5" fill="#ea580c" text-anchor="middle">⑯ 写入工单</text>
 
-      <line x1="450" y1="425" x2="110" y2="425" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="280" y="419" font-size="9" fill="#065f46" text-anchor="middle">⑬ 推送答复消息给员工</text>
+      <!-- ⑰ 后台返回工单号 -->
+      <line x1="583" y1="375" x2="262" y2="375" stroke="#ea580c" stroke-width="1" stroke-dasharray="3" marker-end="url(#arr-orange)"/>
+      <text x="422" y="369" font-size="7.5" fill="#ea580c" text-anchor="middle">⑰ 返回 ticketId+status</text>
 
-      <!-- 14. 确认解决 -->
-      <line x1="110" y1="455" x2="280" y2="455" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="449" font-size="9" fill="#374151" text-anchor="middle">⑭ "已解决" → 关闭工单</text>
+      <!-- ⑱ Assistant→Work 成功卡 -->
+      <line x1="262" y1="392" x2="149" y2="392" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="205" y="386" font-size="7.5" fill="#374151" text-anchor="middle">⑱ 提交成功</text>
 
-      <!-- 15. 评价 -->
-      <line x1="280" y1="480" x2="110" y2="480" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="474" font-size="9" fill="#374151" text-anchor="middle">⑮ 推送评价打分卡</text>
+      <!-- ⑲ Work渲染成功卡给员工 -->
+      <line x1="147" y1="407" x2="52" y2="407" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="99" y="401" font-size="7.5" fill="#059669" text-anchor="middle">⑲ 渲染成功卡片（APPS）</text>
 
-      <line x1="110" y1="505" x2="280" y2="505" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="195" y="499" font-size="9" fill="#374151" text-anchor="middle">⑯ 提交 4 星评价</text>
+      <!-- Phase 3: 分配+处理 -->
+      <rect x="5" y="425" width="1090" height="16" rx="2" fill="#fef3c7" opacity="0.6"/>
+      <text x="15" y="437" font-size="7" fill="#92400e" font-weight="600">工单分配与处理阶段</text>
 
-      <line x1="280" y1="530" x2="620" y2="530" stroke="#374151" stroke-width="1.2" marker-end="url(#arrowhead)"/>
-      <text x="450" y="524" font-size="9" fill="#374151" text-anchor="middle">⑰ Rate_Ticket → 记录 KPI</text>
+      <!-- ⑳ 后台自动分配 -->
+      <rect x="555" y="450" width="60" height="18" rx="3" fill="#fef3c7" stroke="#f59e0b"/>
+      <text x="585" y="462" font-size="7" fill="#92400e" text-anchor="middle">自动分配</text>
 
-      <!-- End -->
-      <rect x="250" y="555" width="400" height="22" rx="4" fill="#ecfdf5" stroke="#6ee7b7"/>
-      <text x="450" y="570" font-size="9" fill="#065f46" text-anchor="middle" font-weight="500">✅ 完整闭环：问询 → 提单 → 分配 → 处理 → 答复 → 确认 → 评价</text>
+      <!-- ㉑ 后台→消息中心 -->
+      <line x1="585" y1="478" x2="695" y2="478" stroke="#059669" stroke-width="1" marker-end="url(#arr-green)"/>
+      <text x="640" y="472" font-size="7.5" fill="#059669" text-anchor="middle">㉑ 投递分配事件</text>
+
+      <!-- ㉒ 消息中心→Workbench -->
+      <line x1="697" y1="493" x2="810" y2="493" stroke="#059669" stroke-width="1" marker-end="url(#arr-green)"/>
+      <text x="753" y="487" font-size="7.5" fill="#059669" text-anchor="middle">㉒ 推送工单通知</text>
+
+      <!-- ㉓ Workbench→Work渲染→处理人 -->
+      <line x1="812" y1="508" x2="918" y2="508" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="865" y="502" font-size="7.5" fill="#374151" text-anchor="middle">㉓ 渲染新工单卡（APPS）</text>
+
+      <!-- ㉔ 处理人查看并答复 -->
+      <line x1="920" y1="530" x2="814" y2="530" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="867" y="524" font-size="7.5" fill="#374151" text-anchor="middle">㉔ 编写答复</text>
+
+      <!-- ㉕ Workbench→MCP 提交答复 -->
+      <line x1="812" y1="548" x2="472" y2="548" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="642" y="542" font-size="7.5" fill="#ea580c" text-anchor="middle">㉕ Reply_Ticket</text>
+
+      <!-- ㉖ MCP→后台更新 -->
+      <line x1="470" y1="563" x2="583" y2="563" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="526" y="557" font-size="7.5" fill="#ea580c" text-anchor="middle">㉖ 更新工单状态</text>
+
+      <!-- ㉗ 后台→消息中心 推送答复 -->
+      <line x1="585" y1="580" x2="695" y2="580" stroke="#059669" stroke-width="1" marker-end="url(#arr-green)"/>
+      <text x="640" y="574" font-size="7.5" fill="#059669" text-anchor="middle">㉗ 投递答复事件</text>
+
+      <!-- ㉘ 消息中心→Assistant -->
+      <line x1="697" y1="595" x2="264" y2="595" stroke="#059669" stroke-width="1" marker-end="url(#arr-green)"/>
+      <text x="480" y="589" font-size="7.5" fill="#059669" text-anchor="middle">㉘ 推送答复给员工端</text>
+
+      <!-- ㉙ Assistant→Work渲染→员工 -->
+      <line x1="262" y1="610" x2="149" y2="610" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="147" y1="623" x2="52" y2="623" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="99" y="617" font-size="7.5" fill="#374151" text-anchor="middle">㉙ 渲染答复消息</text>
+
+      <!-- Phase 4: 评价 -->
+      <rect x="5" y="640" width="1090" height="16" rx="2" fill="#fdf2f8" opacity="0.6"/>
+      <text x="15" y="652" font-size="7" fill="#9f1239" font-weight="600">确认与评价阶段</text>
+
+      <!-- ㉚ 员工确认解决 -->
+      <line x1="50" y1="672" x2="145" y2="672" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="97" y="666" font-size="7.5" fill="#374151" text-anchor="middle">㉚ "已解决"→关闭工单</text>
+
+      <!-- ㉛ 推送评价卡 -->
+      <line x1="147" y1="690" x2="52" y2="690" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="99" y="684" font-size="7.5" fill="#374151" text-anchor="middle">㉛ 渲染评价打分卡（APPS）</text>
+
+      <!-- ㉜ 员工评分 -->
+      <line x1="50" y1="710" x2="145" y2="710" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="97" y="704" font-size="7.5" fill="#059669" text-anchor="middle">㉜ 提交 4 星评价</text>
+
+      <!-- ㉝ Work→Assistant→MCP -->
+      <line x1="147" y1="725" x2="260" y2="725" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="262" y1="740" x2="468" y2="740" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="365" y="734" font-size="7.5" fill="#ea580c" text-anchor="middle">㉝ Rate_Ticket(4星)</text>
+
+      <!-- ㉞ MCP→后台记录 -->
+      <line x1="470" y1="755" x2="583" y2="755" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="526" y="749" font-size="7.5" fill="#ea580c" text-anchor="middle">㉞ 记录 KPI 数据</text>
+
+      <!-- 完成标记 -->
+      <rect x="300" y="775" width="500" height="22" rx="4" fill="#ecfdf5" stroke="#6ee7b7"/>
+      <text x="550" y="790" font-size="9" fill="#065f46" text-anchor="middle" font-weight="500">✅ 完整闭环：问询 → 知识检索 → 提单 → 分配 → 推送 → 处理 → 答复 → 确认 → 评价</text>
     </svg>
 
     <h3>3.3 知识数据流转图</h3>
