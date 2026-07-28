@@ -387,7 +387,7 @@
 
     <div class="stats">
         <div class="stat-item severe">
-            <div class="stat-value">29</div>
+            <div class="stat-value">30</div>
             <div class="stat-label">问题总数</div>
         </div>
         <div class="stat-item severe">
@@ -399,7 +399,7 @@
             <div class="stat-label">已解决</div>
         </div>
         <div class="stat-item severe">
-            <div class="stat-value">27</div>
+            <div class="stat-value">28</div>
             <div class="stat-label">待解决</div>
         </div>
     </div>
@@ -757,9 +757,6 @@
                 <dd>"先上线才能测试"违反软件工程基本流程（开发→测试→上线）。开发者被迫将未验证的技能上线，要么增加线上风险，要么严重拖慢迭代速度</dd>
             </dl>
         </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 高翔</span>
-        </div>
     </div>
 
     <!-- Issue #17 -->
@@ -777,9 +774,6 @@
                 <dt>为什么是标品问题</dt>
                 <dd>同名 Skill 在迭代更新中非常常见。平台缺乏冲突处理机制，静默覆盖线上版本可能导致生产环境故障</dd>
             </dl>
-        </div>
-        <div class="issue-card-footer">
-            <span>刘景庞 / 高翔</span>
         </div>
     </div>
 
@@ -799,29 +793,23 @@
                 <dd>智能体 = 提示词 + 技能 + 知识 + 外部连接，四要素配置分散在三个模块。且开发者和运营者的操作混在一起，团队协作时必然混乱</dd>
             </dl>
         </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 高翔</span>
-        </div>
     </div>
 
     <!-- Issue #19 -->
     <div class="issue-card">
         <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#19</span>智能体没有版本管理</span>
+            <span class="issue-card-title"><span class="issue-num">#19</span>智能体/技能没有版本管理</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
         <div class="issue-card-body">
             <dl>
                 <dt>当前现状</dt>
-                <dd>智能体缺乏版本管理机制，无法查看历史版本、对比差异、回滚到之前的版本</dd>
+                <dd>智能体/技能缺乏版本管理机制，无法查看历史版本、对比差异、回滚到之前的版本</dd>
                 <dt>标品应有能力</dt>
                 <dd>每次提交/上线形成版本快照，支持版本列表查看、Diff 对比、一键回滚</dd>
                 <dt>为什么是标品问题</dt>
-                <dd>智能体在迭代中会频繁修改提示词、调整技能编排。没有版本管理意味着改坏了无法回滚、多人协作无法追溯变更——这是企业级开发平台的基本门槛</dd>
+                <dd>智能体/技能在迭代中会频繁修改提示词、调整技能编排。没有版本管理意味着改坏了无法回滚、多人协作无法追溯变更——这是企业级开发平台的基本门槛</dd>
             </dl>
-        </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 高翔</span>
         </div>
     </div>
 
@@ -841,9 +829,6 @@
                 <dd>与 #10（应用部署强绑苍穹）属同一架构耦合问题。没有苍穹环境的团队将无法完成智能体部署</dd>
             </dl>
         </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 杨刚</span>
-        </div>
     </div>
 
     <!-- Issue #21 -->
@@ -861,9 +846,6 @@
                 <dt>为什么是标品问题</dt>
                 <dd>智能体与 Skill 存在天然依赖关系，发布流程应感知这层依赖。手动管理发布顺序不可持续</dd>
             </dl>
-        </div>
-        <div class="issue-card-footer">
-            <span>刘景庞 / 高翔</span>
         </div>
     </div>
 
@@ -883,9 +865,6 @@
                 <dd>Build 的核心交互模式是"对话驱动开发"。如果对话中的操作不真实反映到工作区，开发者无法信任对话结果，对话式开发的可靠性被根本破坏</dd>
             </dl>
         </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 高翔</span>
-        </div>
     </div>
 
     <!-- Issue #23 -->
@@ -903,9 +882,6 @@
                 <dt>为什么是标品问题</dt>
                 <dd>在智能体中迭代修改技能是高频操作。"手动复制回源文件"极易遗漏，导致线上运行旧版本技能而开发者不自知——这是隐性线上 Bug 的主要来源</dd>
             </dl>
-        </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 高翔</span>
         </div>
     </div>
 
@@ -925,9 +901,6 @@
                 <dd>多文件项目中需要快速识别变更范围。无状态标记意味着开发者只能靠记忆管理文件状态，复杂项目中极易遗漏提交</dd>
             </dl>
         </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 高翔</span>
-        </div>
     </div>
 
     <!-- Issue #25 -->
@@ -946,11 +919,6 @@
                 <dd>技能迭代更新是日常操作。当前机制让"更新已有技能"这个最基本的操作走不通，开发者被迫改名或先删旧版本</dd>
             </dl>
         </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 高翔</span>
-        </div>
-    </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">修改后重新提交被当作新建</p>
     </div>
 
     <!-- Issue #26 -->
@@ -968,9 +936,6 @@
                 <dt>为什么是标品问题</dt>
                 <dd>模型服务是 Build 的底层基础设施。死循环浪费 Token 和开发时间，且终止后前序对话上下文可能丢失，开发者被迫重新开始</dd>
             </dl>
-        </div>
-        <div class="issue-card-footer">
-            <span>刘景庞 / 高翔</span>
         </div>
     </div>
 
@@ -992,6 +957,27 @@
         </div>
         <div class="issue-card-footer">
             <span>刘景庞 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #29 -->
+    <div class="issue-card">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#29</span>已发布技能更新内容后无法触发状态变更，导致无法重新提交</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>已发布的技能，无论是直接更新本地技能包文件内容，还是在对话框中让 AI 修改描述，都无法触发状态从"已发布"变为"已保存"，导致无法重新提交。<br><br>多人协作更严重：同事 A 调好技能发给同事 B，B 删除本地文件夹让灵基重新上传，仍无法变更状态。唯一 workaround 是让 AI 做无关改动（如改描述语言）才能触发状态变化</dd>
+                <dt>标品应有能力</dt>
+                <dd>① 技能文件内容变更后，系统应自动检测并标记为"已保存/待提交"<br>② 多人协作的技能文件替换应与发布流程无缝衔接</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>"改了内容却提交不了"属于状态检测机制的基础 Bug。多人协作传递技能文件是团队开发常规场景，流程走不通意味着 Build 不支持基本团队协作</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
         </div>
     </div>
 </div>
