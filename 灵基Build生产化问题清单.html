@@ -744,10 +744,22 @@
     <!-- Issue #16 -->
     <div class="issue-card">
         <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#16</span>测试智能体必须先将技能上线</span>
+            <span class="issue-card-title"><span class="issue-num">#16</span>测试智能体必须先将其依赖的技能上线</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">违反开发 → 测试 → 上线基本流程</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>开发阶段若要测试一个智能体，必须先将其依赖的技能走完"提交→审核→上线"的完整流程。技能未上线，智能体就无法调试</dd>
+                <dt>标品应有能力</dt>
+                <dd>开发态下智能体应能直接引用未上线的技能进行联调测试。"上线"是发布行为，不应成为"调试"的前置条件</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>"先上线才能测试"违反软件工程基本流程（开发→测试→上线）。开发者被迫将未验证的技能上线，要么增加线上风险，要么严重拖慢迭代速度</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
     </div>
 
     <!-- Issue #17 -->
@@ -756,16 +768,40 @@
             <span class="issue-card-title"><span class="issue-num">#17</span>构建同名 Skill 点击测试会静默覆盖线上 Skill</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">缺乏同名冲突处理机制，应沙箱隔离 + 上线时提醒</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>开发者创建与线上 Skill 同名的新版本时，点击"测试"会直接覆盖线上正在运行的 Skill，无任何提醒或确认</dd>
+                <dt>标品应有能力</dt>
+                <dd>① 测试阶段：同名 Skill 的测试应在沙箱进行，不影响线上<br>② 上线阶段：检测到同名时明确提醒，让用户选择"更新现有版本"或"放弃"</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>同名 Skill 在迭代更新中非常常见。平台缺乏冲突处理机制，静默覆盖线上版本可能导致生产环境故障</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 高翔</span>
+        </div>
     </div>
 
     <!-- Issue #18 -->
     <div class="issue-card">
         <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#18</span>智能体 MCP Server 关联与知识挂载无法在 Build 中连贯完成</span>
+            <span class="issue-card-title"><span class="issue-num">#18</span>智能体的 MCP Server 关联与知识挂载无法在 Build 中连贯完成</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">需在 Build / Console / Work 三处切换，角色职责混淆</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>① 智能体要连接的 MCP Server 需在 Console 中创建实例时关联，Build 中无法完成<br>② 智能体的知识也需在 Console 创建实例时关联<br>③ 知识同时又开放在 Work-智能体-知识中上传<br>开发者需在 Build → Console → Work 三处反复切换</dd>
+                <dt>标品应有能力</dt>
+                <dd>① 开发者在 Build 中一站式完成智能体全部配置（含 MCP Server 关联、知识挂载）<br>② 明确区分"开发者视角"和"运营者视角"的配置入口</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>智能体 = 提示词 + 技能 + 知识 + 外部连接，四要素配置分散在三个模块。且开发者和运营者的操作混在一起，团队协作时必然混乱</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
     </div>
 
     <!-- Issue #19 -->
@@ -774,7 +810,19 @@
             <span class="issue-card-title"><span class="issue-num">#19</span>智能体没有版本管理</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">无法查看历史 / 对比 / 回滚</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>智能体缺乏版本管理机制，无法查看历史版本、对比差异、回滚到之前的版本</dd>
+                <dt>标品应有能力</dt>
+                <dd>每次提交/上线形成版本快照，支持版本列表查看、Diff 对比、一键回滚</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>智能体在迭代中会频繁修改提示词、调整技能编排。没有版本管理意味着改坏了无法回滚、多人协作无法追溯变更——这是企业级开发平台的基本门槛</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
     </div>
 
     <!-- Issue #20 -->
@@ -783,7 +831,19 @@
             <span class="issue-card-title"><span class="issue-num">#20</span>智能体实例创建对苍穹有不明确依赖</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">需澄清是否合理，与 #10 同一架构耦合问题</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>创建智能体实例时需在苍穹中新增一个 Bot 机器人，但为什么需要这步、具体需要什么权限均不明确</dd>
+                <dt>标品应有能力</dt>
+                <dd>① 先澄清：智能体实例创建是否真的需要依赖苍穹？不需要则解除耦合<br>② 如确需，应在灵基侧自动化完成，不要求开发者手动操作苍穹</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>与 #10（应用部署强绑苍穹）属同一架构耦合问题。没有苍穹环境的团队将无法完成智能体部署</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 杨刚</span>
+        </div>
     </div>
 
     <!-- Issue #21 -->
@@ -792,16 +852,40 @@
             <span class="issue-card-title"><span class="issue-num">#21</span>智能体创建 Skill 后缺乏同步批量发布机制</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">需手动按顺序逐个发布</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>AI 辅助创建智能体时可能自动创建配套 Skill，但智能体发布依赖 Skill 先发布。开发者需手动按顺序逐个发布，极易遗漏</dd>
+                <dt>标品应有能力</dt>
+                <dd>一键发布智能体时，自动检测并同步发布其依赖的未上线 Skill（或至少提示并支持批量操作）</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>智能体与 Skill 存在天然依赖关系，发布流程应感知这层依赖。手动管理发布顺序不可持续</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 高翔</span>
+        </div>
     </div>
 
     <!-- Issue #22 -->
     <div class="issue-card">
         <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#22</span>Build 中更换 Agent 的 Skill 后工作区未同步</span>
+            <span class="issue-card-title"><span class="issue-num">#22</span>Build 中通过对话更换 Agent 的 Skill 后工作区未同步</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">对话操作不反映到实际文件</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>通过对话指令更换 Agent 绑定的 Skill 后，对话内容显示已成功，但工作区的实际文件和配置没有同步更新。需手动再操作一次</dd>
+                <dt>标品应有能力</dt>
+                <dd>对话式操作的结果应实时同步到工作区文件和配置中，保持所见即所得</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>Build 的核心交互模式是"对话驱动开发"。如果对话中的操作不真实反映到工作区，开发者无法信任对话结果，对话式开发的可靠性被根本破坏</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
     </div>
 
     <!-- Issue #23 -->
@@ -810,7 +894,19 @@
             <span class="issue-card-title"><span class="issue-num">#23</span>技能在智能体中被修改后无法同步上线</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">需手动复制回源文件再单独提交</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>先独立开发技能，再在智能体中使用。本地文件结构是将技能拷贝到智能体目录下。若在智能体对话中修改了技能：<br>① 提交智能体时只能发布智能体本身，技能发不上去<br>② 需手动将修改复制回技能源文件<br>③ 再单独测试/提交技能<br>线上才是最新版本</dd>
+                <dt>标品应有能力</dt>
+                <dd>① 在智能体上下文中修改技能后，修改自动同步回技能源文件<br>② 或：提交智能体时检测技能有变更，提示一起提交</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>在智能体中迭代修改技能是高频操作。"手动复制回源文件"极易遗漏，导致线上运行旧版本技能而开发者不自知——这是隐性线上 Bug 的主要来源</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
     </div>
 
     <!-- Issue #24 -->
@@ -819,23 +915,62 @@
             <span class="issue-card-title"><span class="issue-num">#24</span>智能体 / 技能文件修改后文件树无状态标记</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
-        <p style="color: var(--gray-700); font-size: 0.9rem;">无法识别哪些已修改 / 未提交</p>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>文件被修改后，左侧文件树中没有任何直观的状态标记（如已修改、未保存、未提交等）</dd>
+                <dt>标品应有能力</dt>
+                <dd>文件树应显示文件状态（类似 Git：已修改未保存、已保存未提交、已提交待审核等）</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>多文件项目中需要快速识别变更范围。无状态标记意味着开发者只能靠记忆管理文件状态，复杂项目中极易遗漏提交</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
     </div>
 
     <!-- Issue #25 -->
     <div class="issue-card">
         <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#25</span>提交同名技能因名称重复失败</span>
+            <span class="issue-card-title"><span class="issue-num">#25</span>提交同名技能因名称重复失败，不支持更新语义</span>
             <span class="status-unsolved">❌ 未解决</span>
         </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>将修改后的技能重新提交到"个人使用"时，因名称重复而失败。系统将"修改后重新提交"等同于"新建同名"而拒绝</dd>
+                <dt>标品应有能力</dt>
+                <dd>① 修改后重新提交应识别为"版本更新"而非"新建"<br>② 引入除名称外的唯一标识（ID），区分新建与更新</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>技能迭代更新是日常操作。当前机制让"更新已有技能"这个最基本的操作走不通，开发者被迫改名或先删旧版本</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
         <p style="color: var(--gray-700); font-size: 0.9rem;">修改后重新提交被当作新建</p>
     </div>
 
     <!-- Issue #26 -->
     <div class="issue-card">
         <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#26</span>Build 使用 fast 模型时进入死循环</span>
+            <span class="issue-card-title"><span class="issue-num">#26</span>Build 使用 fast 模型时不定期进入死循环</span>
             <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>在 Build 中使用 fast 模型进行对话开发时，模型会不定期进入死循环——反复输出相同内容或陷入无意义的循环调用，直到开发者手动终止</dd>
+                <dt>标品应有能力</dt>
+                <dd>模型服务应具备循环检测和自动中断机制，检测到重复输出时自动停止并提示用户</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>模型服务是 Build 的底层基础设施。死循环浪费 Token 和开发时间，且终止后前序对话上下文可能丢失，开发者被迫重新开始</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 高翔</span>
         </div>
     </div>
 
@@ -844,6 +979,19 @@
         <div class="issue-card-header">
             <span class="issue-card-title"><span class="issue-num">#27</span>Build 使用 deep 模型时回复无限加载</span>
             <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>使用 deep 模型时，AI 回复有时一直处于加载状态（无限加载动画），无法正常输出结果，只能点击"终止"</dd>
+                <dt>标品应有能力</dt>
+                <dd>应有超时检测和优雅降级机制：超时后提示用户可选重试或降级到其他模型</dd>
+                <dt>为什么是标品问题</dt>
+                <dd>deep 模型通常用于复杂的技能/智能体开发。若频繁卡死，开发者将被迫降级使用能力更弱的 fast 模型，影响开发质量</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>刘景庞 / 高翔</span>
         </div>
     </div>
 </div>
