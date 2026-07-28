@@ -387,7 +387,7 @@
 
     <div class="stats">
         <div class="stat-item severe">
-            <div class="stat-value">30</div>
+            <div class="stat-value">31</div>
             <div class="stat-label">问题总数</div>
         </div>
         <div class="stat-item severe">
@@ -399,7 +399,7 @@
             <div class="stat-label">已解决</div>
         </div>
         <div class="stat-item severe">
-            <div class="stat-value">28</div>
+            <div class="stat-value">29</div>
             <div class="stat-label">待解决</div>
         </div>
     </div>
@@ -955,9 +955,6 @@
                 <dd>deep 模型通常用于复杂的技能/智能体开发。若频繁卡死，开发者将被迫降级使用能力更弱的 fast 模型，影响开发质量</dd>
             </dl>
         </div>
-        <div class="issue-card-footer">
-            <span>刘景庞 / 高翔</span>
-        </div>
     </div>
 
     <!-- Issue #29 -->
@@ -969,11 +966,46 @@
         <div class="issue-card-body">
             <dl>
                 <dt>当前现状</dt>
-                <dd>已发布的技能，无论是直接更新本地技能包文件内容，还是在对话框中让 AI 修改描述，都无法触发状态从"已发布"变为"已保存"，导致无法重新提交。<br><br>多人协作更严重：同事 A 调好技能发给同事 B，B 删除本地文件夹让灵基重新上传，仍无法变更状态。唯一 workaround 是让 AI 做无关改动（如改描述语言）才能触发状态变化</dd>
+                <dd>已发布的技能，无论是直接更新本地文件内容，还是在对话框中让 AI 修改描述，都无法触发状态从"已发布"变为"已保存"，导致无法重新提交。唯一 workaround 是让 AI 做无关改动（如改描述语言）才能触发状态变化</dd>
                 <dt>标品应有能力</dt>
-                <dd>① 技能文件内容变更后，系统应自动检测并标记为"已保存/待提交"<br>② 多人协作的技能文件替换应与发布流程无缝衔接</dd>
+                <dd>技能文件内容变更后，系统应自动检测并标记为"已保存/待提交"</dd>
                 <dt>为什么是标品问题</dt>
-                <dd>"改了内容却提交不了"属于状态检测机制的基础 Bug。多人协作传递技能文件是团队开发常规场景，流程走不通意味着 Build 不支持基本团队协作</dd>
+                <dd>"改了内容却提交不了"属于状态检测机制的基础 Bug</dd>
+            </dl>
+        </div>
+        <div class="issue-card-footer">
+            <span>邹茂桃 / 高翔</span>
+        </div>
+    </div>
+
+    <!-- Issue #30 -->
+    <div class="issue-card critical">
+        <div class="issue-card-header">
+            <span class="issue-card-title"><span class="issue-num">#30</span>Build 不支持多人协同开发技能和智能体</span>
+            <span class="status-unsolved">❌ 未解决</span>
+        </div>
+        <div class="highlight highlight-red" style="margin: 0 0 16px;">
+            <strong>Build 当前只能单人单会话工作，完全没有团队协作机制。</strong>
+        </div>
+        <div class="issue-card-body">
+            <dl>
+                <dt>当前现状</dt>
+                <dd>
+                    ① 没有共享项目/工作空间——每人只能在自己的 Build 会话中工作<br>
+                    ② 没有技能交付标准流程——开发好的技能只能通过聊天传文件<br>
+                    ③ 接收方无标准导入方式——只能"删除本地文件夹再上传"，且触发 #29 状态 Bug<br>
+                    ④ 没有变更合并机制——两人同时改同一制品时无法合并<br>
+                    ⑤ 没有协作可见性——看不到其他人在做什么、改了什么
+                </dd>
+                <dt>标品应有能力</dt>
+                <dd>
+                    ① <strong>共享项目空间：</strong>多人加入同一项目，共享同一套制品（智能体/技能/APPS）<br>
+                    ② <strong>标准交付流程：</strong>支持将技能"发布到项目"或"共享给协作者"，一键拉取最新版本<br>
+                    ③ <strong>变更感知：</strong>协作者更新后，其他人能收到通知或看到变更提示<br>
+                    ④ <strong>至少支持"分工→集成"：</strong>不同人负责不同技能，集成到同一智能体时有工具支持而非手动文件搬运
+                </dd>
+                <dt>为什么是标品问题</dt>
+                <dd>任何超过"一人做一个简单智能体"的项目都需要多人协作。振兴 HelpDesk 就有多人分工（接口技能/问答技能/智能体编排各有负责人）。Build 无协同机制 = 只能用于个人实验，无法支撑团队级生产项目。这是从"个人工具"走向"团队开发平台"的关键缺失</dd>
             </dl>
         </div>
         <div class="issue-card-footer">
