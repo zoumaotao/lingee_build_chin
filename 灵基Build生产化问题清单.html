@@ -66,10 +66,10 @@
     <a href="#overview" class="nav-link"><span class="num">01</span>总览</a>
     <a href="#apps" class="nav-link"><span class="num">02</span>MCP APPS（8项）</a>
     <a href="#dc" class="nav-link"><span class="num">03</span>DC 知识（5项）</a>
-    <a href="#deploy" class="nav-link"><span class="num">04</span>部署与身份（2项）</a>
+    <a href="#deploy" class="nav-link"><span class="num">04</span>待讨论（1项）</a>
     <a href="#message" class="nav-link"><span class="num">05</span>消息与事件（1项）</a>
     <a href="#i18n" class="nav-link"><span class="num">06</span>国际化（4项）</a>
-    <a href="#devops" class="nav-link"><span class="num">07</span>开发范式（14项）</a>
+    <a href="#devops" class="nav-link"><span class="num">07</span>开发范式（15项）</a>
     <a href="#model" class="nav-link"><span class="num">08</span>模型稳定性（2项）</a>
     <a href="#priority" class="nav-link"><span class="num">09</span>优先级建议</a>
 </nav>
@@ -86,7 +86,7 @@
     <h2>01 问题总览</h2>
     <div class="stats">
         <div class="stat-item severe"><div class="stat-value">36</div><div class="stat-label">问题总数</div></div>
-        <div class="stat-item severe"><div class="stat-value">5</div><div class="stat-label">P0 阻塞上线</div></div>
+        <div class="stat-item severe"><div class="stat-value">4</div><div class="stat-label">P0 阻塞上线</div></div>
         <div class="stat-item moderate"><div class="stat-value">2</div><div class="stat-label">已解决</div></div>
         <div class="stat-item severe"><div class="stat-value">34</div><div class="stat-label">待解决</div></div>
     </div>
@@ -95,10 +95,10 @@
         <tbody>
             <tr><td>MCP APPS</td><td>#1–#6, #32</td><td>8 项</td><td>交互层能力不足，无法支撑生产级场景</td></tr>
             <tr><td>DC 知识平台</td><td>#7–#9</td><td>5 项</td><td>权限 / 写入 / 智能体沉淀 / 外部拉取</td></tr>
-            <tr><td>部署与身份</td><td>#10–#11</td><td>2 项</td><td>部署绑定苍穹 / 缺少联邦认证</td></tr>
+            <tr><td>待讨论</td><td>#10</td><td>1 项</td><td>部署绑定苍穹（需先确认灵基自身托管规划）</td></tr>
             <tr><td>消息与事件</td><td>#31</td><td>1 项</td><td>MCP 无主动推送 / 缺事件驱动</td></tr>
             <tr><td>国际化</td><td>#12–#15</td><td>4 项</td><td>翻译错误 / AI 语言不遵循配置</td></tr>
-            <tr><td>开发范式</td><td>#16–#25, #28–#30, #33</td><td>14 项</td><td>端到端断裂 / 无版本管理 / 无协同 / APPS 开发割裂</td></tr>
+            <tr><td>开发范式</td><td>#16–#25, #28–#30, #33, #11</td><td>15 项</td><td>端到端断裂 / APPS 开发割裂 / 无版本管理 / 无协同</td></tr>
             <tr><td>模型稳定性</td><td>#26–#27</td><td>2 项</td><td>死循环 / 无限加载</td></tr>
         </tbody>
     </table>
@@ -140,16 +140,14 @@
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8c</span>DC 缺少主动拉取外部数据源的连接器框架</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>DC 无法主动从外部数据源（如 SharePoint、Confluence、Google Drive）拉取文档并增量同步。唯一方式是人工下载后手动上传</dd><dt>应有能力</dt><dd>通用连接器框架：① 对接主流文档平台（SharePoint/Confluence 等）；② OAuth 等标准认证；③ 增量变更检测（仅同步新增/修改）；④ 定时调度或 Webhook 触发；⑤ 同步后自动进入 DC 加工流程</dd><dt>为什么是标品问题</dt><dd>企业知识大量存在 SharePoint 等平台且持续更新。DC 不能主动拉取 = 知识只能一次性搬运 = 时效性无法保障。振兴 2TB SharePoint 是 Phase 3 核心需求，但连接器是通用平台能力</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#9</span>Work 知识检索存在越权</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户可检索到不属于自己权限范围的知识内容</dd><dt>应有能力</dt><dd>严格权限控制，按角色/部门/智能体实例隔离</dd><dt>为什么是标品问题</dt><dd>知识越权 = 企业级不可接受的安全漏洞</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#9</span>DC 缺少完整的知识权限体系（检索存在越权仅是表面现象）</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户可检索到不属于自己权限范围的知识内容。深层原因是 DC 在知识权限的五个层面均未建设：<br>① <strong>权限模型缺失</strong>——知识按什么维度隔离（智能体实例/租户/部门/文档级）未定义<br>② <strong>权限标记机制缺失</strong>——知识入库时无法打权限标签（人工标记/继承外部 ACL 均不支持）<br>③ <strong>检索时权限过滤缺失</strong>——向量检索不做权限拦截，全量返回后无 post-filter<br>④ <strong>与灵基用户体系未打通</strong>——DC 不知道当前检索用户的角色/部门/所属实例，无法做动态权限判断<br>⑤ <strong>权限管理界面缺失</strong>——运营者无处配置"谁能看什么知识"的规则</dd><dt>应有能力</dt><dd>① 定义知识权限模型：支持按智能体实例隔离（基础）+ 按部门/角色/用户组细粒度标记（进阶）<br>② 知识入库时支持打权限标签：手动标记 / 基于上传来源自动继承 / 映射外部文档权限（如 SharePoint ACL）<br>③ 检索引擎支持 pre-filter 或 post-filter 的权限过滤，确保用户只能获取有权内容<br>④ DC 检索接口自动接收灵基用户身份信息（角色/部门/实例），无需调用方额外传递<br>⑤ 提供权限配置管理界面，支持批量规则（如"IT 部门可见 IT 类知识"）、实时生效、变更审计</dd><dt>为什么是标品问题</dt><dd>知识权限管控是企业级产品的基本安全要求。振兴有 3 条业务线（Tech GBS / People GBS / BP），知识必须隔离。且未来对接 SharePoint 后权限继承更复杂。这不是修一个检索 Bug 就能解决的——是一整套权限体系需要从零建设</dd></div></div>
 </div>
 
-<!-- ===== 04 部署与身份 ===== -->
+<!-- ===== 04 待讨论 ===== -->
 <div class="section" id="deploy">
-    <h2>04 部署与身份体系（2 项）</h2>
+    <h2>04 待讨论（1 项）</h2>
 
-    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#10</span>Build 应用仅支持部署到苍穹 + 灵基缺少联邦身份认证</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>① Build 后端应用只能托管苍穹（需许可+账号）；② 灵基用户多数非 ERP 用户，无苍穹账号；③ 灵基不支持 SAML/OIDC 标准联邦认证，无法对接 Azure AD/Okta 等企业 IdP</dd><dt>应有能力</dt><dd><strong>部署：</strong>支持苍穹 / 灵基自身轻量托管 / 客户云服务器<br><strong>身份：</strong>SAML 2.0 / OIDC 联邦认证，对接企业 IdP，非 ERP 用户无需苍穹账号即可登录灵基</dd><dt>为什么是标品问题</dt><dd>部署绑苍穹 = 灵基限制在 ERP 用户圈。不支持联邦认证 = 海外客户员工登不进灵基。两者共同导致灵基无法独立面向非 ERP 客户交付</dd></div></div>
-
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#11</span>应用开发要求过多不相关文件权限</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 中开发应用时系统要求授予大量不相关权限</dd><dt>应有能力</dt><dd>最小权限原则，仅请求必需资源</dd><dt>为什么是标品问题</dt><dd>违反安全原则，企业客户会触发审批流程、拖慢交付</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#10</span>Build 开发的应用仅支持部署到苍穹</span><span class="tag tag-p0">待讨论</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 开发的后端应用只能托管到苍穹平台，而苍穹有独立的许可体系和账号体系。灵基用户（多数非 ERP 用户）没有苍穹账号，无法访问部署在苍穹上的应用</dd><dt>应有能力</dt><dd>Build 应支持将应用部署到多种目标环境：苍穹（现有）/ 灵基自身轻量级应用托管 / 客户自有云服务器。应用身份验证应直接基于灵基用户体系，不强制依赖苍穹身份</dd><dt>为什么是标品问题</dt><dd>灵基的目标用户群远大于 ERP 用户群。Build 应用只能跑在苍穹上 = 使用者必须有苍穹身份 = 灵基适用场景被限制在 ERP 用户圈内</dd><dt>待讨论</dt><dd>需先确认：灵基应用托管能力是否已在规划中？苍穹绑定是否有架构层面的必要性？确认后再定优先级</dd></div></div>
 </div>
 
 <!-- ===== 05 消息与多模态 ===== -->
@@ -175,7 +173,7 @@
 
 <!-- ===== 07 开发范式 ===== -->
 <div class="section" id="devops">
-    <h2>07 开发范式与工具链（14 项）</h2>
+    <h2>07 开发范式与工具链（15 项）</h2>
 
     <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#28</span>端到端开发流程完全断裂（最关键系统性问题）</span><span class="tag tag-p2">P2</span></div>
         <div class="highlight highlight-red" style="margin:0 0 12px"><strong>⚠️ 灵基 Build 走向生产级平台最根本的问题。</strong>开发者需在 5+ 工具/环境间反复切换，各环节零衔接。</div>
@@ -214,7 +212,9 @@
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#30</span>Build 不支持多人协同开发技能和智能体</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 单人单会话：① 无共享项目空间；② 技能只能聊天传文件；③ 接收方只能"删文件夹再上传"且触发 #29 Bug；④ 无变更合并；⑤ 无协作可见性</dd><dt>应有能力</dt><dd>① 共享项目空间（多人同一套制品）；② 标准技能交付流程（发布到项目/一键拉取）；③ 变更通知；④ 至少支持"分工→集成"模式</dd><dt>为什么是标品问题</dt><dd>任何超过一人做一个简单智能体的项目都需要协同。Build 无协同 = 只能做个人实验，无法支撑团队级项目</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#33</span>MCP APPS 开发完全游离于 Build 之外，无法在 Build 中构建和调试</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>MCP APPS 组件的开发必须在本地 IDE 中进行（编码→编译→打包），完成后手动上传到 KDM 平台注册。整个过程与 Build 完全割裂：Build 既不能创建 APPS 项目，也不能调试 APPS 组件，更无法在 Build 中将 APPS 与 Skill/智能体进行联调</dd><dt>应有能力</dt><dd>① Build 应支持 APPS 组件的创建、开发（或至少脚手架生成+本地开发引导）<br>② Build 中应能预览和调试 APPS 组件的渲染效果<br>③ APPS 组件发布后应能在 Build 中直接关联到 Skill/智能体，无需跳转 KDM 手动配置<br>④ 至少：Build 与本地 APPS 开发之间有自动化衔接（如 CLI 工具、热更新调试通道）</dd><dt>为什么是标品问题</dt><dd>APPS 是智能体与用户交互的核心层，但其开发与 Build 完全割裂 = Build 号称的"一站式开发"天然缺了交互层。开发者被迫在 Build（Skill/智能体）和本地 IDE（APPS）之间反复切换，这是 #28 端到端断裂在 APPS 维度的具体表现</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#33</span> 不支持在 Build 中构建和调试MCP APPS</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>MCP APPS 组件的开发必须在本地 IDE 中进行（编码→编译→打包），完成后手动上传到 KDM 平台注册。整个过程与 Build 完全割裂：Build 既不能创建 APPS 项目，也不能调试 APPS 组件，更无法在 Build 中将 APPS 与 Skill/智能体进行联调</dd><dt>应有能力</dt><dd>① Build 应支持 APPS 组件的创建、开发（或至少脚手架生成+本地开发引导）<br>② Build 中应能预览和调试 APPS 组件的渲染效果<br>③ APPS 组件发布后应能在 Build 中直接关联到 Skill/智能体，无需跳转 KDM 手动配置<br>④ 至少：Build 与本地 APPS 开发之间有自动化衔接（如 CLI 工具、热更新调试通道）</dd><dt>为什么是标品问题</dt><dd>APPS 是智能体与用户交互的核心层，但其开发与 Build 完全割裂 = Build 号称的"一站式开发"天然缺了交互层。开发者被迫在 Build（Skill/智能体）和本地 IDE（APPS）之间反复切换，这是 #28 端到端断裂在 APPS 维度的具体表现</dd></div></div>
+
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#11</span>应用开发要求过多不相关文件权限</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 中开发应用时系统要求授予大量与当前开发任务不相关的文件权限</dd><dt>应有能力</dt><dd>最小权限原则，仅请求必需资源，权限用途有清晰说明</dd><dt>为什么是标品问题</dt><dd>违反安全原则，企业客户会触发安全审批流程、拖慢交付</dd></div></div>
 </div>
 
 <!-- ===== 08 模型稳定性 ===== -->
@@ -230,12 +230,11 @@
     <h2>09 优先级建议</h2>
 
     <div class="priority-group">
-        <h3><span class="tag tag-p0">P0</span> 阻塞上线（5 项）</h3>
+        <h3><span class="tag tag-p0">P0</span> 阻塞上线（4 项）</h3>
         <table><thead><tr><th>#</th><th>问题</th><th>一句话理由</th></tr></thead><tbody>
             <tr><td>#1</td><td>APPS 不支持租户级自定义</td><td>企业交互退化为纯文本</td></tr>
             <tr><td>#2</td><td>APPS 卡片内容不入 LLM 上下文</td><td>模型感知不到用户输入</td></tr>
             <tr><td>#2b</td><td>APPS→LLM 缺乏精简机制</td><td>Token/界面/性能三重问题</td></tr>
-            <tr><td>#10</td><td>部署强绑苍穹 + 缺联邦认证</td><td>非 ERP 用户无法登录和使用</td></tr>
             <tr><td>#31</td><td>MCP 无主动推送 + 缺事件驱动</td><td>唯一工作台闭环不成立</td></tr>
         </tbody></table>
     </div>
@@ -273,7 +272,7 @@
         <h3><span class="tag tag-p3">P3</span> 体验与完善（8 项）</h3>
         <table><thead><tr><th>#</th><th>问题</th></tr></thead><tbody>
             <tr><td>#6</td><td>Agent 感知 APPS 逻辑</td></tr>
-            <tr><td>#11</td><td>权限过多</td></tr>
+            <tr><td>#11</td><td>应用开发权限过多</td></tr>
             <tr><td>#18</td><td>MCP/知识关联流程割裂</td></tr>
             <tr><td>#20</td><td>创建实例依赖苍穹</td></tr>
             <tr><td>#21</td><td>缺乏批量发布</td></tr>
