@@ -5,1222 +5,280 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>灵基 Build 生产化问题清单</title>
     <style>
-        :root {
-            --primary: #1a56db;
-            --primary-light: #e8f0fe;
-            --secondary: #059669;
-            --warning: #d97706;
-            --danger: #dc2626;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            line-height: 1.7;
-            color: var(--gray-800);
-            background: var(--gray-50);
-        }
-        /* Sidebar Navigation */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            height: 100vh;
-            background: white;
-            border-right: 1px solid var(--gray-200);
-            overflow-y: auto;
-            padding: 20px 0;
-            z-index: 100;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.05);
-        }
-        .sidebar-back {
-            display: block;
-            padding: 8px 20px 16px;
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 500;
-            border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 12px;
-            transition: color 0.2s;
-        }
-        .sidebar-back:hover { color: var(--danger); }
-        .sidebar-title {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--gray-600);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0 20px;
-            margin-bottom: 12px;
-        }
-        .sidebar a.nav-link {
-            display: block;
-            padding: 8px 20px;
-            color: var(--gray-700);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-        .sidebar a.nav-link:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-left-color: var(--primary);
-        }
-        .sidebar a .num {
-            display: inline-block;
-            width: 24px;
-            font-weight: 600;
-            color: var(--gray-400);
-            font-size: 0.8rem;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            margin-left: 260px;
-            padding: 40px 24px;
-        }
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 60px 40px;
-            background: linear-gradient(135deg, #1a56db 0%, #7c3aed 100%);
-            border-radius: 16px;
-            color: white;
-            margin-bottom: 48px;
-        }
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        .header .meta {
-            margin-top: 24px;
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            flex-wrap: wrap;
-        }
-        /* Sections */
-        .section {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            margin-bottom: 32px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .section h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--primary);
-        }
-        .section h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--gray-800);
-            margin: 24px 0 12px;
-        }
-        .section p {
-            margin-bottom: 12px;
-            color: var(--gray-700);
-        }
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 0.9rem;
-        }
-        th, td {
-            padding: 10px 14px;
-            text-align: left;
-            border: 1px solid var(--gray-200);
-        }
-        th {
-            background: var(--gray-100);
-            font-weight: 600;
-            color: var(--gray-800);
-        }
-        tr:nth-child(even) { background: var(--gray-50); }
-        /* Tags */
-        .tag {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        .tag-p0 { background: #fef2f2; color: var(--danger); }
-        .tag-p1 { background: #fffbeb; color: var(--warning); }
-        .tag-p2 { background: #ecfdf5; color: var(--secondary); }
-        .tag-p3 { background: var(--gray-100); color: var(--gray-600); }
-        /* Status */
-        .status-unsolved { color: var(--danger); font-weight: 600; }
-        .status-solved { color: var(--secondary); font-weight: 600; }
-        /* Highlight box */
-        .highlight {
-            padding: 20px 24px;
-            border-radius: 8px;
-            margin: 16px 0;
-        }
-        .highlight-blue { background: #eff6ff; border-left: 4px solid var(--primary); }
-        .highlight-green { background: #ecfdf5; border-left: 4px solid var(--secondary); }
-        .highlight-yellow { background: #fffbeb; border-left: 4px solid var(--warning); }
-        .highlight-red { background: #fef2f2; border-left: 4px solid var(--danger); }
-        .highlight-red strong { color: var(--danger); }
-        /* Issue Cards */
-        .issue-card {
-            border: 1px solid var(--gray-200);
-            border-radius: 10px;
-            padding: 24px;
-            margin-bottom: 20px;
-            background: var(--gray-50);
-            transition: box-shadow 0.2s;
-        }
-        .issue-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        .issue-card.critical {
-            border-left: 4px solid var(--danger);
-        }
-        .issue-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .issue-card-title {
-            font-weight: 700;
-            font-size: 1.05rem;
-            color: var(--gray-900);
-        }
-        .issue-card-title .issue-num {
-            color: var(--primary);
-            margin-right: 8px;
-        }
-        .issue-card-body {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            font-size: 0.9rem;
-        }
-        .issue-card-body dt {
-            font-weight: 600;
-            color: var(--gray-600);
-            margin-bottom: 2px;
-        }
-        .issue-card-body dd {
-            color: var(--gray-700);
-            margin-bottom: 12px;
-        }
-        .issue-card-footer {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            color: var(--gray-600);
-        }
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-            margin: 16px 0;
-        }
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-            background: var(--gray-50);
-            border-radius: 10px;
-            border: 1px solid var(--gray-200);
-        }
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--gray-600);
-            margin-top: 4px;
-        }
-        .stat-item.severe .stat-value { color: var(--danger); }
-        .stat-item.moderate .stat-value { color: var(--warning); }
-        /* Flow diagram */
-        .flow {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 16px 0;
-            padding: 16px;
-            background: var(--gray-50);
-            border-radius: 8px;
-            border: 1px solid var(--gray-200);
-        }
-        .flow-step {
-            padding: 8px 16px;
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        .flow-step.broken {
-            border-color: var(--danger);
-            color: var(--danger);
-            background: #fef2f2;
-        }
-        .flow-arrow {
-            color: var(--gray-300);
-            font-size: 1.2rem;
-        }
-        /* Priority Section */
-        .priority-group {
-            margin-bottom: 24px;
-        }
-        .priority-group h3 {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        /* Simple issue list (for i18n) */
-        .issue-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .issue-list li {
-            padding: 12px 16px;
-            border: 1px solid var(--gray-200);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            background: var(--gray-50);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .issue-list li .issue-text {
-            font-size: 0.92rem;
-            color: var(--gray-700);
-        }
-        .issue-list li .issue-text .issue-num {
-            color: var(--primary);
-            font-weight: 600;
-            margin-right: 8px;
-        }
-        .issue-list li .issue-meta {
-            font-size: 0.82rem;
-            color: var(--gray-500);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        /* Print */
-        @media print {
-            body { background: white; }
-            .container { padding: 0; margin-left: 0; }
-            .section { box-shadow: none; border: 1px solid var(--gray-200); }
-            .header { border-radius: 0; }
-            .sidebar { display: none; }
-        }
-        @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .container { margin-left: auto; }
-            .issue-card-body { grid-template-columns: 1fr; }
-        }
+        :root { --primary:#1a56db; --primary-light:#e8f0fe; --secondary:#059669; --warning:#d97706; --danger:#dc2626; --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db; --gray-400:#9ca3af; --gray-600:#4b5563; --gray-700:#374151; --gray-800:#1f2937; --gray-900:#111827; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;color:var(--gray-800);background:var(--gray-50)}
+        .sidebar{position:fixed;left:0;top:0;width:220px;height:100vh;background:white;border-right:1px solid var(--gray-200);overflow-y:auto;padding:16px 0;z-index:100;box-shadow:2px 0 8px rgba(0,0,0,.05)}
+        .sidebar-back{display:block;padding:8px 16px 12px;color:var(--primary);text-decoration:none;font-size:.82rem;font-weight:500;border-bottom:1px solid var(--gray-200);margin-bottom:10px}
+        .sidebar-back:hover{color:var(--danger)}
+        .sidebar-title{font-size:.75rem;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.05em;padding:0 16px;margin:12px 0 8px}
+        .sidebar a.nav-link{display:block;padding:6px 16px;color:var(--gray-700);text-decoration:none;font-size:.82rem;transition:all .2s;border-left:3px solid transparent}
+        .sidebar a.nav-link:hover{background:var(--primary-light);color:var(--primary);border-left-color:var(--primary)}
+        .sidebar .num{display:inline-block;width:22px;font-weight:600;color:var(--gray-400);font-size:.78rem}
+        .container{max-width:960px;margin:0 auto;margin-left:240px;padding:32px 20px}
+        .header{text-align:center;padding:48px 32px;background:linear-gradient(135deg,#1a56db 0%,#7c3aed 100%);border-radius:14px;color:white;margin-bottom:40px}
+        .header h1{font-size:2.2rem;font-weight:700;margin-bottom:8px}
+        .header .subtitle{font-size:1rem;opacity:.9}
+        .section{background:white;border-radius:12px;padding:32px;margin-bottom:28px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+        .section h2{font-size:1.4rem;font-weight:700;color:var(--gray-900);margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--primary)}
+        .section h3{font-size:1.1rem;font-weight:600;color:var(--gray-800);margin:20px 0 10px}
+        .section p{margin-bottom:10px;color:var(--gray-700)}
+        table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.88rem}
+        th,td{padding:9px 12px;text-align:left;border:1px solid var(--gray-200)}
+        th{background:var(--gray-100);font-weight:600;color:var(--gray-800)}
+        tr:nth-child(even){background:var(--gray-50)}
+        .tag{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.78rem;font-weight:600}
+        .tag-p0{background:#fef2f2;color:var(--danger)} .tag-p1{background:#fffbeb;color:var(--warning)} .tag-p2{background:#ecfdf5;color:var(--secondary)} .tag-p3{background:var(--gray-100);color:var(--gray-600)}
+        .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin:14px 0}
+        .stat-item{text-align:center;padding:16px;background:var(--gray-50);border-radius:10px;border:1px solid var(--gray-200)}
+        .stat-value{font-size:1.8rem;font-weight:700;color:var(--primary)}
+        .stat-label{font-size:.82rem;color:var(--gray-600);margin-top:4px}
+        .stat-item.severe .stat-value{color:var(--danger)}
+        .stat-item.moderate .stat-value{color:var(--warning)}
+        .highlight{padding:16px 20px;border-radius:8px;margin:14px 0}
+        .highlight-red{background:#fef2f2;border-left:4px solid var(--danger)}
+        .highlight-red strong{color:var(--danger)}
+        .highlight-blue{background:#eff6ff;border-left:4px solid var(--primary)}
+        .issue-card{border:1px solid var(--gray-200);border-radius:10px;padding:20px;margin-bottom:16px;background:var(--gray-50);transition:box-shadow .2s}
+        .issue-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+        .issue-card.critical{border-left:4px solid var(--danger)}
+        .issue-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+        .issue-card-title{font-weight:700;font-size:1rem;color:var(--gray-900)}
+        .issue-card-title .issue-num{color:var(--primary);margin-right:6px}
+        .issue-card-body{font-size:.88rem}
+        .issue-card-body dt{font-weight:600;color:var(--gray-600);margin:8px 0 2px}
+        .issue-card-body dd{color:var(--gray-700);margin-bottom:6px}
+        .flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0;padding:12px;background:var(--gray-50);border-radius:8px;border:1px solid var(--gray-200)}
+        .flow-step{padding:6px 12px;background:white;border:1px solid var(--gray-200);border-radius:6px;font-size:.82rem;font-weight:500}
+        .flow-step.broken{border-color:var(--danger);color:var(--danger);background:#fef2f2}
+        .flow-arrow{color:var(--gray-300);font-size:1.1rem}
+        .priority-group{margin-bottom:20px}
+        .priority-group h3{display:inline-flex;align-items:center;gap:8px}
+        @media print{.sidebar{display:none}.container{margin-left:auto}}
+        @media(max-width:900px){.sidebar{display:none}.container{margin-left:auto}}
     </style>
 </head>
 <body>
 
-<!-- Sidebar Navigation -->
 <nav class="sidebar">
     <a href="index.html" class="sidebar-back">← 返回项目计划书</a>
-    <div class="sidebar-title">问题清单导航</div>
-    <a href="#sec1" class="nav-link"><span class="num">01</span>问题总览</a>
-    <a href="#sec2" class="nav-link"><span class="num">02</span>MCP APPS（7项）</a>
-    <a href="#sec3" class="nav-link"><span class="num">03</span>DC 知识平台（3项）</a>
-    <a href="#sec4" class="nav-link"><span class="num">04</span>部署与身份（2项）</a>
-    <a href="#sec5" class="nav-link"><span class="num">05</span>国际化（4项）</a>
-    <a href="#sec6" class="nav-link"><span class="num">06</span>开发范式（12项）</a>
-    <a href="#sec7" class="nav-link"><span class="num">07</span>优先级建议</a>
+    <div class="sidebar-title">问题清单</div>
+    <a href="#overview" class="nav-link"><span class="num">01</span>总览</a>
+    <a href="#apps" class="nav-link"><span class="num">02</span>MCP APPS（8项）</a>
+    <a href="#dc" class="nav-link"><span class="num">03</span>DC 知识（3项）</a>
+    <a href="#deploy" class="nav-link"><span class="num">04</span>部署与身份（2项）</a>
+    <a href="#message" class="nav-link"><span class="num">05</span>消息与事件（1项）</a>
+    <a href="#i18n" class="nav-link"><span class="num">06</span>国际化（4项）</a>
+    <a href="#devops" class="nav-link"><span class="num">07</span>开发范式（14项）</a>
+    <a href="#model" class="nav-link"><span class="num">08</span>模型稳定性（2项）</a>
+    <a href="#priority" class="nav-link"><span class="num">09</span>优先级建议</a>
 </nav>
 
 <div class="container">
 
-<!-- Header -->
 <div class="header">
     <h1>灵基 Build 生产化问题清单</h1>
-    <div class="subtitle">推动标品能力补齐，使灵基 Build 具备生产级开发与交付能力</div>
-    <div class="meta">
-        <span>来源：振兴 HelpDesk POC</span>
-    </div>
+    <div class="subtitle">推动标品能力补齐 · 使灵基具备生产级开发与交付能力</div>
 </div>
 
-<!-- Section 1: 问题总览 -->
-<div class="section" id="sec1">
+<!-- ===== 01 总览 ===== -->
+<div class="section" id="overview">
     <h2>01 问题总览</h2>
-
     <div class="stats">
-        <div class="stat-item severe">
-            <div class="stat-value">31</div>
-            <div class="stat-label">问题总数</div>
-        </div>
-        <div class="stat-item severe">
-            <div class="stat-value">4</div>
-            <div class="stat-label">P0 阻塞上线</div>
-        </div>
-        <div class="stat-item moderate">
-            <div class="stat-value">2</div>
-            <div class="stat-label">已解决</div>
-        </div>
-        <div class="stat-item severe">
-            <div class="stat-value">29</div>
-            <div class="stat-label">待解决</div>
-        </div>
+        <div class="stat-item severe"><div class="stat-value">34</div><div class="stat-label">问题总数</div></div>
+        <div class="stat-item severe"><div class="stat-value">5</div><div class="stat-label">P0 阻塞上线</div></div>
+        <div class="stat-item moderate"><div class="stat-value">2</div><div class="stat-label">已解决</div></div>
+        <div class="stat-item severe"><div class="stat-value">32</div><div class="stat-label">待解决</div></div>
     </div>
-
     <table>
-        <thead>
-            <tr>
-                <th>问题维度</th>
-                <th>数量</th>
-                <th>严重程度</th>
-                <th>核心缺口</th>
-            </tr>
-        </thead>
+        <thead><tr><th>维度</th><th>编号</th><th>数量</th><th>核心缺口</th></tr></thead>
         <tbody>
-            <tr>
-                <td>MCP APPS 平台能力</td>
-                <td>7 项</td>
-                <td><span class="tag tag-p0">严重</span></td>
-                <td>APPS 交互层能力不足</td>
-            </tr>
-            <tr>
-                <td>DC 知识平台能力</td>
-                <td>3 项</td>
-                <td><span class="tag tag-p0">严重</span></td>
-                <td>海外可用 / 权限 / 写入缺口</td>
-            </tr>
-            <tr>
-                <td>应用部署与身份体系</td>
-                <td>2 项</td>
-                <td><span class="tag tag-p0">严重</span></td>
-                <td>部署路径单一 / 身份不适用</td>
-            </tr>
-            <tr>
-                <td>国际化与多语言</td>
-                <td>4 项</td>
-                <td><span class="tag tag-p1">中等</span></td>
-                <td>海外客户语言支持不达标</td>
-            </tr>
-            <tr>
-                <td>开发范式与工具链</td>
-                <td>12 项</td>
-                <td><span class="tag tag-p0">严重</span></td>
-                <td>端到端流程断裂</td>
-            </tr>
-            <tr>
-                <td>模型服务稳定性</td>
-                <td>2 项</td>
-                <td><span class="tag tag-p1">中等</span></td>
-                <td>死循环 / 加载卡死</td>
-            </tr>
+            <tr><td>MCP APPS</td><td>#1–#6, #32</td><td>8 项</td><td>交互层能力不足，无法支撑生产级场景</td></tr>
+            <tr><td>DC 知识平台</td><td>#7–#9</td><td>3 项</td><td>权限 / 写入缺口；海外部署已完成</td></tr>
+            <tr><td>部署与身份</td><td>#10–#11</td><td>2 项</td><td>部署绑定苍穹 / 缺少联邦认证</td></tr>
+            <tr><td>消息与事件</td><td>#31</td><td>1 项</td><td>MCP 无主动推送 / 缺事件驱动</td></tr>
+            <tr><td>国际化</td><td>#12–#15</td><td>4 项</td><td>翻译错误 / AI 语言不遵循配置</td></tr>
+            <tr><td>开发范式</td><td>#16–#25, #28–#30, #33</td><td>14 项</td><td>端到端断裂 / 无版本管理 / 无协同 / APPS 开发割裂</td></tr>
+            <tr><td>模型稳定性</td><td>#26–#27</td><td>2 项</td><td>死循环 / 无限加载</td></tr>
         </tbody>
     </table>
-
     <div class="highlight highlight-red">
-        <strong>核心结论：</strong>APPS 交互层能力不足 + DC 知识能力未就绪 + Build 开发范式端到端断裂 — 三者共同构成灵基 Build 从"演示工具"迈向"生产级开发平台"的根本障碍。
+        <strong>核心结论：</strong>APPS 交互层 + DC 知识 + 平台消息能力 + Build 开发范式——四个维度共同构成灵基从"可演示"迈向"可生产、可协作、可持续运行"的关键缺口。
     </div>
 </div>
 
-<!-- Section 2: MCP APPS -->
-<div class="section" id="sec2">
-    <h2>02 MCP APPS 平台能力（7项）</h2>
+<!-- ===== 02 MCP APPS ===== -->
+<div class="section" id="apps">
+    <h2>02 MCP APPS 平台能力（8 项）</h2>
 
-    <!-- Issue #1 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#1</span>APPS 不支持租户级自定义开发与发布上架</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>仅标品预置组件，不支持自定义</dd>
-                <dt>标品应有能力</dt>
-                <dd>支持开发者自定义 APPS 组件并发布到租户</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>每个企业交互需求不同</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1</span>APPS 不支持租户级自定义开发与发布上架</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>MCP APPS 仅有标品预置组件，不支持客户/实施方自定义开发并发布到租户。且 APPS 的开发只能在本地 IDE 完成（编码→编译→打包→上传 KDM），不能在 Build 中构建</dd><dt>应有能力</dt><dd>① 开发者基于标准规范自定义 APPS 组件，经测试后发布上架到租户 APPS 市场<br>② APPS 开发应纳入 Build 工具链（或至少与 Build 有自动化衔接），而非完全割裂在本地 IDE</dd><dt>为什么是标品问题</dt><dd>每个企业交互形态不同，标品不可能穷举所有组件。不开放自定义 = 智能体交互天花板极低。同时 APPS 开发游离于 Build 之外 = Build 的"一站式开发"天然缺了交互层这一块</dd></div></div>
 
-    <!-- Issue #2 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#2</span>APPS 卡片中用户填写的内容不作为 LLM 上下文</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>用户在 MCP APPS 组件（如表单卡片）中填写的内容，不会自动进入 LLM 的会话上下文。模型无法感知用户在卡片中填了什么</dd>
-                <dt>标品应有能力</dt>
-                <dd>用户在 APPS 组件中填写/选择/提交的内容应自动纳入 LLM 上下文，让模型能基于这些内容做后续对话（校验、补全、追问缺失字段等）</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>APPS 是智能体与用户的交互层，卡片中的操作本质就是"用户输入"。模型感知不到则 APPS 沦为静态表单，失去 AI-Native 交互的意义</dd>
-            </dl>
-        </div>
-        <div class="issue-card-footer">
-            <span>刘景庞 / 崔艺露</span>
-        </div>
-    </div>
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#2</span>APPS 卡片中用户填写的内容不作为 LLM 上下文</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户在 APPS 组件（如表单卡片）中填写的内容不会进入 LLM 会话上下文，模型无法感知用户在卡片中填了什么</dd><dt>应有能力</dt><dd>用户在 APPS 中填写/选择/提交的内容应自动纳入 LLM 上下文，让模型能基于这些内容做后续对话（校验、补全、追问缺失字段等）</dd><dt>为什么是标品问题</dt><dd>APPS 是智能体与用户的交互层，卡片操作本质就是"用户输入"。模型感知不到 = APPS 沦为静态表单，失去 AI-Native 交互的意义</dd></div></div>
 
-    <!-- Issue #2b -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#2b</span>APPS 与 LLM 数据传递仅支持全量消息，缺乏精简机制</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>即便 APPS 数据能传给 LLM，当前仅支持全量消息形式。用户选 100 条数据必须全量塞入对话，用户界面也会看到一大段数据</dd>
-                <dt>标品应有能力</dt>
-                <dd>对话展示精简提示（如"已选择100条"），实际数据以用户不感知的形式静默更新 LLM 上下文</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>Token 浪费 + 对话不可读 + 模型性能下降。这是 APPS 与 LLM 协作的基础通信机制</dd>
-            </dl>
-        </div>
-        <div class="issue-card-footer">
-            <span>刘景庞 / 崔艺露</span>
-            <span style="color: var(--warning);">对方已确认方案方向</span>
-        </div>
-    </div>
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#2b</span>APPS→LLM 数据传递仅支持全量消息，缺乏精简机制</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>即便 APPS 数据能传给 LLM，也只能以全量消息塞入对话。用户选 100 条数据 = 100 条完整内容作为对话消息展示，界面不可读</dd><dt>应有能力</dt><dd>支持"对话展示"与"LLM 上下文"分离：界面向用户展示精简提示（如"已选择 100 条"），实际数据静默更新到 LLM Session 上下文</dd><dt>为什么是标品问题</dt><dd>Token 浪费 + 界面污染 + 上下文过长影响模型性能。这是 APPS 与 LLM 协作的基础通信机制</dd></div></div>
 
-    <!-- Issue #3 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#3</span>APPS 组件渲染性能差，偶发渲染失败</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>滚动后组件被释放，回来重新渲染慢 / 偶发白屏</dd>
-                <dt>标品应有能力</dt>
-                <dd>合理缓存 + 状态恢复</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>回看上文是高频操作</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#3</span>APPS 组件渲染性能差，偶发白屏</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>组件滚动离开可视区后被释放，回看时重新渲染慢且偶发白屏</dd><dt>应有能力</dt><dd>合理缓存 + 状态恢复，回看时快速稳定渲染</dd><dt>为什么是标品问题</dt><dd>回看上文是高频操作，渲染不稳 = 交互体验无法达到生产级标准</dd></div></div>
 
-    <!-- Issue #4 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#4</span>APPS 组件提交后不支持内容回显</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>提交后回看对话，已填内容消失</dd>
-                <dt>标品应有能力</dt>
-                <dd>数据持久化，回看可回显</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>表单提交 → 回看是基本闭环</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#4</span>APPS 组件提交后用户手填内容无法回显</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户在 APPS 组件中手动填写/编辑的内容（如修改描述、追加备注），提交后回看对话时丢失显示为空白。而模型自动写入的内容（如自动填充的标题、分类）则能正常回显。说明组件提交时未将用户的前端编辑状态持久化到服务端消息记录中</dd><dt>应有能力</dt><dd>组件提交时应将完整的表单数据（含用户手填部分）持久化到服务端消息记录。回看时从持久化数据渲染，而非依赖组件内存状态</dd><dt>为什么是标品问题</dt><dd>用户手填内容是最关键的信息（如工单的问题描述）。提交后回看丢失 = 用户无法确认自己填了什么 = 对话作为操作记录的可靠性被破坏</dd></div></div>
 
-    <!-- Issue #5 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#5</span>APPS 支持获取灵基登录用户信息</span>
-            <span class="status-solved">✅ 已解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>此前无法获取用户身份</dd>
-                <dt>标品应有能力</dt>
-                <dd>可获取用户 ID / 姓名 / 邮箱 / 部门</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>几乎所有企业场景需要身份</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card" style="border-left:3px solid var(--secondary)"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#5</span>APPS 获取灵基登录用户信息</span><span class="tag tag-p3" style="background:#ecfdf5;color:var(--secondary)">已解决</span></div><div class="issue-card-body"><dt>现状</dt><dd>✅ 已完成（7.20 开发完成，部署在 83 环境；生产环境尚未上线）</dd><dt>应有能力</dt><dd>APPS 可获取当前用户 ID / 姓名 / 邮箱 / 部门</dd></div></div>
 
-    <!-- Issue #6 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#6</span>Agent 无法感知 MCP APP 组件的内部业务逻辑</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>Agent 仅知道入参出参和名称描述</dd>
-                <dt>标品应有能力</dt>
-                <dd>结构化组件能力描述（JSON Schema）</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>限制 AI 辅助开发上限</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#6</span>Agent 无法感知 APPS 组件内部业务逻辑</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>Agent 仅知道入参/出参和名称描述，无法知道组件内部交互元素和业务逻辑</dd><dt>应有能力</dt><dd>提供结构化组件能力描述（JSON Schema），让 Agent 精确理解组件能做什么</dd><dt>为什么是标品问题</dt><dd>Agent 只能靠文字猜测 = 编排精度受限 = AI 辅助开发的上限被锁死</dd></div></div>
+
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#32</span>APPS 无法访问和操作对话中的附件（图片/文件）</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户在对话中发送图片（如错误截图）或文件（如 PDF）后触发提单，但 APPS 工单确认卡渲染时：① 无法从 Session 上下文中获取对话里已有的附件列表；② 无法在卡片内展示"已关联附件"供用户确认/增删；③ 用户确认提交后，附件引用无法随表单数据一起传递给 MCP Tool（如 Upload_Attachment）</dd><dt>应有能力</dt><dd>① APPS 组件渲染时可从当前 Session 上下文中读取对话附件列表（文件名/类型/大小/引用 ID）<br>② 组件中可展示附件缩略图/列表，支持用户勾选、删除或追加新附件<br>③ 组件提交时将附件引用作为结构化字段传递给后续 MCP Tool 调用<br>④ 若 LLM 支持多模态，可基于图片内容辅助生成工单描述</dd><dt>为什么是标品问题</dt><dd>"截图+描述→提单"是企业服务最常见交互模式。APPS 无法操作对话附件 = 智能体只能处理纯文本 = 与传统邮件工单无差异。这是 APPS 作为 AI-Native 交互层的基础能力缺失</dd></div></div>
 </div>
 
-<!-- Section 3: DC 知识平台 -->
-<div class="section" id="sec3">
-    <h2>03 DC 知识平台能力（3项）</h2>
+<!-- ===== 03 DC 知识 ===== -->
+<div class="section" id="dc">
+    <h2>03 DC 知识平台能力（3 项）</h2>
 
-    <!-- Issue #7 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#7</span>DC 海外部署</span>
-            <span class="status-solved">✅ 已解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>已完成海外部署（新加坡节点）</dd>
-                <dt>标品应有能力</dt>
-                <dd>多区域部署（新加坡）</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>海外客户无法使用知识能力</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card" style="border-left:3px solid var(--secondary)"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#7</span>DC 海外部署</span><span class="tag tag-p3" style="background:#ecfdf5;color:var(--secondary)">已解决</span></div><div class="issue-card-body"><dt>现状</dt><dd>✅ 已完成海外部署（新加坡节点）</dd></div></div>
 
-    <!-- Issue #8 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#8</span>DC 不支持第三方系统写入知识</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>无写入 API</dd>
-                <dt>标品应有能力</dt>
-                <dd>标准 API 写入指定智能体知识库</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>知识飞轮 / 自主进化的底层支撑</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8</span>DC 不支持第三方系统写入知识（知识回写缺失）</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>DC 暂不支持第三方系统通过 API 向指定智能体知识库写入知识，缺乏写入时的关联标识（集群/租户/智能体/实例）</dd><dt>应有能力</dt><dd>标准 API 允许鉴权后的外部系统向指定智能体知识库写入结构化知识，支持增量更新与版本管理</dd><dt>为什么是标品问题</dt><dd>智能体知识不应仅来自初始上传，应在运行中持续积累（如工单处理结论）。知识回写 = 知识飞轮/自主进化的底层支撑</dd></div></div>
 
-    <!-- Issue #9 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#9</span>Work 中知识检索存在越权</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>可检索到不属于自己权限的内容</dd>
-                <dt>标品应有能力</dt>
-                <dd>严格权限控制</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>企业级基本安全要求</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#9</span>Work 知识检索存在越权</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户可检索到不属于自己权限范围的知识内容</dd><dt>应有能力</dt><dd>严格权限控制，按角色/部门/智能体实例隔离</dd><dt>为什么是标品问题</dt><dd>知识越权 = 企业级不可接受的安全漏洞</dd></div></div>
 </div>
 
-<!-- Section 4: 部署与身份 -->
-<div class="section" id="sec4">
-    <h2>04 部署与身份体系（2项）</h2>
+<!-- ===== 04 部署与身份 ===== -->
+<div class="section" id="deploy">
+    <h2>04 部署与身份体系（2 项）</h2>
 
-    <!-- Issue #10 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#10</span>Build 开发的应用仅支持部署到苍穹</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>只能托管苍穹，苍穹有许可体系，灵基用户无苍穹账号</dd>
-                <dt>标品应有能力</dt>
-                <dd>支持多种部署目标（苍穹 / 灵基自身 / 客户云服务器），身份基于灵基用户体系</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>灵基适用场景不应限于 ERP 用户圈</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#10</span>Build 应用仅支持部署到苍穹 + 灵基缺少联邦身份认证</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>① Build 后端应用只能托管苍穹（需许可+账号）；② 灵基用户多数非 ERP 用户，无苍穹账号；③ 灵基不支持 SAML/OIDC 标准联邦认证，无法对接 Azure AD/Okta 等企业 IdP</dd><dt>应有能力</dt><dd><strong>部署：</strong>支持苍穹 / 灵基自身轻量托管 / 客户云服务器<br><strong>身份：</strong>SAML 2.0 / OIDC 联邦认证，对接企业 IdP，非 ERP 用户无需苍穹账号即可登录灵基</dd><dt>为什么是标品问题</dt><dd>部署绑苍穹 = 灵基限制在 ERP 用户圈。不支持联邦认证 = 海外客户员工登不进灵基。两者共同导致灵基无法独立面向非 ERP 客户交付</dd></div></div>
 
-    <!-- Issue #11 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#11</span>应用开发要求过多不相关文件权限</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>大量不相关权限请求</dd>
-                <dt>标品应有能力</dt>
-                <dd>最小权限原则</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>违反安全原则，企业客户会触发审批</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#11</span>应用开发要求过多不相关文件权限</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 中开发应用时系统要求授予大量不相关权限</dd><dt>应有能力</dt><dd>最小权限原则，仅请求必需资源</dd><dt>为什么是标品问题</dt><dd>违反安全原则，企业客户会触发审批流程、拖慢交付</dd></div></div>
 </div>
 
-<!-- Section 5: 国际化 -->
-<div class="section" id="sec5">
-    <h2>05 国际化与多语言（4项）</h2>
+<!-- ===== 05 消息与多模态 ===== -->
+<div class="section" id="message">
+    <h2>05 消息与事件（1 项）</h2>
 
-    <ul class="issue-list">
-        <li>
-            <span class="issue-text"><span class="issue-num">#12</span>灵基客户端多语言翻译错误</span>
-            <span class="issue-meta">
-                <span class="status-unsolved">❌</span>
-            </span>
-        </li>
-        <li>
-            <span class="issue-text"><span class="issue-num">#13</span>Build 板块 AI 输出中英夹杂（配置 English 仍夹杂中文）</span>
-            <span class="issue-meta">
-                <span class="status-unsolved">❌</span>
-            </span>
-        </li>
-        <li>
-            <span class="issue-text"><span class="issue-num">#14</span>Web 端语言切换需反复操作三遍</span>
-            <span class="issue-meta">
-                <span class="status-unsolved">❌</span>
-            </span>
-        </li>
-        <li>
-            <span class="issue-text"><span class="issue-num">#15</span>Work 板块全英配置下 AI 回复偶现中文</span>
-            <span class="issue-meta">
-                <span class="status-unsolved">❌</span>
-            </span>
-        </li>
-    </ul>
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#31</span>灵基缺少接收 MCP Server 主动推送自定义格式消息的平台能力</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>灵基智能体连接 MCP Server 后仅支持"灵基发起请求→MCP 返回结果"的同步调用。MCP Server 无法在工单分配、答复、SLA 告警等后台事件发生时，主动向指定灵基用户/工作组/智能体实例推送自定义格式消息。后台事件无法可靠进入灵基 = 灵基不能成为唯一工作台</dd><dt>应有能力</dt><dd>① 标准消息/事件接入协议（已鉴权 MCP Server 可主动投递）<br>② 按用户/工作组/角色/智能体实例路由<br>③ 支持文本/通知/卡片/按钮等自定义消息 Schema，由 Work 渲染和交互<br>④ 消息队列/幂等/重试/离线补发/已读未读<br>⑤ 后台→智能体、智能体→智能体跨主体消息传递 + 权限审计<br>⑥ 消息到达后触发智能体自动执行预设动作（事件驱动），而非被动等用户打开才展示</dd><dt>为什么是标品问题</dt><dd>异步事件推送不是 HelpDesk 私有需求——审批待办、告警、任务分配等企业场景都需要。只有请求—响应 = 只能"用户问、系统答"，不能支撑持续运行的业务工作台</dd><dt>与项目边界</dt><dd>标品负责通用接入/路由/投递/审计；HelpDesk 仅定义具体业务事件和卡片</dd></div></div>
 </div>
 
-<!-- Section 6: 开发范式 -->
-<div class="section" id="sec6">
-    <h2>06 开发范式与工具链（12项）</h2>
+<!-- ===== 06 国际化 ===== -->
+<div class="section" id="i18n">
+    <h2>06 国际化与多语言（4 项）</h2>
+    <table>
+        <thead><tr><th>#</th><th>问题</th><th>现状</th><th>应有能力</th></tr></thead>
+        <tbody>
+            <tr><td><span class="issue-num">#12</span></td><td>客户端多语言翻译错误</td><td>多处翻译错误或未国际化文案</td><td>全量文案国际化，翻译经 native speaker 审核</td></tr>
+            <tr><td><span class="issue-num">#13</span></td><td>Build AI 输出中英夹杂</td><td>配置 English 后 AI 仍夹杂中文</td><td>AI 输出严格遵循系统语言配置</td></tr>
+            <tr><td><span class="issue-num">#14</span></td><td>Work AI 回复偶现中文</td><td>同 #13，Work 板块</td><td>同 #13</td></tr>
+            <tr><td><span class="issue-num">#15</span></td><td>语言切换需操作三遍</td><td>切换界面语言需反复操作三次才生效</td><td>一次操作即时生效</td></tr>
+        </tbody>
+    </table>
+</div>
 
-    <!-- Issue #28 - Most Critical, shown first with highlight -->
-    <div class="issue-card critical">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#28</span>端到端开发流程完全断裂（最关键问题）</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="highlight highlight-red" style="margin: 0 0 16px;">
-            <strong>⚠️ 这是灵基 Build 走向生产级平台最根本的问题。</strong><br>
-            当前开发者需在 5+ 个工具 / 环境间反复切换，各环节零衔接。
-        </div>
-        <h3 style="font-size: 0.95rem; margin: 12px 0 8px; color: var(--gray-600);">当前碎片化流程</h3>
+<!-- ===== 07 开发范式 ===== -->
+<div class="section" id="devops">
+    <h2>07 开发范式与工具链（14 项）</h2>
+
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#28</span>端到端开发流程完全断裂（最关键系统性问题）</span><span class="tag tag-p2">P2</span></div>
+        <div class="highlight highlight-red" style="margin:0 0 12px"><strong>⚠️ 灵基 Build 走向生产级平台最根本的问题。</strong>开发者需在 5+ 工具/环境间反复切换，各环节零衔接。</div>
         <div class="flow">
-            <span class="flow-step broken">产品设计 (Kiro)</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-step broken">MCP APPS (本地IDE→KDM)</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-step broken">Skill (Build→Console→Work)</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-step broken">智能体 (Build→Console→Work)</span>
-            <span class="flow-arrow">→</span>
-            <span class="flow-step broken">应用 (本地苍穹→Build→苍穹上线→配MCP)</span>
-            <span class="flow-arrow">→</span>
+            <span class="flow-step broken">产品设计 (Kiro)</span><span class="flow-arrow">→</span>
+            <span class="flow-step broken">APPS (本地IDE→KDM)</span><span class="flow-arrow">→</span>
+            <span class="flow-step broken">Skill (Build→Console→Work)</span><span class="flow-arrow">→</span>
+            <span class="flow-step broken">智能体 (Build→Console→Work)</span><span class="flow-arrow">→</span>
+            <span class="flow-step broken">应用 (苍穹→Build→苍穹上线→配MCP)</span><span class="flow-arrow">→</span>
             <span class="flow-step broken">联调 (Work)</span>
         </div>
-        <div class="issue-card-body" style="margin-top: 16px;">
-            <dl>
-                <dt>标品应有能力</dt>
-                <dd><strong>终态：</strong>一站式工作空间<br><strong>初阶：</strong>各环节自动化衔接</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>Build 从"演示工具"走向"生产级开发平台"的根本问题</dd>
-            </dl>
-        </div>
+        <div class="issue-card-body"><dt>应有能力</dt><dd><strong>终态：</strong>一站式项目工作空间。<strong>初阶：</strong>需求产物自动传递到开发；APPS/Skill/智能体/应用同一沙箱联调；发布有依赖感知和批量操作；环境切换有明确引导</dd><dt>为什么是标品问题</dt><dd>任何开发超过"单技能"复杂度的项目都会遇到完全相同的断裂。Build 从"演示工具"走向"生产级平台"的根本问题</dd></div>
     </div>
 
-    <!-- Issue #16 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#16</span>测试智能体必须先将其依赖的技能上线</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>开发阶段若要测试一个智能体，必须先将其依赖的技能走完"提交→审核→上线"的完整流程。技能未上线，智能体就无法调试</dd>
-                <dt>标品应有能力</dt>
-                <dd>开发态下智能体应能直接引用未上线的技能进行联调测试。"上线"是发布行为，不应成为"调试"的前置条件</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>"先上线才能测试"违反软件工程基本流程（开发→测试→上线）。开发者被迫将未验证的技能上线，要么增加线上风险，要么严重拖慢迭代速度</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#16</span>测试智能体必须先将依赖技能上线</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>技能未走完"提交→审核→上线"则智能体无法调试</dd><dt>应有能力</dt><dd>开发态直接引用未上线技能进行联调</dd><dt>为什么是标品问题</dt><dd>"先上线才能测试"违反软件工程基本流程</dd></div></div>
 
-    <!-- Issue #17 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#17</span>构建同名 Skill 点击测试会静默覆盖线上 Skill</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>开发者创建与线上 Skill 同名的新版本时，点击"测试"会直接覆盖线上正在运行的 Skill，无任何提醒或确认</dd>
-                <dt>标品应有能力</dt>
-                <dd>① 测试阶段：同名 Skill 的测试应在沙箱进行，不影响线上<br>② 上线阶段：检测到同名时明确提醒，让用户选择"更新现有版本"或"放弃"</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>同名 Skill 在迭代更新中非常常见。平台缺乏冲突处理机制，静默覆盖线上版本可能导致生产环境故障</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#17</span>同名 Skill 测试静默覆盖线上版本</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>创建与线上同名的新版本，点"测试"直接覆盖线上，无提醒</dd><dt>应有能力</dt><dd>测试在沙箱；上线时检测同名并提醒</dd><dt>为什么是标品问题</dt><dd>迭代中同名极常见，静默覆盖可能导致生产故障</dd></div></div>
 
-    <!-- Issue #18 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#18</span>智能体的 MCP Server 关联与知识挂载无法在 Build 中连贯完成</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>① 智能体要连接的 MCP Server 需在 Console 中创建实例时关联，Build 中无法完成<br>② 智能体的知识也需在 Console 创建实例时关联<br>③ 知识同时又开放在 Work-智能体-知识中上传<br>开发者需在 Build → Console → Work 三处反复切换</dd>
-                <dt>标品应有能力</dt>
-                <dd>① 开发者在 Build 中一站式完成智能体全部配置（含 MCP Server 关联、知识挂载）<br>② 明确区分"开发者视角"和"运营者视角"的配置入口</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>智能体 = 提示词 + 技能 + 知识 + 外部连接，四要素配置分散在三个模块。且开发者和运营者的操作混在一起，团队协作时必然混乱</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#18</span>MCP Server 关联与知识挂载无法在 Build 中连贯完成</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>MCP 关联需在 Console，知识挂载需在 Console+Work，开发者在 Build→Console→Work 三处切换</dd><dt>应有能力</dt><dd>Build 一站式完成全部配置；区分开发者/运营者入口</dd><dt>为什么是标品问题</dt><dd>智能体四要素（提示词+技能+知识+外部连接）配置分散三模块 = 任何开发者都会割裂</dd></div></div>
 
-    <!-- Issue #19 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#19</span>智能体/技能没有版本管理</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>智能体/技能缺乏版本管理机制，无法查看历史版本、对比差异、回滚到之前的版本</dd>
-                <dt>标品应有能力</dt>
-                <dd>每次提交/上线形成版本快照，支持版本列表查看、Diff 对比、一键回滚</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>智能体/技能在迭代中会频繁修改提示词、调整技能编排。没有版本管理意味着改坏了无法回滚、多人协作无法追溯变更——这是企业级开发平台的基本门槛</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#19</span>技能/智能体没有版本管理</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>无历史版本、无 Diff 对比、无回滚</dd><dt>应有能力</dt><dd>每次提交形成版本快照，支持列表/Diff/一键回滚</dd><dt>为什么是标品问题</dt><dd>没有版本管理 = 改坏了无法回滚、多人无法追溯。企业级开发平台基本门槛</dd></div></div>
 
-    <!-- Issue #20 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#20</span>智能体实例创建对苍穹有不明确依赖</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>创建智能体实例时需在苍穹中新增一个 Bot 机器人，但为什么需要这步、具体需要什么权限均不明确</dd>
-                <dt>标品应有能力</dt>
-                <dd>① 先澄清：智能体实例创建是否真的需要依赖苍穹？不需要则解除耦合<br>② 如确需，应在灵基侧自动化完成，不要求开发者手动操作苍穹</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>与 #10（应用部署强绑苍穹）属同一架构耦合问题。没有苍穹环境的团队将无法完成智能体部署</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#20</span>智能体实例创建对苍穹有不明确依赖</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>创建实例需在苍穹新增 Bot，为何需要不明确</dd><dt>应有能力</dt><dd>澄清是否真的依赖苍穹；如不需则解耦；如需则灵基侧自动化</dd><dt>为什么是标品问题</dt><dd>与 #10 同一架构耦合问题</dd></div></div>
 
-    <!-- Issue #21 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#21</span>智能体创建 Skill 后缺乏同步批量发布机制</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>AI 辅助创建智能体时可能自动创建配套 Skill，但智能体发布依赖 Skill 先发布。开发者需手动按顺序逐个发布，极易遗漏</dd>
-                <dt>标品应有能力</dt>
-                <dd>一键发布智能体时，自动检测并同步发布其依赖的未上线 Skill（或至少提示并支持批量操作）</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>智能体与 Skill 存在天然依赖关系，发布流程应感知这层依赖。手动管理发布顺序不可持续</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#21</span>智能体创建 Skill 后缺乏同步批量发布</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>智能体发布依赖 Skill 先发布，需手动逐个按顺序</dd><dt>应有能力</dt><dd>一键发布时自动检测并同步发布依赖 Skill</dd><dt>为什么是标品问题</dt><dd>依赖关系应由平台管理，手动管发布顺序不可持续</dd></div></div>
 
-    <!-- Issue #22 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#22</span>Build 中通过对话更换 Agent 的 Skill 后工作区未同步</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>通过对话指令更换 Agent 绑定的 Skill 后，对话内容显示已成功，但工作区的实际文件和配置没有同步更新。需手动再操作一次</dd>
-                <dt>标品应有能力</dt>
-                <dd>对话式操作的结果应实时同步到工作区文件和配置中，保持所见即所得</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>Build 的核心交互模式是"对话驱动开发"。如果对话中的操作不真实反映到工作区，开发者无法信任对话结果，对话式开发的可靠性被根本破坏</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#22</span>对话更换 Skill 后工作区未同步</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>对话显示已成功更换 Skill，但工作区文件和配置没同步</dd><dt>应有能力</dt><dd>对话操作实时同步到工作区，所见即所得</dd><dt>为什么是标品问题</dt><dd>"对话驱动开发"的核心可靠性问题</dd></div></div>
 
-    <!-- Issue #23 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#23</span>技能在智能体中被修改后无法同步上线</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>先独立开发技能，再在智能体中使用。本地文件结构是将技能拷贝到智能体目录下。若在智能体对话中修改了技能：<br>① 提交智能体时只能发布智能体本身，技能发不上去<br>② 需手动将修改复制回技能源文件<br>③ 再单独测试/提交技能<br>线上才是最新版本</dd>
-                <dt>标品应有能力</dt>
-                <dd>① 在智能体上下文中修改技能后，修改自动同步回技能源文件<br>② 或：提交智能体时检测技能有变更，提示一起提交</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>在智能体中迭代修改技能是高频操作。"手动复制回源文件"极易遗漏，导致线上运行旧版本技能而开发者不自知——这是隐性线上 Bug 的主要来源</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#23</span>技能在智能体中被修改后无法同步上线</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>在智能体对话中改了技能，提交智能体时技能发不上去，需手动复制回技能源文件再单独提交</dd><dt>应有能力</dt><dd>修改自动同步回源文件，或提交时检测变更提示一起提交</dd><dt>为什么是标品问题</dt><dd>"手动复制"极易遗漏 = 线上运行旧版本而不自知 = 隐性 Bug 主要来源</dd></div></div>
 
-    <!-- Issue #24 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#24</span>智能体 / 技能文件修改后文件树无状态标记</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>文件被修改后，左侧文件树中没有任何直观的状态标记（如已修改、未保存、未提交等）</dd>
-                <dt>标品应有能力</dt>
-                <dd>文件树应显示文件状态（类似 Git：已修改未保存、已保存未提交、已提交待审核等）</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>多文件项目中需要快速识别变更范围。无状态标记意味着开发者只能靠记忆管理文件状态，复杂项目中极易遗漏提交</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#24</span>文件修改后文件树无状态标记</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>修改文件后左侧文件树无任何视觉标记</dd><dt>应有能力</dt><dd>类 Git 状态标记（已修改/未提交/待审核）</dd><dt>为什么是标品问题</dt><dd>无标记 = 靠记忆管理 = 复杂项目必遗漏</dd></div></div>
 
-    <!-- Issue #25 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#25</span>提交同名技能因名称重复失败，不支持更新语义</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>将修改后的技能重新提交到"个人使用"时，因名称重复而失败。系统将"修改后重新提交"等同于"新建同名"而拒绝</dd>
-                <dt>标品应有能力</dt>
-                <dd>① 修改后重新提交应识别为"版本更新"而非"新建"<br>② 引入除名称外的唯一标识（ID），区分新建与更新</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>技能迭代更新是日常操作。当前机制让"更新已有技能"这个最基本的操作走不通，开发者被迫改名或先删旧版本</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#25</span>提交同名技能因名称重复失败</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>修改后重新提交被视为"新建同名"而拒绝</dd><dt>应有能力</dt><dd>识别为"版本更新"；引入唯一 ID 区分新建与更新</dd><dt>为什么是标品问题</dt><dd>"更新已有技能"这个基本操作走不通</dd></div></div>
 
-    <!-- Issue #26 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#26</span>Build 使用 fast 模型时不定期进入死循环</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>在 Build 中使用 fast 模型进行对话开发时，模型会不定期进入死循环——反复输出相同内容或陷入无意义的循环调用，直到开发者手动终止</dd>
-                <dt>标品应有能力</dt>
-                <dd>模型服务应具备循环检测和自动中断机制，检测到重复输出时自动停止并提示用户</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>模型服务是 Build 的底层基础设施。死循环浪费 Token 和开发时间，且终止后前序对话上下文可能丢失，开发者被迫重新开始</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#29</span>已发布技能更新内容后无法触发状态变更</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>已发布技能无论直接改文件还是让 AI 改描述，都无法触发状态从"已发布"→"已保存"，导致无法重新提交。唯一 workaround 是让 AI 做无关改动才能触发</dd><dt>应有能力</dt><dd>文件内容变更后系统自动检测并标记为"已保存/待提交"</dd><dt>为什么是标品问题</dt><dd>"改了却提交不了" = 状态检测机制的基础 Bug</dd></div></div>
 
-    <!-- Issue #27 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#27</span>Build 使用 deep 模型时回复无限加载</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>使用 deep 模型时，AI 回复有时一直处于加载状态（无限加载动画），无法正常输出结果，只能点击"终止"</dd>
-                <dt>标品应有能力</dt>
-                <dd>应有超时检测和优雅降级机制：超时后提示用户可选重试或降级到其他模型</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>deep 模型通常用于复杂的技能/智能体开发。若频繁卡死，开发者将被迫降级使用能力更弱的 fast 模型，影响开发质量</dd>
-            </dl>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#30</span>Build 不支持多人协同开发技能和智能体</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 单人单会话：① 无共享项目空间；② 技能只能聊天传文件；③ 接收方只能"删文件夹再上传"且触发 #29 Bug；④ 无变更合并；⑤ 无协作可见性</dd><dt>应有能力</dt><dd>① 共享项目空间（多人同一套制品）；② 标准技能交付流程（发布到项目/一键拉取）；③ 变更通知；④ 至少支持"分工→集成"模式</dd><dt>为什么是标品问题</dt><dd>任何超过一人做一个简单智能体的项目都需要协同。Build 无协同 = 只能做个人实验，无法支撑团队级项目</dd></div></div>
 
-    <!-- Issue #29 -->
-    <div class="issue-card">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#29</span>已发布技能更新内容后无法触发状态变更，导致无法重新提交</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>已发布的技能，无论是直接更新本地文件内容，还是在对话框中让 AI 修改描述，都无法触发状态从"已发布"变为"已保存"，导致无法重新提交。唯一 workaround 是让 AI 做无关改动（如改描述语言）才能触发状态变化</dd>
-                <dt>标品应有能力</dt>
-                <dd>技能文件内容变更后，系统应自动检测并标记为"已保存/待提交"</dd>
-                <dt>为什么是标品问题</dt>
-                <dd>"改了内容却提交不了"属于状态检测机制的基础 Bug</dd>
-            </dl>
-        </div>
-    </div>
-
-    <!-- Issue #30 -->
-    <div class="issue-card critical">
-        <div class="issue-card-header">
-            <span class="issue-card-title"><span class="issue-num">#30</span>Build 不支持多人协同开发技能和智能体</span>
-            <span class="status-unsolved">❌ 未解决</span>
-        </div>
-        <div class="highlight highlight-red" style="margin: 0 0 16px;">
-            <strong>Build 当前只能单人单会话工作，完全没有团队协作机制。</strong>
-        </div>
-        <div class="issue-card-body">
-            <dl>
-                <dt>当前现状</dt>
-                <dd>
-                    ① 没有共享项目/工作空间——每人只能在自己的 Build 会话中工作<br>
-                    ② 没有技能交付标准流程——开发好的技能只能通过聊天传文件<br>
-                    ③ 接收方无标准导入方式——只能"删除本地文件夹再上传"，且触发 #29 状态 Bug<br>
-                    ④ 没有变更合并机制——两人同时改同一制品时无法合并<br>
-                    ⑤ 没有协作可见性——看不到其他人在做什么、改了什么
-                </dd>
-                <dt>标品应有能力</dt>
-                <dd>
-                    ① <strong>共享项目空间：</strong>多人加入同一项目，共享同一套制品（智能体/技能/APPS）<br>
-                    ② <strong>标准交付流程：</strong>支持将技能"发布到项目"或"共享给协作者"，一键拉取最新版本<br>
-                    ③ <strong>变更感知：</strong>协作者更新后，其他人能收到通知或看到变更提示<br>
-                    ④ <strong>至少支持"分工→集成"：</strong>不同人负责不同技能，集成到同一智能体时有工具支持而非手动文件搬运
-                </dd>
-                <dt>为什么是标品问题</dt>
-                <dd>任何超过"一人做一个简单智能体"的项目都需要多人协作。振兴 HelpDesk 就有多人分工（接口技能/问答技能/智能体编排各有负责人）。Build 无协同机制 = 只能用于个人实验，无法支撑团队级生产项目。这是从"个人工具"走向"团队开发平台"的关键缺失</dd>
-            </dl>
-        </div>
-        <div class="issue-card-footer">
-            <span>邹茂桃 / 高翔</span>
-        </div>
-    </div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#33</span>MCP APPS 开发完全游离于 Build 之外，无法在 Build 中构建和调试</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>MCP APPS 组件的开发必须在本地 IDE 中进行（编码→编译→打包），完成后手动上传到 KDM 平台注册。整个过程与 Build 完全割裂：Build 既不能创建 APPS 项目，也不能调试 APPS 组件，更无法在 Build 中将 APPS 与 Skill/智能体进行联调</dd><dt>应有能力</dt><dd>① Build 应支持 APPS 组件的创建、开发（或至少脚手架生成+本地开发引导）<br>② Build 中应能预览和调试 APPS 组件的渲染效果<br>③ APPS 组件发布后应能在 Build 中直接关联到 Skill/智能体，无需跳转 KDM 手动配置<br>④ 至少：Build 与本地 APPS 开发之间有自动化衔接（如 CLI 工具、热更新调试通道）</dd><dt>为什么是标品问题</dt><dd>APPS 是智能体与用户交互的核心层，但其开发与 Build 完全割裂 = Build 号称的"一站式开发"天然缺了交互层。开发者被迫在 Build（Skill/智能体）和本地 IDE（APPS）之间反复切换，这是 #28 端到端断裂在 APPS 维度的具体表现</dd></div></div>
 </div>
 
-<!-- Section 7: 优先级建议 -->
-<div class="section" id="sec7">
-    <h2>07 优先级建议</h2>
+<!-- ===== 08 模型稳定性 ===== -->
+<div class="section" id="model">
+    <h2>08 模型服务稳定性（2 项）</h2>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#26</span>fast 模型不定期进入死循环</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>对话开发时模型反复输出相同内容或循环调用</dd><dt>应有能力</dt><dd>循环检测 + 自动中断</dd><dt>为什么是标品问题</dt><dd>模型服务是底层基础设施，不稳 = 所有上层开发受影响</dd></div></div>
 
-    <!-- P0 -->
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#27</span>deep 模型回复无限加载</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>AI 回复一直转圈，无法输出，只能强制终止</dd><dt>应有能力</dt><dd>超时检测 + 优雅降级（提示重试/切模型）</dd><dt>为什么是标品问题</dt><dd>同 #26</dd></div></div>
+</div>
+
+<!-- ===== 09 优先级建议 ===== -->
+<div class="section" id="priority">
+    <h2>09 优先级建议</h2>
+
     <div class="priority-group">
-        <h3><span class="tag tag-p0">P0</span> 阻塞上线</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>编号</th>
-                    <th>问题</th>
-                    <th>维度</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>#7</td>
-                    <td>DC 海外部署</td>
-                    <td>DC 知识平台</td>
-                </tr>
-                <tr>
-                    <td>#10</td>
-                    <td>应用部署与身份</td>
-                    <td>部署与身份</td>
-                </tr>
-                <tr>
-                    <td>#1</td>
-                    <td>APPS 自定义开发</td>
-                    <td>MCP APPS</td>
-                </tr>
-                <tr>
-                    <td>#2</td>
-                    <td>APPS 上下文精简</td>
-                    <td>MCP APPS</td>
-                </tr>
-            </tbody>
-        </table>
+        <h3><span class="tag tag-p0">P0</span> 阻塞上线（5 项）</h3>
+        <table><thead><tr><th>#</th><th>问题</th><th>一句话理由</th></tr></thead><tbody>
+            <tr><td>#1</td><td>APPS 不支持租户级自定义</td><td>企业交互退化为纯文本</td></tr>
+            <tr><td>#2</td><td>APPS 卡片内容不入 LLM 上下文</td><td>模型感知不到用户输入</td></tr>
+            <tr><td>#2b</td><td>APPS→LLM 缺乏精简机制</td><td>Token/界面/性能三重问题</td></tr>
+            <tr><td>#10</td><td>部署强绑苍穹 + 缺联邦认证</td><td>非 ERP 用户无法登录和使用</td></tr>
+            <tr><td>#31</td><td>MCP 无主动推送 + 缺事件驱动</td><td>唯一工作台闭环不成立</td></tr>
+        </tbody></table>
     </div>
 
-    <!-- P1 -->
     <div class="priority-group">
-        <h3><span class="tag tag-p1">P1</span> 影响交付质量</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>编号</th>
-                    <th>问题</th>
-                    <th>维度</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>#8</td>
-                    <td>DC 知识回写</td>
-                    <td>DC 知识平台</td>
-                </tr>
-                <tr>
-                    <td>#9</td>
-                    <td>知识越权</td>
-                    <td>DC 知识平台</td>
-                </tr>
-                <tr>
-                    <td>#3</td>
-                    <td>APPS 渲染性能</td>
-                    <td>MCP APPS</td>
-                </tr>
-                <tr>
-                    <td>#4</td>
-                    <td>APPS 回显</td>
-                    <td>MCP APPS</td>
-                </tr>
-                <tr>
-                    <td>#12-15</td>
-                    <td>多语言问题（4项）</td>
-                    <td>国际化</td>
-                </tr>
-                <tr>
-                    <td>#17</td>
-                    <td>同名 Skill 覆盖</td>
-                    <td>开发范式</td>
-                </tr>
-            </tbody>
-        </table>
+        <h3><span class="tag tag-p1">P1</span> 影响交付质量（8 项）</h3>
+        <table><thead><tr><th>#</th><th>问题</th><th>一句话理由</th></tr></thead><tbody>
+            <tr><td>#8</td><td>DC 知识回写</td><td>知识飞轮基础</td></tr>
+            <tr><td>#9</td><td>知识检索越权</td><td>安全底线</td></tr>
+            <tr><td>#3</td><td>APPS 渲染白屏</td><td>破坏用户操作</td></tr>
+            <tr><td>#4</td><td>APPS 回显丢失</td><td>操作不可追溯</td></tr>
+            <tr><td>#12–15</td><td>多语言（4项）</td><td>海外客户无法接受</td></tr>
+            <tr><td>#17</td><td>同名 Skill 覆盖线上</td><td>生产安全红线</td></tr>
+            <tr><td>#32</td><td>APPS 无法操作对话附件</td><td>"截图+描述"提单走不通</td></tr>
+        </tbody></table>
     </div>
 
-    <!-- P2 -->
     <div class="priority-group">
-        <h3><span class="tag tag-p2">P2</span> 影响开发效率</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>编号</th>
-                    <th>问题</th>
-                    <th>维度</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>#28</td>
-                    <td>端到端开发流程断裂</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#16</td>
-                    <td>测试需先上线</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#19</td>
-                    <td>无版本管理</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#23</td>
-                    <td>技能修改不同步</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#26/27</td>
-                    <td>模型稳定性（死循环 / 无限加载）</td>
-                    <td>开发范式</td>
-                </tr>
-            </tbody>
-        </table>
+        <h3><span class="tag tag-p2">P2</span> 影响开发效率（7 项）</h3>
+        <table><thead><tr><th>#</th><th>问题</th><th>一句话理由</th></tr></thead><tbody>
+            <tr><td>#28</td><td>端到端流程断裂</td><td>Build 能否做复杂项目的根因</td></tr>
+            <tr><td>#16</td><td>测试需先上线技能</td><td>违反开发基本流程</td></tr>
+            <tr><td>#19</td><td>无版本管理</td><td>企业级基本门槛</td></tr>
+            <tr><td>#23</td><td>技能修改不同步</td><td>隐性线上 Bug 来源</td></tr>
+            <tr><td>#29</td><td>状态检测 Bug</td><td>改了提交不了</td></tr>
+            <tr><td>#30</td><td>无多人协同</td><td>团队项目走不通</td></tr>
+            <tr><td>#33</td><td>APPS 开发游离于 Build 之外</td><td>Build"一站式"天然缺交互层</td></tr>
+            <tr><td>#26/27</td><td>模型稳定性</td><td>打断开发流程</td></tr>
+        </tbody></table>
     </div>
 
-    <!-- P3 -->
     <div class="priority-group">
-        <h3><span class="tag tag-p3">P3</span> 体验优化</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>编号</th>
-                    <th>问题</th>
-                    <th>维度</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>#6</td>
-                    <td>Agent 感知 APP 逻辑</td>
-                    <td>MCP APPS</td>
-                </tr>
-                <tr>
-                    <td>#18</td>
-                    <td>MCP / 知识关联</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#20</td>
-                    <td>创建实例依赖苍穹</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#21</td>
-                    <td>批量发布</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#22</td>
-                    <td>工作区同步</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#24</td>
-                    <td>文件状态标记</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#25</td>
-                    <td>同名提交失败</td>
-                    <td>开发范式</td>
-                </tr>
-                <tr>
-                    <td>#11</td>
-                    <td>权限过多</td>
-                    <td>部署与身份</td>
-                </tr>
-            </tbody>
-        </table>
+        <h3><span class="tag tag-p3">P3</span> 体验与完善（8 项）</h3>
+        <table><thead><tr><th>#</th><th>问题</th></tr></thead><tbody>
+            <tr><td>#6</td><td>Agent 感知 APPS 逻辑</td></tr>
+            <tr><td>#11</td><td>权限过多</td></tr>
+            <tr><td>#18</td><td>MCP/知识关联流程割裂</td></tr>
+            <tr><td>#20</td><td>创建实例依赖苍穹</td></tr>
+            <tr><td>#21</td><td>缺乏批量发布</td></tr>
+            <tr><td>#22</td><td>工作区同步</td></tr>
+            <tr><td>#24</td><td>文件状态标记</td></tr>
+            <tr><td>#25</td><td>同名提交失败</td></tr>
+        </tbody></table>
     </div>
 
     <div class="highlight highlight-blue">
-        <strong>建议推动策略：</strong>P0 问题需在当前迭代中明确解决时间线并跟踪；P1 问题可并行推进；P2/P3 问题作为中长期改善项持续跟进。
+        <strong>推动策略：</strong>P0 必须在第一个客户上线节点前解决；P1 在首批用户推广前解决；P2/P3 作为 Build 产品持续迭代目标。
     </div>
 </div>
 

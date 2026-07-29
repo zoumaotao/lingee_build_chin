@@ -1064,7 +1064,7 @@
         <tr><td>工单转派</td><td>新处理人</td><td>转派通知 + 工单卡片</td></tr>
     </table>
     <div class="highlight highlight-red">
-        <strong>标品差距：</strong>灵基当前不具备平台级消息中心能力。"MCP Server 自定义格式消息推送"本质上需要的就是这一层。这是灵基从"对话工具"升级为"工作台"的关键基础设施。
+        <strong>标品差距（对应问题清单 #31）：</strong>灵基当前不具备统一的平台级消息与事件能力。已连接的 MCP Server 或后台应用无法主动向指定灵基用户/智能体投递自定义格式消息。这是灵基从“对话工具”升级为“工作台”的关键基础设施缺口。
     </div>
 
     <h3>4.5 后台工单服务（MCP Server）</h3>
@@ -1187,7 +1187,7 @@
         <tr><td>知识权限管控</td><td>❌ 存在越权</td><td>#9 检索越权</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>应用部署（非 ERP 用户可用）</td><td>❌ 仅支持苍穹</td><td>#10 部署强绑苍穹<br>#20 实例创建依赖苍穹</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>多语言（海外客户）</td><td>❌ 多处 Bug</td><td>#12-#15 翻译错误/AI 中英夹杂/语言切换</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>消息中心（双向推送）</td><td>❌ 不支持</td><td>标品无此能力（项目计划书 4.4 节）</td><td><span class="tag tag-p0">P0</span></td></tr>
+        <tr><td>消息中心（MCP 主动推送）</td><td>❌ 仅支持灵基发起的请求—响应调用，缺少后台主动事件通道</td><td>#31 MCP Server 无法主动推送自定义格式消息</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>SSO 身份打通</td><td>⚠️ 计划中</td><td>灵基用户无 ERP 账号，SSO 方案需重新考虑</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>开发效率（端到端）</td><td>❌ 完全断裂</td><td>#28 端到端流程断裂<br>#16 测试需先上线<br>#17 同名覆盖<br>#19 无版本管理</td><td><span class="tag tag-p2">P2</span></td></tr>
         <tr><td>团队协作</td><td>❌ 不支持</td><td>#30 无多人协同机制<br>#29 状态检测 Bug</td><td><span class="tag tag-p2">P2</span></td></tr>
@@ -1201,8 +1201,8 @@
         <ol>
             <li><strong>#1</strong> MCP APPS 支持租户级自定义开发与发布</li>
             <li><strong>#2 / #2b</strong> APPS 卡片内容作为上下文 + 精简传递机制</li>
-            <li><strong>#10 / #20</strong> 应用部署支持非苍穹环境，解除苍穹强依赖</li>
-            <li><strong>消息中心</strong> 灵基平台级消息推送能力（工单分配/答复/告警等双向推送）</li>
+            <li><strong>#10</strong> Build 应用支持部署到非苍穹环境，解除对苍穹身份与许可的强依赖</li>
+            <li><strong>#31</strong> 灵基平台消息与事件能力（MCP Server 主动推送、路由、自定义卡片、可靠投递）</li>
         </ol>
     </div>
     <div class="highlight highlight-yellow">
