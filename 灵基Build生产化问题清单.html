@@ -66,7 +66,7 @@
     <a href="#overview" class="nav-link"><span class="num">01</span>总览</a>
     <a href="#apps" class="nav-link"><span class="num">02</span>MCP APPS（8项）</a>
     <a href="#dc" class="nav-link"><span class="num">03</span>DC 知识（5项）</a>
-    <a href="#deploy" class="nav-link"><span class="num">04</span>待讨论（1项）</a>
+    <a href="#deploy" class="nav-link"><span class="num">04</span>待讨论（2项）</a>
     <a href="#message" class="nav-link"><span class="num">05</span>消息与事件（1项）</a>
     <a href="#i18n" class="nav-link"><span class="num">06</span>国际化（4项）</a>
     <a href="#devops" class="nav-link"><span class="num">07</span>开发范式（15项）</a>
@@ -85,7 +85,7 @@
 <div class="section" id="overview">
     <h2>01 问题总览</h2>
     <div class="stats">
-        <div class="stat-item severe"><div class="stat-value">36</div><div class="stat-label">问题总数</div></div>
+        <div class="stat-item severe"><div class="stat-value">37</div><div class="stat-label">问题总数</div></div>
         <div class="stat-item severe"><div class="stat-value">4</div><div class="stat-label">P0 阻塞上线</div></div>
         <div class="stat-item moderate"><div class="stat-value">2</div><div class="stat-label">已解决</div></div>
         <div class="stat-item severe"><div class="stat-value">34</div><div class="stat-label">待解决</div></div>
@@ -95,7 +95,7 @@
         <tbody>
             <tr><td>MCP APPS</td><td>#1–#6, #32</td><td>8 项</td><td>交互层能力不足，无法支撑生产级场景</td></tr>
             <tr><td>DC 知识平台</td><td>#7–#9</td><td>5 项</td><td>权限 / 写入 / 智能体沉淀 / 外部拉取</td></tr>
-            <tr><td>待讨论</td><td>#10</td><td>1 项</td><td>部署绑定苍穹（需先确认灵基自身托管规划）</td></tr>
+            <tr><td>待讨论</td><td>#10, #34</td><td>2 项</td><td>部署绑定苍穹；苍穹二开应用无法透出 MCP</td></tr>
             <tr><td>消息与事件</td><td>#31</td><td>1 项</td><td>MCP 无主动推送 / 缺事件驱动</td></tr>
             <tr><td>国际化</td><td>#12–#15</td><td>4 项</td><td>翻译错误 / AI 语言不遵循配置</td></tr>
             <tr><td>开发范式</td><td>#16–#25, #28–#30, #33, #11</td><td>15 项</td><td>端到端断裂 / APPS 开发割裂 / 无版本管理 / 无协同</td></tr>
@@ -145,9 +145,11 @@
 
 <!-- ===== 04 待讨论 ===== -->
 <div class="section" id="deploy">
-    <h2>04 待讨论（1 项）</h2>
+    <h2>04 待讨论（2 项）</h2>
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#10</span>Build 开发的应用仅支持部署到苍穹</span><span class="tag tag-p0">待讨论</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 开发的后端应用只能托管到苍穹平台，而苍穹有独立的许可体系和账号体系。灵基用户（多数非 ERP 用户）没有苍穹账号，无法访问部署在苍穹上的应用</dd><dt>应有能力</dt><dd>Build 应支持将应用部署到多种目标环境：苍穹（现有）/ 灵基自身轻量级应用托管 / 客户自有云服务器。应用身份验证应直接基于灵基用户体系，不强制依赖苍穹身份</dd><dt>为什么是标品问题</dt><dd>灵基的目标用户群远大于 ERP 用户群。Build 应用只能跑在苍穹上 = 使用者必须有苍穹身份 = 灵基适用场景被限制在 ERP 用户圈内</dd><dt>待讨论</dt><dd>需先确认：灵基应用托管能力是否已在规划中？苍穹绑定是否有架构层面的必要性？确认后再定优先级</dd></div></div>
+
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#34</span>苍穹不支持客户二开应用透出 MCP Server 供灵基调用</span><span class="tag tag-p0">待讨论</span></div><div class="issue-card-body"><dt>现状</dt><dd>客户在苍穹上有二次开发的业务应用（自定义接口），但苍穹不支持将这些接口暴露为 MCP Server。灵基智能体只能连接标品预置的 MCP，无法调用客户在苍穹上已有的业务能力</dd><dt>应有能力</dt><dd>苍穹应支持客户将二开接口注册/透出为标准 MCP Server，使灵基智能体可直接连接调用。或灵基侧提供适配网关对接苍穹非 MCP 接口并转换为 MCP 协议</dd><dt>为什么是标品问题</dt><dd>大量企业客户在苍穹上已有定制化业务应用。这些已有能力无法被灵基调用 = 客户要么重新开发（重复建设），要么放弃智能体连接已有业务——两者都不可接受</dd><dt>待讨论</dt><dd>推动方向需确认：① 苍穹提供"自定义 MCP 透出"？② 灵基提供"苍穹接口→MCP"适配网关？③ 两者结合？</dd></div></div>
 </div>
 
 <!-- ===== 05 消息与多模态 ===== -->
