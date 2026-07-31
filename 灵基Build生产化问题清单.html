@@ -111,7 +111,7 @@
 <div class="section" id="apps">
     <h2>02 MCP APPS 平台能力（9 项）</h2>
 
-    <div class="issue-card critical"><div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1</span>APPS 自定义开发能力未对租户开放（规范已有但未公开）</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>APPS 自定义开发规范（dev-guide）、工程模板（demo.zip）、上传机制（KDManage 业务组件）均已存在且内部实施方在使用，但未对租户/客户开放自助操作</dd><dt>应有能力</dt><dd>① 公开开发规范文档和工程模板；② 提供版本化 SDK 和 API 参考；③ 明确组件能力边界、安全约束和审核机制</dd><dt>为什么是标品问题</dt><dd>能力已有却不开放 = 客户只能依赖金蝶实施方代做 = 不可规模化。关联：#1b（上传入口）、#33（Build 中开发）</dd></div></div>
+    <div class="issue-card critical"><div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1</span>APPS 自定义开发能力未对租户开放（规范已有但未公开）</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>APPS 自定义开发规范（dev-guide）、工程模板（demo.zip）、上传机制（KDManage 业务组件）均已存在且内部在使用，但未对租户/客户开放</dd><dt>应有能力</dt><dd>① 公开开发规范文档和工程模板；② 提供版本化 SDK 和 API 参考；③ 明确组件能力边界、安全约束和审核机制</dd><dt>为什么是标品问题</dt><dd>能力已有但未开放 = 客户只能依赖金蝶标品代做 = 不可规模化。关联：#1b（上传入口）、#33（Build 中开发）</dd></div></div>
 
     <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1b</span>Console/KDManage 自定义组件上传入口未对租户开放</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>自定义 APPS 组件的上传/注册通过 KDManage"业务组件"功能完成，但该入口仅内部人员可操作，租户无法自助上传</dd><dt>应有能力</dt><dd>① 对租户开放组件上传入口；② 支持组件版本管理（上传新版/回滚）；③ 支持审核机制（上传后审核通过才可用）；④ 支持启用/停用/下架管理</dd><dt>为什么是标品问题</dt><dd>上传能力已存在但未开放 = 客户每次组件变更都要走内部流程 = 不可持续。开放后才能形成"开发→上传→使用"的自助闭环</dd></div></div>
 
