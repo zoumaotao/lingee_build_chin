@@ -64,14 +64,15 @@
     <a href="index.html" class="sidebar-back">← 返回项目计划书</a>
     <div class="sidebar-title">问题清单</div>
     <a href="#overview" class="nav-link"><span class="num">01</span>总览</a>
-    <a href="#apps" class="nav-link"><span class="num">02</span>MCP APPS（9项）</a>
-    <a href="#dc" class="nav-link"><span class="num">03</span>DC 知识（5项）</a>
-    <a href="#deploy" class="nav-link"><span class="num">04</span>待讨论（2项）</a>
-    <a href="#message" class="nav-link"><span class="num">05</span>消息与事件（1项）</a>
-    <a href="#i18n" class="nav-link"><span class="num">06</span>国际化（4项）</a>
-    <a href="#devops" class="nav-link"><span class="num">07</span>开发范式（15项）</a>
-    <a href="#model" class="nav-link"><span class="num">08</span>模型稳定性（2项）</a>
-    <a href="#priority" class="nav-link"><span class="num">09</span>优先级建议</a>
+    <a href="#console" class="nav-link"><span class="num">02</span>Console（1项）</a>
+    <a href="#apps" class="nav-link"><span class="num">03</span>MCP APPS（8项）</a>
+    <a href="#dc" class="nav-link"><span class="num">04</span>DC 知识（5项）</a>
+    <a href="#deploy" class="nav-link"><span class="num">05</span>待讨论（2项）</a>
+    <a href="#message" class="nav-link"><span class="num">06</span>消息与事件（1项）</a>
+    <a href="#i18n" class="nav-link"><span class="num">07</span>国际化（4项）</a>
+    <a href="#devops" class="nav-link"><span class="num">08</span>开发范式（15项）</a>
+    <a href="#model" class="nav-link"><span class="num">09</span>模型稳定性（2项）</a>
+    <a href="#priority" class="nav-link"><span class="num">10</span>优先级建议</a>
 </nav>
 
 <div class="container">
@@ -93,7 +94,8 @@
     <table>
         <thead><tr><th>维度</th><th>编号</th><th>数量</th><th>核心缺口</th></tr></thead>
         <tbody>
-            <tr><td>MCP APPS</td><td>#1–#6, #32</td><td>8 项</td><td>交互层能力不足，无法支撑生产级场景</td></tr>
+            <tr><td>Console</td><td>#1b</td><td>1 项</td><td>组件上传入口未对租户开放</td></tr>
+            <tr><td>MCP APPS</td><td>#1, #2–#6, #32</td><td>8 项</td><td>交互层能力未开放、上下文/附件传递不足</td></tr>
             <tr><td>DC 知识平台</td><td>#7–#9</td><td>5 项</td><td>权限 / 写入 / 智能体沉淀 / 外部拉取</td></tr>
             <tr><td>待讨论</td><td>#10, #34</td><td>2 项</td><td>部署绑定苍穹；苍穹二开应用无法透出 MCP</td></tr>
             <tr><td>消息与事件</td><td>#31</td><td>1 项</td><td>MCP 无主动推送 / 缺事件驱动</td></tr>
@@ -107,13 +109,18 @@
     </div>
 </div>
 
-<!-- ===== 02 MCP APPS ===== -->
+<!-- ===== 02 Console ===== -->
+<div class="section" id="console">
+    <h2>02 Console（1 项）</h2>
+
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1b</span>Console 组件上传未对租户开放</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>自定义 APPS 组件的上传/注册通过 KDManage"业务组件"功能完成，但该入口是金蝶管理员可操作，租户无法自助上传自己开发的组件包</dd><dt>应有能力</dt><dd>① 在console对租户开放"业务组件"上传，客户可自助提交组件包<br>② 支持组件版本管理（上传新版/回滚旧版）<br>③ 支持审核机制（上传后审核通过才对智能体可用）<br>④ 支持启用/停用/下架管理</dd><dt>为什么是标品问题</dt><dd>上传能力已存在但未对外开放 = 客户每次组件变更都要走内部流程 = 不可持续。开放后才能形成"开发→上传→使用"的自助闭环。关联：#1（规范开放）、#33（Build 中开发）</dd></div></div>
+</div>
+
+<!-- ===== 03 MCP APPS ===== -->
 <div class="section" id="apps">
-    <h2>02 MCP APPS 平台能力（9 项）</h2>
+    <h2>03 MCP APPS 平台能力（8 项）</h2>
 
-    <div class="issue-card critical"><div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1</span>APPS 自定义开发能力未对租户开放（规范已有但未公开）</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>APPS 自定义开发规范（dev-guide）、工程模板（demo.zip）、上传机制（KDManage 业务组件）均已存在且内部在使用，但未对租户/客户开放</dd><dt>应有能力</dt><dd>① 公开开发规范文档和工程模板；② 提供版本化 SDK 和 API 参考；③ 明确组件能力边界、安全约束和审核机制</dd><dt>为什么是标品问题</dt><dd>能力已有但未开放 = 客户只能依赖金蝶标品代做 = 不可规模化。关联：#1b（上传入口）、#33（Build 中开发）</dd></div></div>
-
-    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1b</span>Console/KDManage 自定义组件上传入口未对租户开放</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>自定义 APPS 组件的上传/注册通过 KDManage"业务组件"功能完成，但该入口仅内部人员可操作，租户无法自助上传</dd><dt>应有能力</dt><dd>① 对租户开放组件上传入口；② 支持组件版本管理（上传新版/回滚）；③ 支持审核机制（上传后审核通过才可用）；④ 支持启用/停用/下架管理</dd><dt>为什么是标品问题</dt><dd>上传能力已存在但未开放 = 客户每次组件变更都要走内部流程 = 不可持续。开放后才能形成"开发→上传→使用"的自助闭环</dd></div></div>
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1</span>APPS 自定义开发能力未对租户开放（规范已有但未公开）</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>APPS 自定义开发规范（dev-guide）、工程模板（demo.zip）、上传机制（KDManage 业务组件）均已存在且内部在使用，但未对租户/客户开放</dd><dt>应有能力</dt><dd>① 公开开发规范文档和工程模板；② 提供版本化 SDK 和 API 参考；③ 明确组件能力边界、安全约束和审核机制</dd><dt>为什么是标品问题</dt><dd>能力已有但未开放 = 客户只能依赖金蝶实施方代做 = 不可规模化。关联：#1b（Console 上传入口）、#33（Build 中开发）</dd></div></div>
 
     <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#2</span>APPS 卡片中用户填写的内容不作为 LLM 上下文</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户在 APPS 组件（如表单卡片）中填写的内容不会进入 LLM 会话上下文，模型无法感知用户在卡片中填了什么</dd><dt>应有能力</dt><dd>用户在 APPS 中填写/选择/提交的内容应自动纳入 LLM 上下文，让模型能基于这些内容做后续对话（校验、补全、追问缺失字段等）</dd><dt>为什么是标品问题</dt><dd>APPS 是智能体与用户的交互层，卡片操作本质就是"用户输入"。模型感知不到 = APPS 沦为静态表单，失去 AI-Native 交互的意义</dd></div></div>
 
