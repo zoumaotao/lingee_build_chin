@@ -64,7 +64,7 @@
     <a href="index.html" class="sidebar-back">← 返回项目计划书</a>
     <div class="sidebar-title">问题清单</div>
     <a href="#overview" class="nav-link"><span class="num">01</span>总览</a>
-    <a href="#apps" class="nav-link"><span class="num">02</span>MCP APPS（8项）</a>
+    <a href="#apps" class="nav-link"><span class="num">02</span>MCP APPS（9项）</a>
     <a href="#dc" class="nav-link"><span class="num">03</span>DC 知识（5项）</a>
     <a href="#deploy" class="nav-link"><span class="num">04</span>待讨论（2项）</a>
     <a href="#message" class="nav-link"><span class="num">05</span>消息与事件（1项）</a>
@@ -85,7 +85,7 @@
 <div class="section" id="overview">
     <h2>01 问题总览</h2>
     <div class="stats">
-        <div class="stat-item severe"><div class="stat-value">37</div><div class="stat-label">问题总数</div></div>
+        <div class="stat-item severe"><div class="stat-value">38</div><div class="stat-label">问题总数</div></div>
         <div class="stat-item severe"><div class="stat-value">4</div><div class="stat-label">P0 阻塞上线</div></div>
         <div class="stat-item moderate"><div class="stat-value">2</div><div class="stat-label">已解决</div></div>
         <div class="stat-item severe"><div class="stat-value">34</div><div class="stat-label">待解决</div></div>
@@ -109,9 +109,11 @@
 
 <!-- ===== 02 MCP APPS ===== -->
 <div class="section" id="apps">
-    <h2>02 MCP APPS 平台能力（8 项）</h2>
+    <h2>02 MCP APPS 平台能力（9 项）</h2>
 
-    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1</span>APPS 不支持租户级自定义开发与发布上架</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>MCP APPS 仅有标品预置组件，不支持客户/实施方自定义开发并发布到租户。且 APPS 的开发只能在本地 IDE 完成（编码→编译→打包→上传 KDM），不能在 Build 中构建</dd><dt>应有能力</dt><dd>① 开发者基于标准规范自定义 APPS 组件，经测试后发布上架到租户 APPS 市场<br>② APPS 开发应纳入 Build 工具链（或至少与 Build 有自动化衔接），而非完全割裂在本地 IDE</dd><dt>为什么是标品问题</dt><dd>每个企业交互形态不同，标品不可能穷举所有组件。不开放自定义 = 智能体交互天花板极低。同时 APPS 开发游离于 Build 之外 = Build 的"一站式开发"天然缺了交互层这一块</dd></div></div>
+    <div class="issue-card critical"><div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1</span>APPS 自定义开发能力未对租户开放（规范已有但未公开）</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>APPS 自定义开发规范（dev-guide）、工程模板（demo.zip）、上传机制（KDManage 业务组件）均已存在且内部实施方在使用，但未对租户/客户开放自助操作</dd><dt>应有能力</dt><dd>① 公开开发规范文档和工程模板；② 提供版本化 SDK 和 API 参考；③ 明确组件能力边界、安全约束和审核机制</dd><dt>为什么是标品问题</dt><dd>能力已有却不开放 = 客户只能依赖金蝶实施方代做 = 不可规模化。关联：#1b（上传入口）、#33（Build 中开发）</dd></div></div>
+
+    <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#1b</span>Console/KDManage 自定义组件上传入口未对租户开放</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>自定义 APPS 组件的上传/注册通过 KDManage"业务组件"功能完成，但该入口仅内部人员可操作，租户无法自助上传</dd><dt>应有能力</dt><dd>① 对租户开放组件上传入口；② 支持组件版本管理（上传新版/回滚）；③ 支持审核机制（上传后审核通过才可用）；④ 支持启用/停用/下架管理</dd><dt>为什么是标品问题</dt><dd>上传能力已存在但未开放 = 客户每次组件变更都要走内部流程 = 不可持续。开放后才能形成"开发→上传→使用"的自助闭环</dd></div></div>
 
     <div class="issue-card critical"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#2</span>APPS 卡片中用户填写的内容不作为 LLM 上下文</span><span class="tag tag-p0">P0</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户在 APPS 组件（如表单卡片）中填写的内容不会进入 LLM 会话上下文，模型无法感知用户在卡片中填了什么</dd><dt>应有能力</dt><dd>用户在 APPS 中填写/选择/提交的内容应自动纳入 LLM 上下文，让模型能基于这些内容做后续对话（校验、补全、追问缺失字段等）</dd><dt>为什么是标品问题</dt><dd>APPS 是智能体与用户的交互层，卡片操作本质就是"用户输入"。模型感知不到 = APPS 沦为静态表单，失去 AI-Native 交互的意义</dd></div></div>
 
@@ -214,7 +216,7 @@
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#30</span>Build 不支持多人协同开发技能和智能体</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 单人单会话：① 无共享项目空间；② 技能只能聊天传文件；③ 接收方只能"删文件夹再上传"且触发 #29 Bug；④ 无变更合并；⑤ 无协作可见性</dd><dt>应有能力</dt><dd>① 共享项目空间（多人同一套制品）；② 标准技能交付流程（发布到项目/一键拉取）；③ 变更通知；④ 至少支持"分工→集成"模式</dd><dt>为什么是标品问题</dt><dd>任何超过一人做一个简单智能体的项目都需要协同。Build 无协同 = 只能做个人实验，无法支撑团队级项目</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#33</span> 不支持在 Build 中构建和调试MCP APPS</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>MCP APPS 组件的开发必须在本地 IDE 中进行（编码→编译→打包），完成后手动上传到 KDM 平台注册。整个过程与 Build 完全割裂：Build 既不能创建 APPS 项目，也不能调试 APPS 组件，更无法在 Build 中将 APPS 与 Skill/智能体进行联调</dd><dt>应有能力</dt><dd>① Build 应支持 APPS 组件的创建、开发（或至少脚手架生成+本地开发引导）<br>② Build 中应能预览和调试 APPS 组件的渲染效果<br>③ APPS 组件发布后应能在 Build 中直接关联到 Skill/智能体，无需跳转 KDM 手动配置<br>④ 至少：Build 与本地 APPS 开发之间有自动化衔接（如 CLI 工具、热更新调试通道）</dd><dt>为什么是标品问题</dt><dd>APPS 是智能体与用户交互的核心层，但其开发与 Build 完全割裂 = Build 号称的"一站式开发"天然缺了交互层。开发者被迫在 Build（Skill/智能体）和本地 IDE（APPS）之间反复切换，这是 #28 端到端断裂在 APPS 维度的具体表现</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#33</span> 不支持在 Build 中构建和调试MCP APPS</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>MCP APPS 组件的开发必须在本地 IDE 中进行（编码→编译→打包），完成后手动上传到 KDM 平台注册。整个过程与 Build 完全割裂：Build 既不能创建 APPS 项目，也不能调试 APPS 组件，更无法在 Build 中将 APPS 与 Skill/智能体进行联调</dd><dt>应有能力</dt><dd>① Build 应支持 APPS 组件的创建、开发（或至少脚手架生成+本地开发引导）<br>② Build 中应能预览和调试 APPS 组件的渲染效果<br>③ APPS 组件发布后应能在 Build 中直接关联到 Skill/智能体，无需跳转 KDM 手动配置<br>④ 至少：Build 与本地 APPS 开发之间有自动化衔接（如 CLI 工具、热更新调试通道）</dd><dt>为什么是标品问题</dt><dd>APPS 是智能体与用户交互的核心层，但其开发与 Build 完全割裂 = Build 号称的"一站式开发"天然缺了交互层。开发者被迫在 Build（Skill/智能体）和本地 IDE（APPS）之间反复切换，这是 #28 端到端断裂在 APPS 维度的具体表现。关联：#1（规范开放）、#1b（上传入口）、本条（Build 中开发）三者需拉通</dd></div></div>
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#11</span>应用开发要求过多不相关文件权限</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 中开发应用时系统要求授予大量与当前开发任务不相关的文件权限</dd><dt>应有能力</dt><dd>最小权限原则，仅请求必需资源，权限用途有清晰说明</dd><dt>为什么是标品问题</dt><dd>违反安全原则，企业客户会触发安全审批流程、拖慢交付</dd></div></div>
 </div>
