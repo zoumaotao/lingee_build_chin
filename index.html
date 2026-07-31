@@ -573,9 +573,9 @@
       <!-- 外部应用 → Work (推送) -->
       <line x1="670" y1="165" x2="640" y2="165" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrowhead)" stroke-dasharray="4"/>
 
-      <!-- DC → 外部数据源 -->
+      <!-- DC → 外部数据源 
       <line x1="300" y1="245" x2="670" y2="310" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
-      <text x="480" y="268" font-size="8" fill="#6b7280" text-anchor="middle">数据同步</text>
+      <text x="480" y="268" font-size="8" fill="#6b7280" text-anchor="middle">数据同步</text>-->
 
       <!-- 外部应用 → DC (知识回写) -->
       <path d="M 670 210 L 350 210 L 350 235" fill="none" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
@@ -833,17 +833,17 @@
       <!-- ===== 知识输入层 ===== -->
       <!-- 路径1: 手动上传 -->
       <rect x="230" y="50" width="180" height="50" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
-      <text x="320" y="72" font-size="10" fill="#92400e" text-anchor="middle" font-weight="600">① 手动上传</text>
-      <text x="320" y="88" font-size="8" fill="#6b7280" text-anchor="middle">IT 域 PDF 20-25 份</text>
+      <text x="320" y="72" font-size="10" fill="#92400e" text-anchor="middle" font-weight="600">① 从Sharepoint下载后手动上传</text>
+      <text x="320" y="88" font-size="8" fill="#6b7280" text-anchor="middle">政策类20-25份（PDF）</text>
       <rect x="233" y="103" width="50" height="14" rx="3" fill="#fef3c7" stroke="#f59e0b"/>
       <text x="258" y="113" font-size="7" fill="#92400e" text-anchor="middle">Phase 1</text>
 
-      <!-- 路径2: SharePoint同步 -->
+      <!-- 路径2: SharePoint同步
       <rect x="450" y="50" width="180" height="50" rx="8" fill="white" stroke="#fb7185" stroke-width="1.5"/>
       <text x="540" y="72" font-size="10" fill="#9f1239" text-anchor="middle" font-weight="600">② SharePoint 增量同步</text>
       <text x="540" y="88" font-size="8" fill="#6b7280" text-anchor="middle">MCP 自动拉取 · 推拉结合</text>
       <rect x="453" y="103" width="50" height="14" rx="3" fill="#fff1f2" stroke="#fb7185"/>
-      <text x="478" y="113" font-size="7" fill="#9f1239" text-anchor="middle">Phase 3</text>
+      <text x="478" y="113" font-size="7" fill="#9f1239" text-anchor="middle">Phase 3</text> -->
 
       <!-- 路径3: 工单沉淀 -->
       <rect x="670" y="50" width="180" height="50" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
@@ -972,9 +972,9 @@
     </div>
 
     <h3>3.5 知识流转说明</h3>
-    <p>短期（1.0）：手动上传 IT 域文档（20-25 份 PDF）到 DC，完成知识初始化<br>
+    <p>短期（1.0）：手动上传政策类文档（20-25 份 PDF）到 DC，完成知识初始化<br>
     中期（2.0）：扩展 HR/行政/财务文档，知识回写机制上线（工单处理→新知识入库）<br>
-    长期（3.0）：SharePoint MCP 自动增量同步，知识飞轮自动运转，新知识可选归档回 SharePoint</p>
+    <!--长期（3.0）：SharePoint MCP 自动增量同步，知识飞轮自动运转，新知识可选归档回 SharePoint</p>-->
 </div>
 
 <!-- Section 4: 功能架构 -->
@@ -1442,7 +1442,7 @@
         <tr><td>10</td><td>处理人完全迁入灵基</td><td>处理人全部操作（接单/查看/答复/转派/统计）均在灵基完成，无需切换到苍穹后台</td></tr>
     </table>
 
-    <h3>10.3 SharePoint 同步验收标准</h3>
+    <!--<h3>10.3 SharePoint 同步验收标准</h3>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
         <tr><td>1</td><td>安全方案评审</td><td>数据传输和存储的安全方案通过客户 Cyber Security Director 评审</td></tr>
@@ -1452,7 +1452,7 @@
         <tr><td>5</td><td>权限继承</td><td>知识检索继承 SharePoint 的文档权限体系，用户只能检索到自己有权限的文档内容</td></tr>
         <tr><td>6</td><td>知识回写</td><td>工单处理结论可通过 API 自动写入智能体知识库，后续相同问题可直接命中新知识</td></tr>
         <tr><td>7</td><td>测试样例通过</td><td>客户提供的测试样例（具体问题→期望答案）通过验证</td></tr>
-    </table>
+    </table>-->
 </div>
 
 </div><!-- end container -->
