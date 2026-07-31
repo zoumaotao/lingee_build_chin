@@ -1185,7 +1185,8 @@
         <tr><th>项目需求</th><th>灵基标品现状</th><th>差距（问题清单编号）</th><th>优先级</th></tr>
         <tr><td>交互式卡片（自定义表单/工单卡）</td><td>⚠️ 仅标品预置组件</td><td>#1 不支持租户级自定义 APPS</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>APPS 数据传递给 LLM</td><td>⚠️ 卡片填写内容不入上下文</td><td>#2 卡片内容不作为上下文<br>#2b 全量消息无精简机制</td><td><span class="tag tag-p0">P0</span></td></tr>
-        <tr><td>APPS 渲染稳定性</td><td>❌ 偶发白屏/不回显</td><td>#3 渲染性能差<br>#4 提交后不回显</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>APPS 渲染稳定性</td><td>❌ 偶发白屏/不回显</td><td>#3 渲染性能差<br>#4 提交后用户手填内容不回显</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>APPS 操作对话附件（图片/文件）</td><td>❌ 不支持</td><td>#32 APPS 无法从上下文获取附件、无法展示/管理附件、无法随表单传递</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>Agent 感知 APPS 逻辑</td><td>❌ 仅知入参出参</td><td>#6 无结构化能力描述</td><td><span class="tag tag-p3">P3</span></td></tr>
         <tr><td>DC 海外可用</td><td>✅ 已完成</td><td>#7 已解决</td><td>—</td></tr>
         <tr><td>知识回写（知识飞轮）</td><td>❌ 无写入 API</td><td>#8 DC 不支持第三方写入</td><td><span class="tag tag-p1">P1</span></td></tr>
@@ -1216,6 +1217,7 @@
             <li><strong>#8</strong> DC 知识回写 API（知识飞轮基础）</li>
             <li><strong>#9</strong> 知识检索权限管控（安全底线）</li>
             <li><strong>#3 / #4</strong> APPS 渲染稳定性 + 提交内容回显</li>
+            <li><strong>#32</strong> APPS 操作对话附件能力（截图+描述→提单场景）</li>
             <li><strong>#12-#15</strong> 多语言 Bug 修复</li>
             <li><strong>SSO</strong> 灵基→苍穹身份方案（需考虑非 ERP 用户）</li>
         </ol>
