@@ -141,7 +141,64 @@ tbody tr:hover{background:#f8fafc}
 
 <!-- Section 3: User Experience -->
 <div class="section">
-<h2 class="section-title">三、用户体验设计（用户视角）</h2>
+<h2 class="section-title">三、角色定义</h2>
+<table>
+<thead><tr><th>角色</th><th>说明</th><th>典型操作</th></tr></thead>
+<tbody>
+<tr><td><strong>APPS 组件开发者</strong></td><td>编写 MCP APPS 前端代码的人</td><td>创建 APPS 项目、编码、调试、打包、上传</td></tr>
+<tr><td><strong>智能体/技能开发者</strong></td><td>在 Build 中构建智能体和 Skill 的人</td><td>编排 Skill 引用 APPS 组件、联调测试</td></tr>
+<tr><td><strong>运营管理员</strong></td><td>在 Console（TManage）中管理组件的人</td><td>审核上架、启用/停用、版本管理</td></tr>
+</tbody>
+</table>
+<div class="info-box">实际项目中，APPS 开发者和智能体开发者可能是同一个人（如振兴 HelpDesk 项目）。方案需支持"一个人在 Build 中同时做 APPS + Skill + 智能体"的场景。</div>
+</div>
+
+<!-- Section 4: Lifecycle -->
+<div class="section">
+<h2 class="section-title">四、组件生命周期状态流转</h2>
+<div class="diagram">
+<svg width="880" height="260" viewBox="0 0 880 260" xmlns="http://www.w3.org/2000/svg">
+<rect x="30" y="20" width="220" height="220" rx="12" fill="#e1effe" stroke="#1a56db" stroke-width="1.5"/>
+<text x="140" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="#1a56db">Build</text>
+<rect x="70" y="70" width="140" height="44" rx="8" fill="#1a56db"/>
+<text x="140" y="97" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">开发中</text>
+<rect x="70" y="150" width="140" height="44" rx="8" fill="var(--purple)"/>
+<text x="140" y="177" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">Skill 引用该组件</text>
+<rect x="310" y="20" width="220" height="220" rx="12" fill="var(--secondary-light)" stroke="#059669" stroke-width="1.5"/>
+<text x="420" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="#059669">Console</text>
+<rect x="340" y="75" width="160" height="36" rx="6" fill="#d97706"/>
+<text x="420" y="98" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">待审核</text>
+<rect x="340" y="130" width="160" height="36" rx="6" fill="#059669"/>
+<text x="420" y="153" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">已上架</text>
+<path d="M420 111 L420 128" stroke="#059669" stroke-width="1.5" marker-end="url(#ag)"/>
+<rect x="590" y="20" width="220" height="220" rx="12" fill="var(--warning-light)" stroke="#d97706" stroke-width="1.5"/>
+<text x="700" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="#d97706">Work</text>
+<rect x="620" y="100" width="160" height="44" rx="8" fill="#d97706"/>
+<text x="700" y="120" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">运行时加载</text>
+<text x="700" y="136" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="9">渲染 APPS 组件</text>
+<!-- Arrows -->
+<path d="M250 92 L308 92" stroke="#1a56db" stroke-width="2" marker-end="url(#ab)"/>
+<text x="279" y="84" text-anchor="middle" font-size="9" fill="#1a56db" font-weight="600">提交</text>
+<path d="M308 172 L250 172" stroke="#059669" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#ab)"/>
+<text x="279" y="164" text-anchor="middle" font-size="9" fill="#059669" font-weight="600">拉取列表</text>
+<path d="M530 148 L588 122" stroke="#d97706" stroke-width="2" marker-end="url(#ab)"/>
+<text x="559" y="128" text-anchor="middle" font-size="9" fill="#d97706" font-weight="600">加载</text>
+</svg>
+</div>
+<table>
+<thead><tr><th>状态</th><th>位置</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>开发中</strong></td><td>Build</td><td>APPS 正在开发或修改中，尚未提交</td></tr>
+<tr><td><strong>待审核</strong></td><td>Console</td><td>已提交到生产 Console，等待管理员审核</td></tr>
+<tr><td><strong>已上架</strong></td><td>Console</td><td>审核通过，可被 Skill/智能体引用</td></tr>
+<tr><td><strong>运行时加载</strong></td><td>Work</td><td>智能体对话中渲染该 APPS 组件</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 5: User Experience -->
+<div class="section">
+<h2 class="section-title">五、用户体验设计（用户视角）</h2>
 <h3 class="section-subtitle">3.1 整体开发流程</h3>
 <div class="diagram">
 <svg width="700" height="580" viewBox="0 0 700 580" xmlns="http://www.w3.org/2000/svg">
@@ -224,7 +281,7 @@ tbody tr:hover{background:#f8fafc}
 
 <!-- Section 4: Internal Design -->
 <div class="section">
-<h2 class="section-title">四、Build 内部能力设计（平台视角）</h2>
+<h2 class="section-title">六、Build 内部能力设计（平台视角）</h2>
 <h3 class="section-subtitle">4.1 支撑 MCP APPS 开发所需的 Skill</h3>
 <table>
 <thead><tr><th>Skill 名称</th><th>职责</th><th>触发时机</th></tr></thead>
@@ -279,7 +336,7 @@ tbody tr:hover{background:#f8fafc}
 
 <!-- Section 5: E2E Flow -->
 <div class="section">
-<h2 class="section-title">五、端到端流程设计</h2>
+<h2 class="section-title">七、端到端流程设计</h2>
 <h3 class="section-subtitle">5.1 目标流程全景</h3>
 <div class="diagram">
 <svg width="880" height="340" viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg">
@@ -368,7 +425,7 @@ tbody tr:hover{background:#f8fafc}
 
 <!-- Section 6: Project Structure -->
 <div class="section">
-<h2 class="section-title">六、APPS 项目结构与规范</h2>
+<h2 class="section-title">八、APPS 项目结构与规范</h2>
 
 <h3 class="section-subtitle">6.1 项目文件结构</h3>
 <p style="margin-bottom:12px;color:var(--text-light)">在 Build 中创建 MCP APPS 项目时，自动生成以下标准结构：</p>
@@ -422,7 +479,7 @@ Call the MCP tool `{appCode}` with the following arguments:
 
 <!-- Section 7: System Requirements -->
 <div class="section">
-<h2 class="section-title">七、各系统能力要求</h2>
+<h2 class="section-title">九、各系统能力要求</h2>
 <h3 class="section-subtitle">7.1 Build 侧</h3>
 <table>
 <thead><tr><th>#</th><th>能力</th><th>说明</th><th>本质</th><th>优先级</th></tr></thead>
@@ -457,9 +514,52 @@ Call the MCP tool `{appCode}` with the following arguments:
 </table>
 </div>
 
-<!-- Section 10: Risks -->
+<!-- Section 10: Compatibility -->
 <div class="section">
-<h2 class="section-title">十、风险与待确认项</h2>
+<h2 class="section-title">十、与现有机制的兼容</h2>
+<table>
+<thead><tr><th>现有机制</th><th>方案兼容策略</th></tr></thead>
+<tbody>
+<tr><td>本地 IDE 开发 + zip 上传</td><td>继续支持。Build 只是新增了一条"对话即开发"路径，不取代本地开发方式</td></tr>
+<tr><td>KDManage 上传</td><td>KDManage 作为金蝶内部管理工具继续存在。Console 是面向租户的开放入口</td></tr>
+<tr><td>lg_mcpapp_cdn 本地调试</td><td>Build 的预览功能内置了类似机制，无需手动加 URL 参数</td></tr>
+<tr><td>info.json 规范</td><td>完全复用现有规范，Build 只是通过对话辅助生成和编辑</td></tr>
+<tr><td>@modelcontextprotocol/ext-apps SDK</td><td>完全复用，Build 项目模板中直接引入</td></tr>
+<tr><td>SKILL.md 格式</td><td>完全复用，Build 在生成 APPS 时自动生成配套 SKILL.md</td></tr>
+<tr><td>现有已上架组件</td><td>不受影响，Console 组件仓库中的已有组件继续可用</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 11: Task Breakdown -->
+<div class="section">
+<h2 class="section-title">十一、任务拆解</h2>
+<table>
+<thead><tr><th>#</th><th>任务</th><th>归属团队</th><th>前置依赖</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Console 提供组件上传 API（接收 zip + 注册）</td><td>Console/TManage</td><td>—</td></tr>
+<tr><td>2</td><td>Console 提供组件列表查询 API</td><td>Console/TManage</td><td>—</td></tr>
+<tr><td>3</td><td>Console 租户级组件管理界面（上传/审核/版本/上下架）</td><td>Console/TManage</td><td>#1</td></tr>
+<tr><td>4</td><td>MCP APPS 开发规范文档对外公开</td><td>APPS 平台</td><td>—</td></tr>
+<tr><td>5</td><td>SDK 版本化公开发布</td><td>APPS 平台</td><td>—</td></tr>
+<tr><td>6</td><td>Build 新增"MCP 开发"入口 + 模板生成</td><td>Build</td><td>#4, #5</td></tr>
+<tr><td>7</td><td>Build APPS 需求澄清 Skill 开发</td><td>Build</td><td>#6</td></tr>
+<tr><td>8</td><td>Build APPS 代码生成 Skill 开发</td><td>Build</td><td>#6</td></tr>
+<tr><td>9</td><td>Build APPS 代码修改 Skill 开发</td><td>Build</td><td>#8</td></tr>
+<tr><td>10</td><td>Build APPS 预览能力（沙箱 iframe + 模拟 toolInput）</td><td>Build</td><td>#6</td></tr>
+<tr><td>11</td><td>Build APPS 构建打包 Tool（vite build → zip）</td><td>Build</td><td>#6</td></tr>
+<tr><td>12</td><td>Build 一键提交到 Console（调用上传 API）</td><td>Build</td><td>#1, #11</td></tr>
+<tr><td>13</td><td>Build 从 Console 拉取组件列表</td><td>Build</td><td>#2</td></tr>
+<tr><td>14</td><td>Build Skill 中引用 APPS 组件（写入 allowed-tools）</td><td>Build</td><td>#13</td></tr>
+<tr><td>15</td><td>Build 端到端联调测试环境</td><td>Build</td><td>#10, #14</td></tr>
+<tr><td>16</td><td>组件版本管理（Console 侧 + Build 侧展示）</td><td>Console + Build</td><td>#3</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 12: Risks -->
+<div class="section">
+<h2 class="section-title">十二、风险与待确认项</h2>
 <table>
 <thead><tr><th>#</th><th>风险/待确认</th><th>影响</th><th>建议</th></tr></thead>
 <tbody>
@@ -468,9 +568,24 @@ Call the MCP tool `{appCode}` with the following arguments:
 <tr><td>3</td><td>预览是否支持真实 MCP Tool 调用</td><td>预览深度</td><td>分两级：mock预览 + 真实联调</td></tr>
 <tr><td>4</td><td>APPS 引用的 Tool 是否必须已存在</td><td>开发体验</td><td>预览允许mock，提交时校验</td></tr>
 <tr><td>5</td><td>APPS + Skill 发布顺序依赖</td><td>一体化发布</td><td>Build感知依赖，自动先提交APPS</td></tr>
-<tr><td>6</td><td>架构师资源</td><td>规范对齐</td><td>需协调</td></tr>
-<tr><td>7</td><td>对话式代码生成质量</td><td>APPS可靠性</td><td>预览作为质量门禁+模板降低自由度</td></tr>
-<tr><td>8</td><td>多人协作</td><td>编辑冲突</td><td>初期不支持，后续结合版本管理</td></tr>
+<tr><td>6</td><td>对话式代码生成质量</td><td>APPS可靠性</td><td>预览作为质量门禁+模板降低自由度</td></tr>
+<tr><td>7</td><td>多人协作</td><td>编辑冲突</td><td>初期不支持，后续结合版本管理</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Appendix -->
+<div class="section">
+<h2 class="section-title">附录：Console API 能力要求</h2>
+<p style="margin-bottom:16px;color:var(--text-light)">Console 需要提供以下接口能力（具体接口格式由 Console 团队定义）：</p>
+<table>
+<thead><tr><th>#</th><th>能力</th><th>输入</th><th>输出</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>组件上传</strong></td><td>zip 文件 + 租户信息 + 描述</td><td>注册状态（成功/待审核/失败）</td><td>支持首次上传和版本更新</td></tr>
+<tr><td>2</td><td><strong>组件列表查询</strong></td><td>租户 ID + 状态筛选</td><td>组件列表（appCode、名称、描述、版本、状态）</td><td>供 Build 拉取可用组件</td></tr>
+<tr><td>3</td><td><strong>组件版本管理</strong></td><td>appCode + 操作（查看历史/回滚）</td><td>版本列表或操作结果</td><td>支持多版本和回滚</td></tr>
+<tr><td>4</td><td><strong>组件审核状态查询</strong></td><td>appCode</td><td>当前审核状态</td><td>Build 展示提交后的处理进度</td></tr>
+<tr><td>5</td><td><strong>组件启停控制</strong></td><td>appCode + 操作（启用/停用/下架）</td><td>操作结果</td><td>Console 管理界面使用</td></tr>
 </tbody>
 </table>
 </div>
