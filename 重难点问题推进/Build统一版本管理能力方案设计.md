@@ -317,12 +317,46 @@ AI 智能体与传统软件不同，需要额外考虑：
 | 阶段 | 策略 | 用户体验 |
 |------|------|---------|
 | 第一阶段 | **快照式** — 发布时自动记录引用的各依赖的当前版本，回滚时整体回滚 | 用户无感，系统自动处理 |
-| 第二阶段 | **提示式** — 依赖更新时提示"Skill X 有新版本，是否更新引用？" | 用户看到更新提示，自主决策 |
-| 第三阶段 | **锁定式** — 支持手动锁定依赖版本，依赖冲突自动检测 | 类似 npm lock，适合复杂项目 |
+| 第二阶段 | **提示式 + lock 文件** — 每个 Agent 维护一个 `dependencies.lock`（类似 npm 的 package-lock.json），记录所依赖的 Skill/MCP Tool 的精确版本号。依赖有更新时提示"Skill X 有新版本 v1.2.0，是否更新引用？" | 用户看到更新提示，自主决策；lock 文件随制品版本一起管理 |
+| 第三阶段 | **锁定式** — 支持手动锁定依赖版本，依赖冲突自动检测，支持版本范围声明（如 `^1.0.0` 表示兼容 1.x） | 类似 npm lock，适合复杂项目 |
+
+**第二阶段 `dependencies.lock` 结构示例：**
+
+```json
+{
+  "artifactId": "helpdesk-assistant",
+  "artifactType": "agent",
+  "lockedAt": "2026-08-03T14:00:00Z",
+  "dependencies": [
+    {
+      "type": "skill",
+      "id": "create-ticket-skill",
+      "version": "1.1.0",
+      "gitCommitSha": "a1b2c3d4"
+    },
+    {
+      "type": "skill",
+      "id": "knowledge-qa-skill",
+      "version": "2.0.0",
+      "gitCommitSha": "e5f6g7h8"
+    },
+    {
+      "type": "mcpapp",
+      "id": "ticket-confirm-card",
+      "version": "1.0.0"
+    },
+    {
+      "type": "mcptool",
+      "id": "Create_Ticket",
+      "serverVersion": "1.2.0"
+    }
+  ]
+}
+```
 
 **为什么不在第一阶段做强制锁定：**
 - Build 的用户从业务专家到开发者跨度大，"依赖锁定"概念对非技术用户太重
-- 当前制品之间的引用关系是通过 appCode/skillId 松耦合的，天然适合"最新版"模式
+- 当前制品之间的引用关系是通过 appCode/skillId 松耦合的（推断自项目文件中 info.json 的 relateTools 和 SKILL.md 的 allowed-tools 均使用名称/ID 引用而非版本锁定），天然适合"最新版"模式
 - 快照式已经能解决"回滚到某个确定状态"的核心需求
 
 ### 4.7 用户交互设计
@@ -434,7 +468,7 @@ AI 智能体与传统软件不同，需要额外考虑：
 | 通用应用 | 整个应用工程 | 部署环境（容器/CDN） | 需要构建步骤（build），产物较大 |
 | 苍穹应用 | 元数据 + 插件 | 苍穹云部署 | 需兼容苍穹自身的版本管理机制 |
 | MCP APPS | 整个 APPS 项目 | Console 组件仓库 | 需 vite build → zip → 上传，版本由 Console 管理 |
-| MCP Server | 服务端代码 | 部署环境 | 需构建+部署，版本与 API 兼容性关联 |
+| MCP Server | 服务端代码 | 部署环境（容器/K8s） | **双重版本管理**：代码版本（Git 管理源码）+ 服务版本（CI/CD 构建镜像 → 部署运行）。代码版本对应 Git 标签，服务版本对应运行中的 Docker 镜像标签。回滚需同时考虑代码回退和服务重新部署。版本号需遵循 SemVer 规范（主版本=不兼容 API 变更，次版本=向下兼容功能新增，修订号=Bug修复），因为 Agent 作为客户端依赖 MCP Server 的 API 兼容性 |
 
 ---
 
