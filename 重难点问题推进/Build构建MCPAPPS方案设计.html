@@ -1,1232 +1,483 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Build 构建 MCP APPS 方案设计</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #1a56db;
-            --primary-light: #e1effe;
-            --secondary: #059669;
-            --secondary-light: #d1fae5;
-            --warning: #d97706;
-            --warning-light: #fef3c7;
-            --danger: #dc2626;
-            --danger-light: #fee2e2;
-            --bg: #f9fafb;
-            --card-bg: #ffffff;
-            --text: #1f2937;
-            --text-light: #6b7280;
-            --border: #e5e7eb;
-            --radius: 12px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-        }
-
-        body {
-            font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-            font-size: 15px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #1a56db 0%, #7c3aed 100%);
-            color: white;
-            padding: 60px 40px;
-            border-radius: var(--radius);
-            margin-bottom: 40px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.4em;
-            font-weight: 700;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
-        }
-
-        .header .subtitle {
-            font-size: 1.15em;
-            opacity: 0.92;
-            margin-bottom: 20px;
-            font-weight: 400;
-        }
-
-        .header .meta {
-            font-size: 0.88em;
-            opacity: 0.78;
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-
-        .header .meta span {
-            background: rgba(255,255,255,0.15);
-            padding: 4px 14px;
-            border-radius: 20px;
-        }
-
-        /* Sections */
-        .section {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 36px;
-            margin-bottom: 28px;
-            border: 1px solid var(--border);
-        }
-
-        .section-title {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--primary-light);
-        }
-
-        .section-subtitle {
-            font-size: 1.15em;
-            font-weight: 600;
-            color: var(--text);
-            margin: 24px 0 12px;
-        }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 0.92em;
-        }
-
-        thead th {
-            background: var(--primary);
-            color: white;
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        thead th:first-child {
-            border-radius: 8px 0 0 0;
-        }
-
-        thead th:last-child {
-            border-radius: 0 8px 0 0;
-        }
-
-        tbody td {
-            padding: 11px 16px;
-            border-bottom: 1px solid var(--border);
-            vertical-align: top;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        tbody tr:last-child td:first-child {
-            border-radius: 0 0 0 8px;
-        }
-
-        tbody tr:last-child td:last-child {
-            border-radius: 0 0 8px 0;
-        }
-
-        /* Tags */
-        .tag {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.82em;
-            font-weight: 600;
-        }
-
-        .tag-high {
-            background: var(--danger-light);
-            color: var(--danger);
-        }
-
-        .tag-medium {
-            background: var(--warning-light);
-            color: var(--warning);
-        }
-
-        .tag-low {
-            background: var(--secondary-light);
-            color: var(--secondary);
-        }
-
-        /* Highlight box */
-        .highlight-box {
-            background: linear-gradient(135deg, var(--primary-light), #ede9fe);
-            border-left: 4px solid var(--primary);
-            padding: 20px 24px;
-            border-radius: 0 var(--radius) var(--radius) 0;
-            margin: 20px 0;
-            font-weight: 500;
-        }
-
-        .highlight-box strong {
-            color: var(--primary);
-        }
-
-        /* Info box */
-        .info-box {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: var(--radius);
-            padding: 16px 20px;
-            margin: 16px 0;
-            font-size: 0.92em;
-            color: #0369a1;
-        }
-
-        .warning-box {
-            background: var(--warning-light);
-            border: 1px solid #fcd34d;
-            border-radius: var(--radius);
-            padding: 16px 20px;
-            margin: 16px 0;
-            font-size: 0.92em;
-            color: #92400e;
-        }
-
-        /* Code blocks */
-        .code-block {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 20px 24px;
-            border-radius: var(--radius);
-            overflow-x: auto;
-            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
-            font-size: 0.85em;
-            line-height: 1.6;
-            margin: 16px 0;
-        }
-
-        .code-block .comment {
-            color: #94a3b8;
-        }
-
-        .code-block .key {
-            color: #7dd3fc;
-        }
-
-        .code-block .string {
-            color: #86efac;
-        }
-
-        .code-block .keyword {
-            color: #c4b5fd;
-        }
-
-        /* File tree */
-        .file-tree {
-            background: #1e293b;
-            color: #e2e8f0;
-            padding: 20px 24px;
-            border-radius: var(--radius);
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.85em;
-            line-height: 1.8;
-            margin: 16px 0;
-        }
-
-        .file-tree .folder {
-            color: #7dd3fc;
-        }
-
-        .file-tree .file {
-            color: #e2e8f0;
-        }
-
-        .file-tree .arrow {
-            color: #94a3b8;
-        }
-
-        /* SVG diagrams */
-        .diagram-container {
-            margin: 24px 0;
-            overflow-x: auto;
-            text-align: center;
-        }
-
-        .diagram-container svg {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* Print styles */
-        @media print {
-            body {
-                background: white;
-                font-size: 12px;
-            }
-
-            .container {
-                padding: 0;
-                max-width: 100%;
-            }
-
-            .section {
-                box-shadow: none;
-                border: 1px solid #ddd;
-                page-break-inside: avoid;
-            }
-
-            .header {
-                box-shadow: none;
-                padding: 30px 20px;
-            }
-
-            .diagram-container svg {
-                max-width: 100%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 16px;
-            }
-
-            .header {
-                padding: 30px 20px;
-            }
-
-            .header h1 {
-                font-size: 1.6em;
-            }
-
-            .section {
-                padding: 20px;
-            }
-
-            table {
-                font-size: 0.82em;
-            }
-
-            thead th, tbody td {
-                padding: 8px 10px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build 构建 MCP APPS 方案设计</title>
+<style>
+:root{--primary:#1a56db;--primary-light:#e1effe;--secondary:#059669;--secondary-light:#d1fae5;--warning:#d97706;--warning-light:#fef3c7;--danger:#dc2626;--danger-light:#fee2e2;--purple:#7c3aed;--purple-light:#ede9fe;--bg:#f9fafb;--card:#fff;--text:#1f2937;--text-light:#6b7280;--border:#e5e7eb;--radius:12px;--shadow:0 1px 3px rgba(0,0,0,.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+.container{max-width:1100px;margin:0 auto;padding:40px 24px}
+.header{background:linear-gradient(135deg,#1a56db 0%,#7c3aed 100%);color:#fff;padding:60px 40px;border-radius:var(--radius);margin-bottom:40px;text-align:center;box-shadow:0 10px 15px -3px rgba(0,0,0,.1)}
+.header h1{font-size:2.4em;font-weight:700;margin-bottom:12px}
+.header .subtitle{font-size:1.15em;opacity:.92;margin-bottom:20px}
+.header .meta{font-size:.88em;opacity:.78;display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.header .meta span{background:rgba(255,255,255,.15);padding:4px 14px;border-radius:20px}
+.section{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:36px;margin-bottom:28px;border:1px solid var(--border)}
+.section-title{font-size:1.5em;font-weight:700;color:var(--primary);margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid var(--primary-light)}
+.section-subtitle{font-size:1.15em;font-weight:600;color:var(--text);margin:24px 0 12px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92em}
+thead th{background:var(--primary);color:#fff;padding:12px 14px;text-align:left;font-weight:600}
+thead th:first-child{border-radius:8px 0 0 0}
+thead th:last-child{border-radius:0 8px 0 0}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tbody tr:hover{background:#f8fafc}
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.82em;font-weight:600}
+.tag-high{background:var(--danger-light);color:var(--danger)}
+.tag-mid{background:var(--warning-light);color:var(--warning)}
+.tag-low{background:var(--secondary-light);color:var(--secondary)}
+.highlight-box{background:linear-gradient(135deg,var(--primary-light),var(--purple-light));border-left:4px solid var(--primary);padding:20px 24px;border-radius:0 var(--radius) var(--radius) 0;margin:20px 0}
+.highlight-box strong{color:var(--primary)}
+.info-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:var(--radius);padding:16px 20px;margin:16px 0;font-size:.92em;color:#0369a1}
+.warning-box{background:var(--warning-light);border:1px solid #fcd34d;border-radius:var(--radius);padding:16px 20px;margin:16px 0;font-size:.92em;color:#92400e}
+.code-block{background:#1e293b;color:#e2e8f0;padding:20px 24px;border-radius:var(--radius);overflow-x:auto;font-family:'SF Mono','Fira Code',monospace;font-size:.85em;line-height:1.6;margin:16px 0;white-space:pre-wrap}
+.code-block .key{color:#7dd3fc}
+.code-block .str{color:#86efac}
+.code-block .cmt{color:#94a3b8}
+.code-block .kw{color:#c4b5fd}
+.file-tree{background:#1e293b;color:#e2e8f0;padding:20px 24px;border-radius:var(--radius);font-family:'SF Mono',monospace;font-size:.85em;line-height:1.8;margin:16px 0;white-space:pre}
+.file-tree .folder{color:#7dd3fc}
+.file-tree .arrow{color:#94a3b8}
+.diagram{margin:24px 0;overflow-x:auto;text-align:center}
+.diagram svg{max-width:100%;height:auto}
+.chat-example{margin:20px 0;padding:20px;background:#f8fafc;border-radius:var(--radius);border:1px solid var(--border)}
+.chat-example h4{color:var(--primary);margin-bottom:16px;font-size:1em}
+.chat-msg{margin:10px 0;padding:12px 16px;border-radius:12px;max-width:85%;font-size:.9em;line-height:1.6}
+.chat-user{background:var(--primary);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.chat-build{background:#fff;border:1px solid var(--border);color:var(--text);margin-right:auto;border-bottom-left-radius:4px}
+.chat-build code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:.88em}
+.chat-build .code-inline{background:#1e293b;color:#e2e8f0;padding:8px 12px;border-radius:6px;display:block;margin:8px 0;font-family:monospace;font-size:.85em;white-space:pre-wrap}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:16px 0}
+.card{padding:20px;border:1px solid var(--border);border-radius:10px;background:var(--bg)}
+.card-title{font-weight:600;color:var(--text);margin-bottom:8px}
+@media print{body{background:#fff;font-size:12px}.container{padding:0}.section{box-shadow:none;border:1px solid #ddd}.header{box-shadow:none;padding:30px 20px}}
+@media(max-width:768px){.container{padding:16px}.header{padding:30px 20px}.header h1{font-size:1.6em}.section{padding:20px}table{font-size:.82em}.chat-msg{max-width:95%}}
+</style>
 </head>
 <body>
 <div class="container">
 
-    <!-- Header -->
-    <div class="header">
-        <h1>Build 构建 MCP APPS 方案设计</h1>
-        <p class="subtitle">实现从创建→开发→调试→上传→编排→使用的端到端闭环</p>
-        <div class="meta">
-            <span>面向：Build产品团队、Console团队、MCP APPS平台团队</span>
-            <span>状态：方案初稿</span>
-        </div>
-    </div>
-
-    <!-- Section 1: 背景与问题 -->
-    <div class="section">
-        <h2 class="section-title">一、背景与问题</h2>
-
-        <h3 class="section-subtitle">1.1 当前现状流程</h3>
-        <p style="margin-bottom:8px; color:var(--text-light);">MCP APPS 是灵基智能体与用户之间的可视化交互层（对话中嵌入的自定义 UI 卡片），当前开发和使用流程如下：</p>
-
-        <div class="diagram-container">
-            <svg width="900" height="420" viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
-                <!-- Background -->
-                <defs>
-                    <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:#1a56db;stop-opacity:0.08"/>
-                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.08"/>
-                    </linearGradient>
-                    <filter id="dropShadow" x="-5%" y="-5%" width="110%" height="110%">
-                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
-                    </filter>
-                </defs>
-                <rect x="0" y="0" width="900" height="420" rx="12" fill="url(#flowGrad)"/>
-
-                <!-- Step 1 -->
-                <rect x="50" y="30" width="180" height="50" rx="8" fill="#1a56db" filter="url(#dropShadow)"/>
-                <text x="140" y="60" text-anchor="middle" fill="white" font-size="13" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">① 本地 IDE 编码</text>
-                <!-- Arrow -->
-                <path d="M140 80 L140 100" stroke="#1a56db" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
-
-                <!-- Step 2 -->
-                <rect x="50" y="105" width="180" height="50" rx="8" fill="#1a56db" filter="url(#dropShadow)"/>
-                <text x="140" y="128" text-anchor="middle" fill="white" font-size="12" font-family="-apple-system, PingFang SC, sans-serif">② 按规范开发</text>
-                <text x="140" y="145" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">引用 ext-apps SDK</text>
-                <path d="M140 155 L140 175" stroke="#1a56db" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
-
-                <!-- Step 3 -->
-                <rect x="50" y="180" width="180" height="50" rx="8" fill="#1a56db" filter="url(#dropShadow)"/>
-                <text x="140" y="210" text-anchor="middle" fill="white" font-size="13" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">③ vite build 打包</text>
-                <path d="M140 230 L140 250" stroke="#1a56db" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
-
-                <!-- Step 4 -->
-                <rect x="50" y="255" width="180" height="50" rx="8" fill="#d97706" filter="url(#dropShadow)"/>
-                <text x="140" y="285" text-anchor="middle" fill="white" font-size="13" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">④ 压缩为 zip</text>
-                <path d="M230 280 L290 280" stroke="#d97706" stroke-width="2" fill="none" marker-end="url(#arrowOrange)"/>
-
-                <!-- Step 5 -->
-                <rect x="295" y="255" width="220" height="50" rx="8" fill="#dc2626" filter="url(#dropShadow)"/>
-                <text x="405" y="278" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">⑤ KDManage 上传 zip</text>
-                <text x="405" y="295" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">⚠️ 仅金蝶内部人员可操作</text>
-                <path d="M515 280 L565 280" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
-
-                <!-- Step 6 -->
-                <rect x="570" y="255" width="200" height="50" rx="8" fill="#dc2626" filter="url(#dropShadow)"/>
-                <text x="670" y="278" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">⑥ 配置连接器、审核上架</text>
-                <text x="670" y="295" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">⚠️ 多步手工操作</text>
-                <path d="M670 305 L670 330" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
-
-                <!-- Step 7 -->
-                <rect x="570" y="335" width="200" height="50" rx="8" fill="#059669" filter="url(#dropShadow)"/>
-                <text x="670" y="358" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">⑦ Build Skill 引用 →</text>
-                <text x="670" y="375" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">运行时渲染 APPS</text>
-
-                <!-- Pain points -->
-                <rect x="295" y="35" width="280" height="90" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,3"/>
-                <text x="310" y="55" fill="#dc2626" font-size="12" font-weight="700" font-family="-apple-system, PingFang SC, sans-serif">⚠️ 痛点标记</text>
-                <text x="310" y="75" fill="#991b1b" font-size="11" font-family="-apple-system, PingFang SC, sans-serif">• 开发与 Build 割裂，需 5+ 工具切换</text>
-                <text x="310" y="93" fill="#991b1b" font-size="11" font-family="-apple-system, PingFang SC, sans-serif">• 客户无法自助上传，依赖金蝶内部流程</text>
-                <text x="310" y="111" fill="#991b1b" font-size="11" font-family="-apple-system, PingFang SC, sans-serif">• 无版本管理，无法回滚</text>
-
-                <!-- Arrow markers -->
-                <defs>
-                    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#1a56db"/>
-                    </marker>
-                    <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#d97706"/>
-                    </marker>
-                    <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626"/>
-                    </marker>
-                    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
-                    </marker>
-                </defs>
-            </svg>
-        </div>
-
-        <h3 class="section-subtitle">1.2 核心问题</h3>
-        <table>
-            <thead>
-                <tr><th>#</th><th>问题</th><th>影响</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>1</td><td>APPS 开发完全在本地 IDE，与 Build 割裂</td><td>Build 号称"一站式开发"但缺了交互层</td></tr>
-                <tr><td>2</td><td>上传入口在 KDManage（金蝶内部平台），客户无法自助</td><td>每次变更都要走金蝶内部流程</td></tr>
-                <tr><td>3</td><td>Build 中做 Skill/智能体时无法同步做 APPS</td><td>交互层和逻辑层开发完全分离，联调困难</td></tr>
-                <tr><td>4</td><td>开发者需在 5+ 工具间切换</td><td>本地 IDE → KDManage → Build → Console → Work</td></tr>
-                <tr><td>5</td><td>无版本管理</td><td>APPS 组件修改后无法回滚、无法对比</td></tr>
-            </tbody>
-        </table>
-
-        <h3 class="section-subtitle">1.3 目标</h3>
-        <div class="highlight-box">
-            <strong>一句话目标：</strong>开发者在 Build 中就能完成 MCP APPS 的创建、开发、调试、上传、编排和使用——不需要离开 Build 去操作 KDManage，也不需要在本地 IDE 和 Build 之间反复切换。
-        </div>
-    </div>
-
-    <!-- Section 2: MCP APPS 机制介绍 -->
-    <div class="section">
-        <h2 class="section-title">二、MCP APPS 当前机制完整介绍</h2>
-
-        <h3 class="section-subtitle">2.1 什么是 MCP APPS</h3>
-        <p>MCP APPS 是灵基智能体对话中嵌入的<strong>自定义可交互 UI 组件</strong>（如表单卡片、数据列表、图表等）。它运行在沙箱 iframe 中，通过 AppBridge（基于 PostMessage）与宿主（灵基 WebUI）双向通信。</p>
-        <div class="info-box">
-            <strong>核心定位：</strong>智能体与用户之间的"可视化交互层"——让对话不仅有文字，还有结构化的表单、按钮、列表等 UI 形态。
-        </div>
-
-        <h3 class="section-subtitle">2.2 运行时架构</h3>
-        <div class="diagram-container">
-            <svg width="880" height="420" viewBox="0 0 880 420" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="hostGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#1a56db;stop-opacity:0.06"/>
-                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.06"/>
-                    </linearGradient>
-                </defs>
-
-                <!-- Host container -->
-                <rect x="20" y="20" width="840" height="250" rx="12" fill="url(#hostGrad)" stroke="#1a56db" stroke-width="1.5"/>
-                <text x="40" y="50" font-size="14" font-weight="700" fill="#1a56db" font-family="-apple-system, PingFang SC, sans-serif">灵基 WebUI（Host / Client 端）</text>
-
-                <!-- 对话消息流 -->
-                <rect x="50" y="70" width="280" height="180" rx="8" fill="white" stroke="#e5e7eb" stroke-width="1"/>
-                <text x="70" y="95" font-size="12" font-weight="600" fill="#374151" font-family="-apple-system, PingFang SC, sans-serif">对话消息流</text>
-                <rect x="70" y="105" width="240" height="25" rx="4" fill="#f3f4f6"/>
-                <text x="80" y="122" font-size="11" fill="#6b7280" font-family="-apple-system, PingFang SC, sans-serif">📝 文本消息</text>
-                <rect x="70" y="135" width="240" height="25" rx="4" fill="#f3f4f6"/>
-                <text x="80" y="152" font-size="11" fill="#6b7280" font-family="-apple-system, PingFang SC, sans-serif">🤖 AI 回复</text>
-
-                <!-- MCP APPS iframe -->
-                <rect x="70" y="168" width="240" height="60" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
-                <text x="130" y="192" font-size="12" font-weight="600" fill="#5b21b6" font-family="-apple-system, PingFang SC, sans-serif">MCP APPS</text>
-                <text x="130" y="210" font-size="10" fill="#7c3aed" font-family="-apple-system, PingFang SC, sans-serif">（沙箱 iframe）</text>
-
-                <!-- AppBridge -->
-                <rect x="400" y="70" width="280" height="180" rx="8" fill="white" stroke="#059669" stroke-width="1.5"/>
-                <text x="420" y="95" font-size="12" font-weight="700" fill="#059669" font-family="-apple-system, PingFang SC, sans-serif">AppBridge（PostMessage 通信层）</text>
-
-                <!-- Host → App -->
-                <text x="420" y="120" font-size="11" font-weight="600" fill="#1a56db" font-family="-apple-system, PingFang SC, sans-serif">Host → App:</text>
-                <text x="430" y="138" font-size="10" fill="#374151" font-family="SF Mono, monospace">sendToolInput</text>
-                <text x="430" y="154" font-size="10" fill="#374151" font-family="SF Mono, monospace">sendToolResult</text>
-                <text x="430" y="170" font-size="10" fill="#374151" font-family="SF Mono, monospace">sendHostContextChange</text>
-                <text x="430" y="186" font-size="10" fill="#374151" font-family="SF Mono, monospace">sendSandboxResourceReady</text>
-
-                <!-- App → Host -->
-                <text x="570" y="120" font-size="11" font-weight="600" fill="#dc2626" font-family="-apple-system, PingFang SC, sans-serif">App → Host:</text>
-                <text x="580" y="138" font-size="10" fill="#374151" font-family="SF Mono, monospace">oncalltool</text>
-                <text x="580" y="154" font-size="10" fill="#374151" font-family="SF Mono, monospace">onmessage</text>
-                <text x="580" y="170" font-size="10" fill="#374151" font-family="SF Mono, monospace">onsizechange</text>
-                <text x="580" y="186" font-size="10" fill="#374151" font-family="SF Mono, monospace">onupdatemodelcontext</text>
-                <text x="580" y="202" font-size="10" fill="#374151" font-family="SF Mono, monospace">onopenlink / ondownloadfile</text>
-
-                <!-- Bidirectional arrow between message flow and bridge -->
-                <line x1="330" y1="195" x2="398" y2="195" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4,3"/>
-                <polygon points="394,191 402,195 394,199" fill="#7c3aed"/>
-                <polygon points="334,191 326,195 334,199" fill="#7c3aed"/>
-
-                <!-- MCP Server -->
-                <rect x="300" y="310" width="300" height="90" rx="12" fill="#f0fdf4" stroke="#059669" stroke-width="1.5"/>
-                <text x="390" y="340" text-anchor="middle" font-size="14" font-weight="700" fill="#059669" font-family="-apple-system, PingFang SC, sans-serif">MCP Server（后端）</text>
-                <text x="390" y="365" text-anchor="middle" font-size="11" fill="#374151" font-family="-apple-system, PingFang SC, sans-serif">Tool 调用：App 通过 Host 代理调用 MCP Server 中的工具</text>
-                <text x="390" y="385" text-anchor="middle" font-size="10" fill="#6b7280" font-family="SF Mono, monospace">POST /session/{id}/mcp-app/proxy</text>
-
-                <!-- Arrow from Host to MCP Server -->
-                <path d="M450 270 L450 308" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
-                <text x="460" y="292" font-size="10" fill="#6b7280" font-family="-apple-system, PingFang SC, sans-serif">代理调用</text>
-            </svg>
-        </div>
-
-        <h3 class="section-subtitle">2.3 通信能力</h3>
-        <p style="margin-bottom: 8px;"><strong>Host → App（宿主向组件注入数据）：</strong></p>
-        <table>
-            <thead><tr><th>能力</th><th>方法</th><th>说明</th></tr></thead>
-            <tbody>
-                <tr><td>注入工具输入</td><td><code>sendToolInput({ arguments })</code></td><td>将 Skill 调用时的参数传给 App</td></tr>
-                <tr><td>注入工具输出</td><td><code>sendToolResult(result)</code></td><td>将 MCP Tool 执行结果传给 App</td></tr>
-                <tr><td>上下文变更通知</td><td><code>sendHostContextChange(ctx)</code></td><td>通知主题、尺寸、显示模式变化</td></tr>
-                <tr><td>资源就绪</td><td><code>sendSandboxResourceReady({ html })</code></td><td>将 App HTML 注入沙箱 iframe</td></tr>
-            </tbody>
-        </table>
-
-        <p style="margin: 20px 0 8px;"><strong>App → Host（组件向宿主发起请求）：</strong></p>
-        <table>
-            <thead><tr><th>能力</th><th>事件/方法</th><th>说明</th></tr></thead>
-            <tbody>
-                <tr><td>请求调用 MCP Tool</td><td><code>oncalltool({ name, arguments })</code></td><td>App 发起工具调用，Host 代理到后端</td></tr>
-                <tr><td>发送消息给 LLM</td><td><code>onmessage({ content })</code></td><td>App 向大模型发送追问/上下文消息</td></tr>
-                <tr><td>上报尺寸</td><td><code>onsizechange({ height })</code></td><td>通知 Host 内容高度变化</td></tr>
-                <tr><td>切换显示模式</td><td><code>onrequestdisplaymode({ mode })</code></td><td>请求 inline / fullscreen 切换</td></tr>
-                <tr><td>更新模型上下文</td><td><code>onupdatemodelcontext({ structuredContent })</code></td><td>App 向 LLM 上下文写入结构化数据</td></tr>
-                <tr><td>打开链接</td><td><code>onopenlink({ url })</code></td><td>在新窗口打开外部链接</td></tr>
-                <tr><td>下载文件</td><td><code>ondownloadfile({ contents })</code></td><td>请求下载文件</td></tr>
-            </tbody>
-        </table>
-
-        <h3 class="section-subtitle">2.4 组件描述文件 info.json</h3>
-        <div class="code-block"><span class="comment">// 每个 APPS 组件必须包含 info.json，声明组件身份、能力和依赖</span>
-{
-  <span class="key">"cloud"</span>: <span class="string">"zcy"</span>,                          <span class="comment">// 云环境标识</span>
-  <span class="key">"domain"</span>: <span class="string">"kingdee"</span>,                     <span class="comment">// 业务域</span>
-  <span class="key">"appCode"</span>: <span class="string">"zcy_kingdee_mcpapp_test"</span>,    <span class="comment">// 全局唯一编码（同时作为虚拟工具名）</span>
-  <span class="key">"appName"</span>: <span class="string">"mcpapp测试demo"</span>,             <span class="comment">// 组件名称</span>
-  <span class="key">"description"</span>: <span class="string">"..."</span>,
-  <span class="key">"capabilityDescription"</span>: {
-    <span class="key">"support"</span>: <span class="string">"数据报表"</span>,
-    <span class="key">"notSupport"</span>: <span class="string">"表单"</span>
-  },
-  <span class="key">"mcpConnector"</span>: {
-    <span class="key">"type"</span>: <span class="string">"XK"</span>,                          <span class="comment">// 集群连接器类型</span>
-    <span class="key">"code"</span>: <span class="string">"xkmcp_test"</span>                   <span class="comment">// 集群连接器编码</span>
-  },
-  <span class="key">"runMode"</span>: <span class="string">"message"</span>,                    <span class="comment">// 运行模式：message / sidecar</span>
-  <span class="key">"version"</span>: <span class="string">"1.0.0"</span>,
-  <span class="key">"relateTools"</span>: [
-    { <span class="key">"name"</span>: <span class="string">"tool_name"</span>, <span class="key">"writeArtifact"</span>: <span class="string">"false"</span> }
-  ],
-  <span class="key">"entryTool"</span>: {
-    <span class="key">"virtual"</span>: {
-      <span class="key">"inputSchema"</span>: <span class="string">"{ JSON Schema }"</span>,
-      <span class="key">"outputSchema"</span>: <span class="string">"{ JSON Schema }"</span>
-    }
-  }
-}</div>
-
-        <h3 class="section-subtitle">2.5 配套 SKILL.md 示例</h3>
-        <div class="code-block"><span class="keyword">---</span>
-<span class="key">name</span>: mock-mcp-app-demo-xxx
-<span class="key">description</span>: Use this skill to open the managed MCP App xxx.
-<span class="key">allowed-tools</span>:
-- {appCode}
-<span class="keyword">---</span>
-
-<span class="comment"># Mock MCP App Demo</span>
-
-Use this skill when the user asks to ...
-
-Call the MCP tool `{appCode}`</div>
-
-        <h3 class="section-subtitle">2.6 开发技术栈</h3>
-        <table>
-            <thead><tr><th>项</th><th>说明</th></tr></thead>
-            <tbody>
-                <tr><td>前端框架</td><td>React 18（推荐）；也支持 Vue/Svelte</td></tr>
-                <tr><td>SDK</td><td><code>@modelcontextprotocol/ext-apps</code>（npm 包，提供 useApp Hook）</td></tr>
-                <tr><td>构建工具</td><td>Vite 5</td></tr>
-                <tr><td>语言</td><td>TypeScript</td></tr>
-                <tr><td>产物格式</td><td>dist/index.html + 静态资源（js/css/图片）</td></tr>
-                <tr><td>上传格式</td><td>zip（一级目录含 dist/ 和 info.json）</td></tr>
-            </tbody>
-        </table>
-
-        <h3 class="section-subtitle">2.7 本地调试机制</h3>
-        <p>开发者本地启动 dev server 后，通过 URL 参数将 App 资源指向本地：</p>
-        <div class="code-block">https://your-webui.com/session/xxx?<span class="key">lg_mcpapp_cdn</span>=<span class="string">http://localhost:4000</span></div>
-        <div class="info-box">
-            <strong>原理：</strong>Host 加载 App 资源时检查 <code>lg_mcpapp_cdn</code> 参数，如存在则将 CDN 地址替换为该参数值。
-        </div>
-
-        <h3 class="section-subtitle">2.8 当前 KDManage 上架流程</h3>
-        <div class="warning-box">
-            ⚠️ 该入口仅金蝶内部人员可操作，租户/客户无法访问 KDManage。
-        </div>
-        <ol style="padding-left: 20px; margin-top: 12px; line-height: 2.2;">
-            <li>登录 KDManage → 左侧菜单 → 业务组件</li>
-            <li>新建业务组件</li>
-            <li>上传 zip 文件（打包好的 APPS）</li>
-            <li>配置集群连接器</li>
-            <li>关联集群连接器里的 MCP 工具</li>
-            <li>提交保存、审核上架</li>
-        </ol>
-    </div>
-
-    <!-- Section 3: 角色定义 -->
-    <div class="section">
-        <h2 class="section-title">三、角色定义</h2>
-        <table>
-            <thead><tr><th>角色</th><th>说明</th><th>典型操作</th></tr></thead>
-            <tbody>
-                <tr><td><strong>APPS 组件开发者</strong></td><td>编写 MCP APPS 前端代码的人</td><td>创建 APPS 项目、编码、调试、打包、上传</td></tr>
-                <tr><td><strong>智能体/技能开发者</strong></td><td>在 Build 中构建智能体和 Skill 的人</td><td>编排 Skill 引用 APPS 组件、联调测试</td></tr>
-                <tr><td><strong>运营管理员</strong></td><td>在 Console（TManage）中管理组件的人</td><td>审核上架、启用/停用、版本管理</td></tr>
-            </tbody>
-        </table>
-        <div class="info-box">
-            实际项目中，APPS 开发者和智能体开发者可能是同一个人（如振兴 HelpDesk 项目）。方案需支持"一个人在 Build 中同时做 APPS + Skill + 智能体"的场景。
-        </div>
-    </div>
-
-    <!-- Section 4: 端到端流程设计 -->
-    <div class="section">
-        <h2 class="section-title">四、端到端流程设计</h2>
-
-        <h3 class="section-subtitle">3.1 目标流程全景</h3>
-        <div class="diagram-container">
-            <svg width="880" height="480" viewBox="0 0 880 480" xmlns="http://www.w3.org/2000/svg">
-                <!-- Build Layer -->
-                <rect x="20" y="20" width="840" height="200" rx="12" fill="#e1effe" stroke="#1a56db" stroke-width="1.5"/>
-                <text x="50" y="48" font-size="15" font-weight="700" fill="#1a56db" font-family="-apple-system, PingFang SC, sans-serif">灵基 Build</text>
-
-                <!-- APPS track -->
-                <rect x="50" y="60" width="130" height="42" rx="6" fill="#1a56db"/>
-                <text x="115" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">创建 APPS</text>
-                <path d="M180 81 L210 81" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="215" y="60" width="130" height="42" rx="6" fill="#1a56db"/>
-                <text x="280" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">开发 APPS</text>
-                <path d="M345 81 L375 81" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="380" y="60" width="130" height="42" rx="6" fill="#1a56db"/>
-                <text x="445" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">调试 APPS</text>
-                <path d="M510 81 L540 81" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="545" y="60" width="130" height="42" rx="6" fill="#059669"/>
-                <text x="610" y="85" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">提交 APPS</text>
-
-                <!-- Skill track -->
-                <rect x="50" y="125" width="130" height="42" rx="6" fill="#7c3aed"/>
-                <text x="115" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">创建 Skill</text>
-                <path d="M180 146 L210 146" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowPurple)"/>
-
-                <rect x="215" y="125" width="130" height="42" rx="6" fill="#7c3aed"/>
-                <text x="280" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">引用 APPS</text>
-                <path d="M345 146 L375 146" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowPurple)"/>
-
-                <rect x="380" y="125" width="130" height="42" rx="6" fill="#7c3aed"/>
-                <text x="445" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">联调测试</text>
-                <path d="M510 146 L540 146" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowPurple)"/>
-
-                <rect x="545" y="125" width="130" height="42" rx="6" fill="#059669"/>
-                <text x="610" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">提交上线</text>
-
-                <!-- Context label -->
-                <text x="720" y="115" font-size="10" fill="#6b7280" font-family="-apple-system, PingFang SC, sans-serif">同一项目上下文</text>
-
-                <!-- Vertical connection -->
-                <line x1="115" y1="102" x2="115" y2="125" stroke="#6b7280" stroke-width="1" stroke-dasharray="3,2"/>
-
-                <!-- Arrow down to Console -->
-                <path d="M440 220 L440 255" stroke="#059669" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
-
-                <!-- Console Layer -->
-                <rect x="20" y="260" width="840" height="95" rx="12" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-                <text x="50" y="290" font-size="15" font-weight="700" fill="#059669" font-family="-apple-system, PingFang SC, sans-serif">Console（TManage）</text>
-
-                <rect x="80" y="305" width="160" height="36" rx="6" fill="#059669"/>
-                <text x="160" y="328" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">组件仓库</text>
-
-                <rect x="280" y="305" width="160" height="36" rx="6" fill="#059669"/>
-                <text x="360" y="328" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">审核 / 上架</text>
-
-                <rect x="480" y="305" width="160" height="36" rx="6" fill="#059669"/>
-                <text x="560" y="328" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">版本管理</text>
-
-                <path d="M240 323 L278 323" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
-                <path d="M440 323 L478 323" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
-
-                <!-- Arrow down to Work -->
-                <path d="M440 355 L440 390" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
-
-                <!-- Work Layer -->
-                <rect x="20" y="395" width="840" height="70" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-                <text x="50" y="425" font-size="15" font-weight="700" fill="#d97706" font-family="-apple-system, PingFang SC, sans-serif">灵基 Work（运行时）</text>
-                <text x="50" y="448" font-size="12" fill="#92400e" font-family="-apple-system, PingFang SC, sans-serif">智能体对话 → Skill 触发 → 渲染 APPS 组件 → 用户交互</text>
-
-                <!-- Arrow markers -->
-                <defs>
-                    <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/>
-                    </marker>
-                </defs>
-            </svg>
-        </div>
-
-        <h3 class="section-subtitle">3.2 链路A：APPS 独立开发</h3>
-        <p style="color:var(--text-light); margin-bottom: 12px;">先做 APPS，再做 Skill/智能体</p>
-        <div class="diagram-container">
-            <svg width="400" height="440" viewBox="0 0 400 440" xmlns="http://www.w3.org/2000/svg">
-                <rect x="80" y="10" width="240" height="40" rx="8" fill="#1a56db"/>
-                <text x="200" y="35" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Build 中创建 APPS 项目</text>
-                <path d="M200 50 L200 65" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="80" y="70" width="240" height="40" rx="8" fill="#1a56db"/>
-                <text x="200" y="95" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Build 中编码开发</text>
-                <path d="M200 110 L200 125" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="80" y="130" width="240" height="40" rx="8" fill="#1a56db"/>
-                <text x="200" y="155" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Build 中实时预览</text>
-                <path d="M200 170 L200 185" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="80" y="190" width="240" height="40" rx="8" fill="#059669"/>
-                <text x="200" y="215" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">一键提交到 Console</text>
-                <path d="M200 230 L200 245" stroke="#059669" stroke-width="2" marker-end="url(#arrowGreen)"/>
-
-                <rect x="80" y="250" width="240" height="40" rx="8" fill="#059669"/>
-                <text x="200" y="275" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Console 审核上架</text>
-                <path d="M200 290 L200 305" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowPurple)"/>
-
-                <rect x="80" y="310" width="240" height="40" rx="8" fill="#7c3aed"/>
-                <text x="200" y="335" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Build 中 Skill 引用该 APPS</text>
-                <path d="M200 350 L200 365" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowPurple)"/>
-
-                <rect x="80" y="370" width="240" height="40" rx="8" fill="#7c3aed"/>
-                <text x="200" y="395" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">编排智能体，绑定 Skill</text>
-                <path d="M200 410 L200 420" stroke="#d97706" stroke-width="2" marker-end="url(#arrowOrange)"/>
-
-                <rect x="60" y="425" width="280" height="10" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
-                <text x="200" y="432" text-anchor="middle" fill="#92400e" font-size="9" font-family="-apple-system, PingFang SC, sans-serif">端到端联调测试</text>
-            </svg>
-        </div>
-
-        <h3 class="section-subtitle">3.3 链路B：一体化开发</h3>
-        <p style="color:var(--text-light); margin-bottom: 12px;">Skill/智能体开发中同步创建 APPS</p>
-        <div class="diagram-container">
-            <svg width="400" height="450" viewBox="0 0 400 450" xmlns="http://www.w3.org/2000/svg">
-                <rect x="60" y="10" width="280" height="40" rx="8" fill="#7c3aed"/>
-                <text x="200" y="35" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Build 中创建智能体项目</text>
-                <path d="M200 50 L200 65" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowPurple)"/>
-
-                <rect x="60" y="70" width="280" height="40" rx="8" fill="#7c3aed"/>
-                <text x="200" y="95" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">开发 Skill（对话式）</text>
-                <path d="M200 110 L200 125" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="60" y="130" width="280" height="40" rx="8" fill="#1a56db"/>
-                <text x="200" y="155" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">识别需自定义 APPS → 自动生成脚手架</text>
-                <path d="M200 170 L200 185" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="60" y="190" width="280" height="40" rx="8" fill="#1a56db"/>
-                <text x="200" y="215" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">在同一项目中编码 APPS</text>
-                <path d="M200 230 L200 245" stroke="#1a56db" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-                <rect x="60" y="250" width="280" height="40" rx="8" fill="#1a56db"/>
-                <text x="200" y="275" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Skill 引用该 APPS（appCode 关联）</text>
-                <path d="M200 290 L200 305" stroke="#d97706" stroke-width="2" marker-end="url(#arrowOrange)"/>
-
-                <rect x="60" y="310" width="280" height="48" rx="8" fill="#d97706"/>
-                <text x="200" y="332" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">联调：对话→Skill→APPS→</text>
-                <text x="200" y="350" text-anchor="middle" fill="white" font-size="11" font-family="-apple-system, PingFang SC, sans-serif">用户交互→数据回传</text>
-                <path d="M200 358 L200 375" stroke="#059669" stroke-width="2" marker-end="url(#arrowGreen)"/>
-
-                <rect x="60" y="380" width="280" height="48" rx="8" fill="#059669"/>
-                <text x="200" y="402" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">一键提交</text>
-                <text x="200" y="420" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">（Skill + APPS + 智能体 统一发布）</text>
-            </svg>
-        </div>
-    </div>
-
-    <!-- Section 5: 各系统能力拆分 -->
-    <div class="section">
-        <h2 class="section-title">五、各系统能力拆分</h2>
-
-        <h3 class="section-subtitle">4.1 Build 侧需要做什么</h3>
-        <table>
-            <thead><tr><th>#</th><th>能力</th><th>说明</th><th>优先级</th></tr></thead>
-            <tbody>
-                <tr><td>B1</td><td>创建 APPS 项目</td><td>提供"新建 MCP APPS"入口，基于模板生成标准项目结构</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>B2</td><td>APPS 代码编辑</td><td>在 Build 中展示和编辑 APPS 源代码，支持对话辅助生成/修改代码</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>B3</td><td>APPS 实时预览</td><td>Build 中嵌入沙箱 iframe 预览渲染效果，支持模拟 toolInput 注入</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>B4</td><td>APPS 构建打包</td><td>在 Build 中执行 vite build，生成 dist/ + info.json 的 zip 包</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>B5</td><td>一键提交到 Console</td><td>点击"提交"将打包好的 zip 推送到 Console 组件仓库</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>B6</td><td>从 Console 拉取组件</td><td>创建 Skill 时，可浏览 Console 组件仓库选择已上架的 APPS</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>B7</td><td>Skill 中引用 APPS</td><td>allowed-tools 中关联 appCode，自动生成 SKILL.md 引用配置</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>B8</td><td>端到端联调</td><td>对话触发 Skill → 渲染 APPS → 完整交互链路可跑通</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>B9</td><td>统一项目结构</td><td>支持同一 Build 项目中包含 APPS、Skill、智能体，统一管理发布</td><td><span class="tag tag-medium">中</span></td></tr>
-                <tr><td>B10</td><td>APPS 模板库</td><td>预置常用模板（表单卡片、列表卡片、图表卡片等）</td><td><span class="tag tag-medium">中</span></td></tr>
-                <tr><td>B11</td><td>对话式 APPS 开发</td><td>自然语言描述需求，Build AI 自动生成 APPS 代码</td><td><span class="tag tag-medium">中</span></td></tr>
-                <tr><td>B12</td><td>本地开发热更新通道</td><td>复杂 APPS 支持本地 IDE 编码、Build 中实时预览</td><td><span class="tag tag-low">低</span></td></tr>
-            </tbody>
-        </table>
-
-        <h3 class="section-subtitle">4.2 Console（TManage）侧需要做什么</h3>
-        <table>
-            <thead><tr><th>#</th><th>能力</th><th>说明</th><th>优先级</th></tr></thead>
-            <tbody>
-                <tr><td>C1</td><td>开放组件上传 API</td><td>提供标准 API 供 Build 调用，接收 zip 包并注册为业务组件</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>C2</td><td>租户级组件仓库</td><td>支持"我上传的"和"官方预置的"分类展示</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>C3</td><td>组件审核流程</td><td>上传后可配置免审核/需管理员审核</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>C4</td><td>组件版本管理</td><td>支持上传新版本、查看历史、回滚到指定版本</td><td><span class="tag tag-medium">中</span></td></tr>
-                <tr><td>C5</td><td>组件启用/停用/下架</td><td>管理组件的生命周期状态</td><td><span class="tag tag-medium">中</span></td></tr>
-                <tr><td>C6</td><td>组件浏览 API</td><td>提供 API 供 Build 查询可用组件列表</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>C7</td><td>对租户开放管理界面</td><td>租户管理员可在 Console 中管理自己的组件</td><td><span class="tag tag-medium">中</span></td></tr>
-            </tbody>
-        </table>
-
-        <h3 class="section-subtitle">4.3 MCP APPS 平台侧需要做什么</h3>
-        <table>
-            <thead><tr><th>#</th><th>能力</th><th>说明</th><th>优先级</th></tr></thead>
-            <tbody>
-                <tr><td>A1</td><td>开发规范对外公开</td><td>将 mcp-app-dev-guide 整理为面向客户的公开文档</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>A2</td><td>SDK 版本化发布</td><td>@modelcontextprotocol/ext-apps 作为公开 npm 包，提供稳定版本</td><td><span class="tag tag-high">高</span></td></tr>
-                <tr><td>A3</td><td>模板工程公开</td><td>提供可直接 clone 使用的模板仓库（React/Vue 版本）</td><td><span class="tag tag-medium">中</span></td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Section 6: 组件生命周期 -->
-    <div class="section">
-        <h2 class="section-title">六、组件生命周期状态流转</h2>
-
-        <div class="diagram-container">
-            <svg width="880" height="280" viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg">
-                <!-- Build zone -->
-                <rect x="30" y="40" width="220" height="200" rx="12" fill="#e1effe" stroke="#1a56db" stroke-width="1.5"/>
-                <text x="140" y="70" text-anchor="middle" font-size="14" font-weight="700" fill="#1a56db" font-family="-apple-system, PingFang SC, sans-serif">Build</text>
-
-                <rect x="70" y="100" width="140" height="50" rx="8" fill="#1a56db"/>
-                <text x="140" y="122" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">开发中</text>
-                <text x="140" y="140" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">创建 / 编码 / 调试</text>
-
-                <rect x="70" y="170" width="140" height="40" rx="8" fill="#7c3aed"/>
-                <text x="140" y="195" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Skill 引用该组件</text>
-
-                <!-- Console zone -->
-                <rect x="330" y="40" width="220" height="200" rx="12" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-                <text x="440" y="70" text-anchor="middle" font-size="14" font-weight="700" fill="#059669" font-family="-apple-system, PingFang SC, sans-serif">Console</text>
-
-                <rect x="360" y="95" width="160" height="40" rx="8" fill="#d97706"/>
-                <text x="440" y="120" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">待审核</text>
-
-                <rect x="360" y="155" width="160" height="40" rx="8" fill="#059669"/>
-                <text x="440" y="180" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">已上架</text>
-
-                <path d="M440 135 L440 153" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
-
-                <!-- Work zone -->
-                <rect x="630" y="40" width="220" height="200" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-                <text x="740" y="70" text-anchor="middle" font-size="14" font-weight="700" fill="#d97706" font-family="-apple-system, PingFang SC, sans-serif">Work</text>
-
-                <rect x="670" y="120" width="140" height="50" rx="8" fill="#d97706"/>
-                <text x="740" y="142" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">运行时加载</text>
-                <text x="740" y="160" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">渲染 APPS 组件</text>
-
-                <!-- Arrows between zones -->
-                <path d="M250 120 L328 115" stroke="#1a56db" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
-                <text x="275" y="108" font-size="10" fill="#1a56db" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">提交</text>
-
-                <path d="M328 192 L250 192" stroke="#059669" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowBlueBack)"/>
-                <text x="270" y="185" font-size="10" fill="#059669" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">拉取列表</text>
-
-                <path d="M550 170 L628 150" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
-                <text x="575" y="153" font-size="10" fill="#d97706" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">加载</text>
-
-                <defs>
-                    <marker id="arrowBlueBack" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-                        <polygon points="10 0, 0 3.5, 10 7" fill="#059669"/>
-                    </marker>
-                </defs>
-            </svg>
-        </div>
-    </div>
-
-    <!-- Section 7: APPS 项目结构 -->
-    <div class="section">
-        <h2 class="section-title">七、Build 中 APPS 项目结构</h2>
-
-        <h3 class="section-subtitle">6.1 项目文件结构</h3>
-        <div class="file-tree">
-<span class="folder">my-helpdesk-ticket-card/</span>
+<div class="header">
+<h1>Build 构建 MCP APPS 方案设计</h1>
+<p class="subtitle">用户通过对话即可完成 APPS 的创建、开发、调试、测试和发布</p>
+<div class="meta">
+<span>面向：Build产品团队、Console团队、MCP APPS平台团队</span>
+<span>状态：方案初稿</span>
+</div>
+</div>
+
+<!-- Section 1 -->
+<div class="section">
+<h2 class="section-title">一、背景与目标</h2>
+<h3 class="section-subtitle">1.1 当前现状与问题</h3>
+<p style="margin-bottom:12px;color:var(--text-light)">MCP APPS 是灵基智能体与用户之间的可视化交互层，当前开发流程如下：</p>
+<div class="diagram">
+<svg width="880" height="380" viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg">
+<defs><filter id="ds" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".1"/></filter>
+<marker id="ab" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#1a56db"/></marker>
+<marker id="ar" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#dc2626"/></marker>
+<marker id="ag" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#059669"/></marker>
+</defs>
+<rect x="50" y="20" width="180" height="42" rx="8" fill="#1a56db" filter="url(#ds)"/>
+<text x="140" y="45" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">① 本地 IDE 编码</text>
+<path d="M140 62 L140 78" stroke="#1a56db" stroke-width="2" marker-end="url(#ab)"/>
+<rect x="50" y="82" width="180" height="42" rx="8" fill="#1a56db" filter="url(#ds)"/>
+<text x="140" y="107" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">② 按规范开发 + SDK</text>
+<path d="M140 124 L140 140" stroke="#1a56db" stroke-width="2" marker-end="url(#ab)"/>
+<rect x="50" y="144" width="180" height="42" rx="8" fill="#1a56db" filter="url(#ds)"/>
+<text x="140" y="169" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">③ vite build 打包</text>
+<path d="M140 186 L140 202" stroke="#d97706" stroke-width="2" marker-end="url(#ab)"/>
+<rect x="50" y="206" width="180" height="42" rx="8" fill="#d97706" filter="url(#ds)"/>
+<text x="140" y="231" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">④ 压缩为 zip</text>
+<path d="M230 227 L280 227" stroke="#dc2626" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="285" y="206" width="220" height="42" rx="8" fill="#dc2626" filter="url(#ds)"/>
+<text x="395" y="225" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">⑤ KDManage 上传</text>
+<text x="395" y="241" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="9">⚠️ 仅金蝶内部人员可操作</text>
+<path d="M505 227 L545 227" stroke="#dc2626" stroke-width="2" marker-end="url(#ar)"/>
+<rect x="550" y="206" width="200" height="42" rx="8" fill="#dc2626" filter="url(#ds)"/>
+<text x="650" y="225" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">⑥ 配置连接器+审核</text>
+<text x="650" y="241" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="9">⚠️ 多步手工操作</text>
+<path d="M650 248 L650 268" stroke="#059669" stroke-width="2" marker-end="url(#ag)"/>
+<rect x="550" y="272" width="200" height="42" rx="8" fill="#059669" filter="url(#ds)"/>
+<text x="650" y="295" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">⑦ Skill引用 → 运行时渲染</text>
+<rect x="285" y="30" width="280" height="80" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-dasharray="4,3"/>
+<text x="300" y="52" fill="#dc2626" font-size="11" font-weight="700">⚠️ 痛点</text>
+<text x="300" y="70" fill="#991b1b" font-size="10">• 开发与 Build 割裂，需 5+ 工具切换</text>
+<text x="300" y="86" fill="#991b1b" font-size="10">• 客户无法自助上传，依赖金蝶内部流程</text>
+<text x="300" y="102" fill="#991b1b" font-size="10">• 无版本管理，无法回滚</text>
+</svg>
+</div>
+<table>
+<thead><tr><th>#</th><th>问题</th><th>影响</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>APPS 开发完全在本地 IDE，与 Build 割裂</td><td>Build 号称"一站式开发"但缺了交互层</td></tr>
+<tr><td>2</td><td>上传入口在 KDManage，客户无法自助</td><td>每次变更都要走金蝶内部流程</td></tr>
+<tr><td>3</td><td>Build 中做 Skill/智能体时无法同步做 APPS</td><td>交互层和逻辑层开发完全分离</td></tr>
+<tr><td>4</td><td>开发者需在 5+ 工具间切换</td><td>IDE→KDManage→Build→Console→Work</td></tr>
+<tr><td>5</td><td>无版本管理</td><td>修改后无法回滚、无法对比</td></tr>
+</tbody>
+</table>
+
+<h3 class="section-subtitle">1.2 目标</h3>
+<div class="highlight-box">
+<strong>一句话目标：</strong>用户在 Build 中通过对话就能完成 MCP APPS 的创建、开发、调试、测试和发布——与技能开发、智能体开发一样的"对话即开发"体验。
+</div>
+
+<h3 class="section-subtitle">1.3 MCP 开发的子类型</h3>
+<p>MCP 开发涵盖两类不同性质的制品：</p>
+<table>
+<thead><tr><th>子类型</th><th>产物</th><th>本质</th><th>本方案覆盖</th></tr></thead>
+<tbody>
+<tr><td><strong>MCP APPS（交互式）</strong></td><td>前端 UI 组件（React/Vue → zip）</td><td>对话中的可交互卡片（表单、列表、图表等）</td><td><span class="tag tag-high">✅ 本方案聚焦</span></td></tr>
+<tr><td><strong>MCP Tool（工具式）</strong></td><td>后端服务（Python/Java/TS → 容器部署）</td><td>给智能体调用的 API 能力（数据读写、业务逻辑）</td><td><span style="color:var(--text-light)">⏳ 后续单独设计</span></td></tr>
+</tbody>
+</table>
+<div class="info-box">
+<strong>两者关系：</strong>APPS 是"前端展示层"，MCP Tool 是"后端能力层"。APPS 通过 <code>callServerTool</code> 调用 MCP Tool 完成实际业务操作。一个完整的 MCP 场景通常需要两者配合（如工单确认卡 APPS + Create_Ticket Tool）。<br><br>
+<strong>本方案聚焦 MCP APPS（交互式）</strong>，MCP Tool 的 Build 开发能力后续单独设计。
+</div>
+</div>
+
+<!-- Section 3: User Experience -->
+<div class="section">
+<h2 class="section-title">三、用户体验设计（用户视角）</h2>
+<h3 class="section-subtitle">3.1 整体开发流程</h3>
+<div class="diagram">
+<svg width="700" height="580" viewBox="0 0 700 580" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="af" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#374151"/></marker></defs>
+<rect x="200" y="10" width="300" height="38" rx="19" fill="#1a56db"/>
+<text x="350" y="34" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">用户进入 Build → MCP 开发 → 新会话</text>
+<path d="M350 48 L350 65" stroke="#374151" stroke-width="1.5" marker-end="url(#af)"/>
+<rect x="150" y="68" width="400" height="38" rx="8" fill="#e1effe" stroke="#3b82f6"/>
+<text x="350" y="92" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600">用户用自然语言描述 APPS 需求</text>
+<path d="M350 106 L350 120" stroke="#374151" stroke-width="1.5" marker-end="url(#af)"/>
+<rect x="150" y="123" width="400" height="38" rx="8" fill="#f3f4f6" stroke="#9ca3af"/>
+<text x="350" y="147" text-anchor="middle" fill="#374151" font-size="11">Build 澄清需求（字段？Tool？交互模式？）</text>
+<path d="M350 161 L350 175" stroke="#374151" stroke-width="1.5" marker-end="url(#af)"/>
+<rect x="150" y="178" width="400" height="38" rx="8" fill="#f3f4f6" stroke="#9ca3af"/>
+<text x="350" y="202" text-anchor="middle" fill="#374151" font-size="11">Build 生成项目（App.tsx + info.json + SKILL.md）</text>
+<path d="M350 216 L350 230" stroke="#374151" stroke-width="1.5" marker-end="url(#af)"/>
+<rect x="150" y="233" width="400" height="38" rx="8" fill="var(--purple-light)" stroke="var(--purple)"/>
+<text x="350" y="257" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="600">预览 + 对话迭代修改（右侧 iframe 实时渲染）</text>
+<path d="M350 271 L350 288" stroke="#374151" stroke-width="1.5" marker-end="url(#af)"/>
+<line x1="200" y1="310" x2="500" y2="310" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,3"/>
+<text x="350" y="303" text-anchor="middle" font-size="10" fill="#d97706" font-weight="700">▼ 沙箱测试</text>
+<rect x="150" y="320" width="400" height="38" rx="8" fill="var(--warning-light)" stroke="#d97706"/>
+<text x="350" y="344" text-anchor="middle" fill="#92400e" font-size="11">Build 构建打包 → 提交沙箱 Console → 沙箱 Work 联调</text>
+<path d="M350 358 L350 378" stroke="#374151" stroke-width="1.5" marker-end="url(#af)"/>
+<line x1="200" y1="400" x2="500" y2="400" stroke="#059669" stroke-width="1.5" stroke-dasharray="6,3"/>
+<text x="350" y="393" text-anchor="middle" font-size="10" fill="#059669" font-weight="700">▼ 提交生产</text>
+<rect x="150" y="410" width="400" height="38" rx="8" fill="var(--secondary-light)" stroke="#059669"/>
+<text x="350" y="434" text-anchor="middle" fill="#065f46" font-size="11">Build 构建 → zip → 生产 Console → 管理员审核</text>
+<path d="M350 448 L350 468" stroke="#059669" stroke-width="2" marker-end="url(#af)"/>
+<rect x="200" y="470" width="300" height="44" rx="22" fill="#059669"/>
+<text x="350" y="495" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">✓ 生产 Work 中可正式使用</text>
+</svg>
+</div>
+
+<h3 class="section-subtitle">3.2 开发过程中的对话示例</h3>
+
+<div class="chat-example">
+<h4>示例一：从零创建一个 APPS</h4>
+<div class="chat-msg chat-user">帮我创建一个工单确认卡片。需要展示工单标题、描述、优先级、处理人，用户可以编辑后点确认提交。</div>
+<div class="chat-msg chat-build">好的，我来帮你梳理需求：<br>• 组件类型：表单确认卡片<br>• 展示字段：标题、描述、优先级（下拉）、处理人<br>• 交互：字段可编辑 + 确认/取消按钮<br><br>提交后需要调用什么 MCP Tool？比如 <code>Create_Ticket</code>？<br>运行模式：对话内卡片还是侧边栏？</div>
+<div class="chat-msg chat-user">调用 Create_Ticket 工具，对话内卡片就行。</div>
+<div class="chat-msg chat-build">已生成项目：<div class="code-inline">✅ App.tsx — 工单确认表单组件
+✅ info.json — relateTools 已配置 Create_Ticket
+✅ SKILL.md — 配套技能描述</div>右侧面板已加载预览，你可以看到卡片效果。需要调整吗？</div>
+</div>
+
+<div class="chat-example">
+<h4>示例二：修改已有的 APPS</h4>
+<div class="chat-msg chat-user">优先级字段改成带颜色标签的样式，紧急显示红色，普通显示灰色。</div>
+<div class="chat-msg chat-build">已修改 App.tsx 中优先级字段的渲染逻辑。预览已更新，紧急工单现在显示红色标签。</div>
+<div class="chat-msg chat-user">再加一个附件上传功能，允许上传图片和PDF。</div>
+<div class="chat-msg chat-build">附件上传需确认：<br>1. 上传后文件调用哪个 MCP Tool？还是 base64 放参数里？<br>2. 文件大小限制？</div>
+<div class="chat-msg chat-user">调用 Upload_Attachment 工具上传，限制 10MB。</div>
+<div class="chat-msg chat-build">已完成：<br>1. App.tsx 增加文件上传组件<br>2. info.json relateTools 新增 <code>Upload_Attachment</code><br><br>预览中可以看到新增的上传区域。</div>
+</div>
+
+<div class="chat-example">
+<h4>示例三：调试渲染问题</h4>
+<div class="chat-msg chat-user">预览里卡片没有渲染出来，显示空白。</div>
+<div class="chat-msg chat-build">发现问题：App.tsx 第23行 <code>useApp()</code> hook 中，解析 arguments 时字段名不匹配。info.json 定义的输入字段是 <code>"ticketData"</code>，但代码中读的是 <code>"data"</code>。<br><br>已修复，刷新预览。</div>
+<div class="chat-msg chat-user">好了，能看到了。</div>
+</div>
+
+<h3 class="section-subtitle">3.3 与其他开发能力的协同</h3>
+<div class="card-grid">
+<div class="card" style="border-top:3px solid var(--primary)">
+<div class="card-title">与技能开发的协同</div>
+<p style="font-size:.9em;color:var(--text-light)">• APPS 通过 appCode 被 Skill 的 allowed-tools 引用<br>• Build 生成 APPS 时自动生成配套 SKILL.md<br>• 在 Skill 开发中发现需要 UI 时，可切换到 APPS 开发上下文</p>
+</div>
+<div class="card" style="border-top:3px solid var(--purple)">
+<div class="card-title">与智能体开发的协同</div>
+<p style="font-size:.9em;color:var(--text-light)">• 智能体通过 Skill 间接使用 APPS<br>• 测试智能体时 APPS 在沙箱 Work 中正常渲染<br>• 一个项目可包含 APPS + Skill + 智能体</p>
+</div>
+<div class="card" style="border-top:3px solid var(--warning)">
+<div class="card-title">依赖感知</div>
+<p style="font-size:.9em;color:var(--text-light)">• 如果 Skill 引用了未提交的 APPS<br>• Build 在测试前自动先将 APPS 提交到沙箱 Console<br>• 确保联调可用</p>
+</div>
+</div>
+</div>
+
+<!-- Section 4: Internal Design -->
+<div class="section">
+<h2 class="section-title">四、Build 内部能力设计（平台视角）</h2>
+<h3 class="section-subtitle">4.1 支撑 MCP APPS 开发所需的 Skill</h3>
+<table>
+<thead><tr><th>Skill 名称</th><th>职责</th><th>触发时机</th></tr></thead>
+<tbody>
+<tr><td><strong>APPS 需求澄清 Skill</strong></td><td>解析用户描述，澄清组件类型、字段、交互、关联Tool、运行模式</td><td>用户首次描述 APPS 需求时</td></tr>
+<tr><td><strong>APPS 代码生成 Skill</strong></td><td>基于确认的需求生成 App.tsx、info.json、SKILL.md</td><td>需求确认后</td></tr>
+<tr><td><strong>APPS 代码修改 Skill</strong></td><td>根据对话指令修改已有代码（增删字段、调整样式、修改逻辑）</td><td>用户说"修改xxx"时</td></tr>
+<tr><td><strong>APPS 预览调试 Skill</strong></td><td>启动沙箱 iframe 预览，注入模拟数据，检查问题并修复</td><td>用户点击预览或说"看看效果"</td></tr>
+<tr><td><strong>APPS 构建打包 Skill</strong></td><td>执行 vite build，生成 dist/，打包为标准 zip</td><td>点击"沙箱测试"或"提交生产"</td></tr>
+<tr><td><strong>APPS 提交发布 Skill</strong></td><td>调用 Console API 上传 zip，处理注册和审核状态</td><td>打包完成后</td></tr>
+</tbody>
+</table>
+
+<h3 class="section-subtitle">4.2 支撑 MCP APPS 开发所需的 Tool</h3>
+<table>
+<thead><tr><th>Tool 名称</th><th>能力</th><th>调用方</th></tr></thead>
+<tbody>
+<tr><td><strong>Vite_Build</strong></td><td>执行 vite build 前端构建</td><td>APPS 构建打包 Skill</td></tr>
+<tr><td><strong>Zip_Package</strong></td><td>将 dist/ + info.json 打包为 zip</td><td>APPS 构建打包 Skill</td></tr>
+<tr><td><strong>Console_Upload_API</strong></td><td>调用 Console 组件上传接口</td><td>APPS 提交发布 Skill</td></tr>
+<tr><td><strong>Console_List_API</strong></td><td>查询租户已上架组件列表</td><td>技能开发中引用 APPS 时</td></tr>
+<tr><td><strong>Sandbox_Preview</strong></td><td>沙箱 iframe 渲染 + 模拟 toolInput 注入</td><td>APPS 预览调试 Skill</td></tr>
+<tr><td><strong>Template_Generator</strong></td><td>基于模板生成标准项目结构</td><td>APPS 代码生成 Skill</td></tr>
+</tbody>
+</table>
+
+<h3 class="section-subtitle">4.3 APPS 开发 Agent</h3>
+<table>
+<thead><tr><th>属性</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>名称</strong></td><td>MCP APPS 开发助手</td></tr>
+<tr><td><strong>职责</strong></td><td>根据用户意图选择合适的 Skill 执行；维护开发上下文</td></tr>
+<tr><td><strong>编排逻辑</strong></td><td>需求描述 → 需求澄清 → 代码生成 → 预览 → 代码修改 → ... → 提交发布</td></tr>
+<tr><td><strong>上下文维护</strong></td><td>当前项目文件列表、info.json 配置、关联 Tool、测试状态</td></tr>
+<tr><td><strong>决策能力</strong></td><td>判断"新建"vs"修改"；判断是否需澄清还是直接执行；识别错误触发调试</td></tr>
+</tbody>
+</table>
+
+<h3 class="section-subtitle">4.4 模板库</h3>
+<table>
+<thead><tr><th>模板</th><th>描述</th><th>适用场景</th></tr></thead>
+<tbody>
+<tr><td><strong>空白模板</strong></td><td>最基础结构，从零开始</td><td>高度自定义场景</td></tr>
+<tr><td><strong>表单卡片</strong></td><td>带输入字段和提交按钮</td><td>工单提交、数据录入</td></tr>
+<tr><td><strong>列表展示卡</strong></td><td>展示数据列表，支持分页</td><td>工单列表、查询结果</td></tr>
+<tr><td><strong>确认卡片</strong></td><td>展示摘要，用户确认/拒绝</td><td>操作确认、审批</td></tr>
+<tr><td><strong>图表卡片</strong></td><td>展示图表数据</td><td>数据分析、报表</td></tr>
+</tbody>
+</table>
+<div class="info-box">模板选择不是必须的。用户直接描述需求时，Build 的代码生成 Skill 会根据需求自动选择最合适的基础结构。</div>
+</div>
+
+<!-- Section 5: E2E Flow -->
+<div class="section">
+<h2 class="section-title">五、端到端流程设计</h2>
+<h3 class="section-subtitle">5.1 目标流程全景</h3>
+<div class="diagram">
+<svg width="880" height="340" viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg">
+<rect x="20" y="10" width="840" height="120" rx="12" fill="#e1effe" stroke="#1a56db" stroke-width="1.5"/>
+<text x="50" y="38" font-size="14" font-weight="700" fill="#1a56db">灵基 Build（对话即开发）</text>
+<rect x="50" y="55" width="130" height="38" rx="6" fill="#1a56db"/><text x="115" y="79" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">创建(对话)</text>
+<path d="M180 74 L200 74" stroke="#1a56db" stroke-width="1.5" marker-end="url(#ab)"/>
+<rect x="205" y="55" width="130" height="38" rx="6" fill="#1a56db"/><text x="270" y="79" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">开发(对话)</text>
+<path d="M335 74 L355 74" stroke="#1a56db" stroke-width="1.5" marker-end="url(#ab)"/>
+<rect x="360" y="55" width="130" height="38" rx="6" fill="var(--purple)"/><text x="425" y="79" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">调试(预览)</text>
+<path d="M490 74 L510 74" stroke="var(--purple)" stroke-width="1.5" marker-end="url(#ab)"/>
+<rect x="515" y="55" width="130" height="38" rx="6" fill="#d97706"/><text x="580" y="79" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">沙箱测试</text>
+<path d="M645 74 L665 74" stroke="#059669" stroke-width="1.5" marker-end="url(#ag)"/>
+<rect x="670" y="55" width="130" height="38" rx="6" fill="#059669"/><text x="735" y="79" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">提交生产</text>
+<path d="M440 130 L300 170" stroke="#d97706" stroke-width="2" marker-end="url(#ab)"/>
+<path d="M440 130 L600 170" stroke="#059669" stroke-width="2" marker-end="url(#ag)"/>
+<rect x="60" y="170" width="360" height="150" rx="12" fill="var(--warning-light)" stroke="#d97706" stroke-width="1.5"/>
+<text x="90" y="198" font-size="13" font-weight="700" fill="#d97706">沙箱环境</text>
+<rect x="90" y="215" width="140" height="36" rx="6" fill="#d97706"/><text x="160" y="238" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">沙箱Console</text>
+<text x="160" y="262" font-size="9" fill="#92400e">自动注册，无需审核</text>
+<rect x="250" y="215" width="140" height="36" rx="6" fill="#d97706"/><text x="320" y="238" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">沙箱Work</text>
+<text x="320" y="262" font-size="9" fill="#92400e">端到端联调测试</text>
+<rect x="480" y="170" width="360" height="150" rx="12" fill="var(--secondary-light)" stroke="#059669" stroke-width="1.5"/>
+<text x="510" y="198" font-size="13" font-weight="700" fill="#059669">生产环境</text>
+<rect x="510" y="215" width="140" height="36" rx="6" fill="#059669"/><text x="580" y="238" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">生产Console</text>
+<text x="580" y="262" font-size="9" fill="#065f46">审核/上架</text>
+<rect x="670" y="215" width="140" height="36" rx="6" fill="#059669"/><text x="740" y="238" text-anchor="middle" fill="#fff" font-size="10" font-weight="600">生产Work</text>
+<text x="740" y="262" font-size="9" fill="#065f46">正式使用</text>
+</svg>
+</div>
+
+<h3 class="section-subtitle">5.2 关键链路 A：MCP APPS 独立开发</h3>
+<p style="color:var(--text-light);margin-bottom:12px">适用场景：用户专门要开发一个 APPS 组件，之后再在 Skill/智能体中引用。</p>
+<div style="background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:16px 0;font-size:.9em;line-height:2">
+<strong>1.</strong> 用户进入 Build，选择"MCP 开发"，开始新会话<br>
+<strong>2.</strong> 用户用自然语言描述需求<br>
+<strong>3.</strong> Build 澄清需求，确认后生成项目代码<br>
+<strong>4.</strong> 用户通过对话迭代修改 + 预览确认<br>
+<strong>5.</strong> 用户点击"沙箱测试"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── Build: vite build → zip → 提交沙箱 Console（自动注册，无需审核）<br>
+<strong>6.</strong> 用户在沙箱 Work 中端到端测试<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── 对话 → Skill → APPS 渲染 → 用户交互 → MCP Tool 调用 → 结果<br>
+<strong>7.</strong> 测试通过，用户点击"提交生产"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── Build 构建打包 → 提交生产 Console → 进入审核流程<br>
+<strong>8.</strong> 管理员审核上架<br>
+<strong>9.</strong> 生产 Work 中智能体可使用该 APPS 组件 ✓
+</div>
+
+<h3 class="section-subtitle">5.3 关键链路 B：与 Skill 一体化开发</h3>
+<p style="color:var(--text-light);margin-bottom:12px">适用场景：用户在开发 Skill 过程中，发现需要一个自定义 APPS 来承载交互。</p>
+<div style="background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:16px 0;font-size:.9em;line-height:2">
+<strong>1.</strong> 用户在 Build 中开发 Skill（技能开发模式）<br>
+<strong>2.</strong> 用户描述 Skill 需要展示一个自定义 UI 卡片<br>
+<strong>3.</strong> Build 识别需要创建 APPS，切换到 APPS 开发上下文<br>
+<strong>4.</strong> Build 澄清 APPS 需求，生成代码<br>
+<strong>5.</strong> 用户确认后，Build 自动将 APPS 的 appCode 写入 Skill 的 allowed-tools<br>
+<strong>6.</strong> 用户点击"测试"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── Build 检测到 Skill 依赖一个未提交的 APPS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--warning);font-weight:600">Build 自动先将 APPS 提交到沙箱 Console</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── 再将 Skill 提交到沙箱<br>
+<strong>7.</strong> 用户在沙箱 Work 中联调<br>
+<strong>8.</strong> 一体化提交：APPS + Skill 按依赖顺序提交生产
+</div>
+<div class="warning-box">
+<strong>依赖感知规则：</strong>如果 Skill 引用了本项目中尚未提交的 APPS，Build 必须在 Skill 测试前自动先提交 APPS。否则沙箱 Work 无法加载该组件。
+</div>
+
+<h3 class="section-subtitle">5.4 联调测试流程</h3>
+<div class="diagram">
+<svg width="880" height="90" viewBox="0 0 880 90" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="afl" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#374151"/></marker></defs>
+<rect x="10" y="20" width="80" height="48" rx="8" fill="#1a56db"/><text x="50" y="42" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">开发者</text><text x="50" y="56" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="8">输入话术</text>
+<path d="M90 44 L110 44" stroke="#374151" stroke-width="1.2" marker-end="url(#afl)"/>
+<rect x="115" y="20" width="80" height="48" rx="8" fill="var(--purple)"/><text x="155" y="42" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">智能体</text><text x="155" y="56" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="8">意图路由</text>
+<path d="M195 44 L215 44" stroke="#374151" stroke-width="1.2" marker-end="url(#afl)"/>
+<rect x="220" y="20" width="80" height="48" rx="8" fill="var(--purple)"/><text x="260" y="42" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">Skill</text><text x="260" y="56" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="8">触发entryTool</text>
+<path d="M300 44 L320 44" stroke="#374151" stroke-width="1.2" marker-end="url(#afl)"/>
+<rect x="325" y="20" width="100" height="48" rx="8" fill="#d97706"/><text x="375" y="40" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">APPS组件</text><text x="375" y="56" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="8">渲染UI+交互</text>
+<path d="M425 44 L445 44" stroke="#374151" stroke-width="1.2" marker-end="url(#afl)"/>
+<rect x="450" y="20" width="100" height="48" rx="8" fill="#dc2626"/><text x="500" y="40" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">MCP Server</text><text x="500" y="56" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="8">callServerTool</text>
+<path d="M550 44 L570 44" stroke="#374151" stroke-width="1.2" marker-end="url(#afl)"/>
+<rect x="575" y="20" width="90" height="48" rx="8" fill="#059669"/><text x="620" y="42" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">结果展示</text><text x="620" y="56" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="8">更新UI ✓</text>
+</svg>
+</div>
+</div>
+
+<!-- Section 6: Project Structure -->
+<div class="section">
+<h2 class="section-title">六、APPS 项目结构与规范</h2>
+
+<h3 class="section-subtitle">6.1 项目文件结构</h3>
+<p style="margin-bottom:12px;color:var(--text-light)">在 Build 中创建 MCP APPS 项目时，自动生成以下标准结构：</p>
+<div class="file-tree"><span class="folder">my-helpdesk-ticket-card/</span>
 ├── <span class="folder">src/</span>
-│   ├── <span class="file">App.tsx</span>              <span class="arrow">← 主组件（开发者编写的 UI 逻辑）</span>
-│   ├── <span class="file">main.tsx</span>             <span class="arrow">← 入口文件（SDK 初始化，不需要改）</span>
-│   └── <span class="file">styles.css</span>           <span class="arrow">← 样式文件</span>
+│   ├── App.tsx              <span class="arrow">← 主组件（开发者编写的 UI 逻辑）</span>
+│   ├── main.tsx             <span class="arrow">← 入口文件（SDK 初始化，不需要改）</span>
+│   └── styles.css           <span class="arrow">← 样式文件</span>
 ├── <span class="folder">public/</span>
 │   └── <span class="arrow">(静态资源)</span>
 ├── <span class="folder">dist/</span>                    <span class="arrow">← 构建产物（build 后生成）</span>
-│   └── <span class="file">index.html</span>
-├── <span class="file">info.json</span>                <span class="arrow">← 组件元信息（appCode/relateTools/entryTool等）</span>
-├── <span class="file">SKILL.md</span>                 <span class="arrow">← 配套 Skill 描述文件</span>
-├── <span class="file">package.json</span>             <span class="arrow">← 依赖管理</span>
-├── <span class="file">vite.config.ts</span>           <span class="arrow">← 构建配置</span>
-└── <span class="file">mcp-app.config.json</span>      <span class="arrow">← 本地调试配置</span></div>
+│   └── index.html
+├── info.json                <span class="arrow">← 组件元信息（appCode/relateTools/entryTool等）</span>
+├── SKILL.md                 <span class="arrow">← 配套 Skill 描述文件</span>
+├── package.json             <span class="arrow">← 依赖管理</span>
+├── vite.config.ts           <span class="arrow">← 构建配置</span>
+└── mcp-app.config.json      <span class="arrow">← 本地调试配置（可选）</span></div>
 
-        <h3 class="section-subtitle">6.2 info.json 关键字段</h3>
-        <table>
-            <thead><tr><th>字段</th><th>说明</th><th>示例</th></tr></thead>
-            <tbody>
-                <tr><td><code>appCode</code></td><td>组件唯一编码（发布后不可改）</td><td><code>chin_helpdesk_ticket_confirm</code></td></tr>
-                <tr><td><code>appName</code></td><td>组件名称</td><td>工单确认卡</td></tr>
-                <tr><td><code>description</code></td><td>组件描述</td><td>展示工单草稿，支持编辑确认后提交</td></tr>
-                <tr><td><code>mcpConnector</code></td><td>关联的 MCP 集群连接器</td><td><code>{ "type": "OTHERS", "code": "chin_mcp" }</code></td></tr>
-                <tr><td><code>relateTools</code></td><td>组件需要调用的 MCP 工具列表</td><td><code>[{ "name": "Create_Ticket" }]</code></td></tr>
-                <tr><td><code>entryTool.virtual</code></td><td>虚拟入口工具的输入/输出 Schema</td><td>描述组件接受什么参数</td></tr>
-                <tr><td><code>runMode</code></td><td>运行模式</td><td><code>"message"</code></td></tr>
-            </tbody>
-        </table>
-    </div>
+<h3 class="section-subtitle">6.2 info.json 关键字段</h3>
+<table>
+<thead><tr><th>字段</th><th>说明</th><th>示例</th></tr></thead>
+<tbody>
+<tr><td><code>appCode</code></td><td>组件唯一编码（发布后不可改）</td><td><code>chin_helpdesk_ticket_confirm</code></td></tr>
+<tr><td><code>appName</code></td><td>组件名称</td><td>工单确认卡</td></tr>
+<tr><td><code>description</code></td><td>组件描述</td><td>展示工单草稿，支持编辑确认后提交</td></tr>
+<tr><td><code>mcpConnector</code></td><td>关联的 MCP 集群连接器</td><td><code>{ "type": "OTHERS", "code": "chin_mcp" }</code></td></tr>
+<tr><td><code>relateTools</code></td><td>组件需要调用的 MCP 工具列表</td><td><code>[{ "name": "Create_Ticket" }]</code></td></tr>
+<tr><td><code>entryTool.virtual</code></td><td>虚拟入口工具的输入/输出 Schema</td><td>描述组件接受什么参数</td></tr>
+<tr><td><code>runMode</code></td><td>运行模式</td><td><code>"message"</code>（对话内）或 <code>"sidecar"</code>（侧边栏）</td></tr>
+<tr><td><code>version</code></td><td>版本号</td><td><code>"1.0.0"</code></td></tr>
+</tbody>
+</table>
 
-    <!-- Section 8: 关键交互流程 -->
-    <div class="section">
-        <h2 class="section-title">八、关键交互流程</h2>
+<h3 class="section-subtitle">6.3 SKILL.md 配套规范</h3>
+<p style="margin-bottom:12px;color:var(--text-light)">每个 APPS 组件应配套一个 SKILL.md，Build 在生成 APPS 时自动生成：</p>
+<div class="code-block"><span class="kw">---</span>
+<span class="key">name</span>: {skill-name}
+<span class="key">description</span>: Use this skill to open the managed MCP App {appName}.
+<span class="key">allowed-tools</span>:
+- {appCode}
+<span class="kw">---</span>
 
-        <h3 class="section-subtitle">7.1 创建 APPS 流程</h3>
-        <div class="diagram-container">
-            <svg width="880" height="520" viewBox="0 0 880 520" xmlns="http://www.w3.org/2000/svg">
-                <!-- Swim lanes -->
-                <rect x="30" y="10" width="160" height="500" rx="0" fill="#e1effe" opacity="0.3"/>
-                <text x="110" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="#1a56db" font-family="-apple-system, PingFang SC, sans-serif">开发者</text>
-                <rect x="210" y="10" width="380" height="500" rx="0" fill="#f3f4f6" opacity="0.3"/>
-                <text x="400" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="#374151" font-family="-apple-system, PingFang SC, sans-serif">Build</text>
-                <rect x="610" y="10" width="240" height="500" rx="0" fill="#d1fae5" opacity="0.3"/>
-                <text x="730" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="#059669" font-family="-apple-system, PingFang SC, sans-serif">Console</text>
+<span class="cmt"># {组件名称}</span>
 
-                <!-- Steps -->
-                <rect x="50" y="55" width="120" height="34" rx="6" fill="#1a56db"/>
-                <text x="110" y="77" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">选择"新建 APPS"</text>
-                <path d="M170 72 L250 72" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+Use this skill when the user asks to {触发场景描述}.
 
-                <rect x="255" y="55" width="180" height="34" rx="6" fill="white" stroke="#e5e7eb"/>
-                <text x="345" y="77" text-anchor="middle" fill="#374151" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">展示模板选择界面</text>
+Call the MCP tool `{appCode}` with the following arguments:
+- {参数1}: {说明}
+- {参数2}: {说明}</div>
+</div>
 
-                <rect x="50" y="110" width="120" height="34" rx="6" fill="#1a56db"/>
-                <text x="110" y="127" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">选模板+填信息</text>
-                <path d="M170 127 L250 127" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+<!-- Section 7: System Requirements -->
+<div class="section">
+<h2 class="section-title">七、各系统能力要求</h2>
+<h3 class="section-subtitle">7.1 Build 侧</h3>
+<table>
+<thead><tr><th>#</th><th>能力</th><th>说明</th><th>本质</th><th>优先级</th></tr></thead>
+<tbody>
+<tr><td>B1</td><td>"MCP 开发"入口</td><td>新增开发模式入口</td><td>UI</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B2</td><td>需求澄清</td><td>对话解析用户需求</td><td>Skill</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B3</td><td>代码生成</td><td>生成完整项目代码</td><td>Skill+Tool</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B4</td><td>代码修改</td><td>对话指令修改代码</td><td>Skill</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B5</td><td>实时预览</td><td>沙箱iframe渲染</td><td>Tool+UI</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B6</td><td>构建打包</td><td>vite build → zip</td><td>Tool</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B7</td><td>提交Console</td><td>调用上传API</td><td>Tool</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B8</td><td>拉取组件列表</td><td>查询已上架APPS</td><td>Tool</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B9</td><td>Skill引用APPS</td><td>自动写allowed-tools</td><td>Skill逻辑</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B10</td><td>联调环境</td><td>全链路沙箱跑通</td><td>环境</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B11</td><td>模板库</td><td>预置常用模板</td><td>资源</td><td><span class="tag tag-mid">中</span></td></tr>
+<tr><td>B12</td><td>依赖感知</td><td>自动先提交APPS</td><td>Skill逻辑</td><td><span class="tag tag-mid">中</span></td></tr>
+</tbody>
+</table>
 
-                <rect x="255" y="110" width="180" height="34" rx="6" fill="white" stroke="#e5e7eb"/>
-                <text x="345" y="132" text-anchor="middle" fill="#374151" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">自动生成项目文件结构</text>
+<h3 class="section-subtitle">7.2 Console 侧</h3>
+<table>
+<thead><tr><th>#</th><th>能力</th><th>说明</th><th>优先级</th></tr></thead>
+<tbody>
+<tr><td>C1</td><td>组件上传 API</td><td>接收zip包注册为业务组件</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>C2</td><td>租户级组件仓库</td><td>"我上传的"+"官方预置"分类</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>C3</td><td>组件审核流程</td><td>可配置免审核/需审核</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>C4</td><td>组件版本管理</td><td>多版本+回滚</td><td><span class="tag tag-mid">中</span></td></tr>
+<tr><td>C5</td><td>组件启停下架</td><td>生命周期管理</td><td><span class="tag tag-mid">中</span></td></tr>
+<tr><td>C6</td><td>组件列表查询API</td><td>供Build拉取可用组件</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>C7</td><td>租户管理界面</td><td>不依赖KDManage</td><td><span class="tag tag-mid">中</span></td></tr>
+</tbody>
+</table>
+</div>
 
-                <rect x="50" y="165" width="120" height="34" rx="6" fill="#1a56db"/>
-                <text x="110" y="187" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">编码/AI生成代码</text>
-                <path d="M170 182 L250 182" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+<!-- Section 10: Risks -->
+<div class="section">
+<h2 class="section-title">十、风险与待确认项</h2>
+<table>
+<thead><tr><th>#</th><th>风险/待确认</th><th>影响</th><th>建议</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Build 是否具备运行 vite 的能力</td><td>决定构建方式</td><td>无法运行则改为服务端构建</td></tr>
+<tr><td>2</td><td>Console 上传 API 权限模型</td><td>租户隔离</td><td>需Console团队确认</td></tr>
+<tr><td>3</td><td>预览是否支持真实 MCP Tool 调用</td><td>预览深度</td><td>分两级：mock预览 + 真实联调</td></tr>
+<tr><td>4</td><td>APPS 引用的 Tool 是否必须已存在</td><td>开发体验</td><td>预览允许mock，提交时校验</td></tr>
+<tr><td>5</td><td>APPS + Skill 发布顺序依赖</td><td>一体化发布</td><td>Build感知依赖，自动先提交APPS</td></tr>
+<tr><td>6</td><td>架构师资源</td><td>规范对齐</td><td>需协调</td></tr>
+<tr><td>7</td><td>对话式代码生成质量</td><td>APPS可靠性</td><td>预览作为质量门禁+模板降低自由度</td></tr>
+<tr><td>8</td><td>多人协作</td><td>编辑冲突</td><td>初期不支持，后续结合版本管理</td></tr>
+</tbody>
+</table>
+</div>
 
-                <rect x="255" y="165" width="180" height="34" rx="6" fill="white" stroke="#e5e7eb"/>
-                <text x="345" y="187" text-anchor="middle" fill="#374151" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">对话辅助 + 代码编辑器</text>
-
-                <rect x="50" y="220" width="120" height="34" rx="6" fill="#1a56db"/>
-                <text x="110" y="242" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">点击"预览"</text>
-                <path d="M170 237 L250 237" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-
-                <rect x="255" y="220" width="280" height="34" rx="6" fill="white" stroke="#7c3aed"/>
-                <text x="395" y="242" text-anchor="middle" fill="#5b21b6" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">右侧面板沙箱 iframe 预览，模拟 toolInput 注入</text>
-
-                <rect x="50" y="280" width="120" height="34" rx="6" fill="#1a56db"/>
-                <text x="110" y="302" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">反复调试</text>
-                <path d="M110 258 C30 270 30 280 110 280" stroke="#6b7280" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
-
-                <rect x="50" y="340" width="120" height="34" rx="6" fill="#059669"/>
-                <text x="110" y="362" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">点击"构建并提交"</text>
-                <path d="M170 357 L250 357" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-
-                <rect x="255" y="340" width="220" height="34" rx="6" fill="white" stroke="#e5e7eb"/>
-                <text x="365" y="362" text-anchor="middle" fill="#374151" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">vite build → zip → 调用 Console API</text>
-                <path d="M477 357 L620 357" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
-
-                <rect x="625" y="340" width="200" height="34" rx="6" fill="#059669"/>
-                <text x="725" y="362" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">接收 zip，注册组件</text>
-
-                <path d="M725 374 L725 400" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
-                <rect x="625" y="400" width="200" height="34" rx="6" fill="#059669"/>
-                <text x="725" y="422" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">返回 status</text>
-                <path d="M625 417 L477 417" stroke="#374151" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowGrayBack)"/>
-
-                <rect x="255" y="450" width="280" height="34" rx="6" fill="white" stroke="#059669"/>
-                <text x="395" y="472" text-anchor="middle" fill="#059669" font-size="10" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">展示"提交成功，待审核"或"已上架"</text>
-
-                <defs>
-                    <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-                        <polygon points="0 0, 8 3, 0 6" fill="#6b7280"/>
-                    </marker>
-                    <marker id="arrowGrayBack" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
-                        <polygon points="8 0, 0 3, 8 6" fill="#6b7280"/>
-                    </marker>
-                </defs>
-            </svg>
-        </div>
-
-        <h3 class="section-subtitle">7.2 引用 APPS 流程</h3>
-        <div class="diagram-container">
-            <svg width="880" height="400" viewBox="0 0 880 400" xmlns="http://www.w3.org/2000/svg">
-                <!-- Swim lanes -->
-                <rect x="30" y="10" width="160" height="380" rx="0" fill="#e1effe" opacity="0.3"/>
-                <text x="110" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="#1a56db" font-family="-apple-system, PingFang SC, sans-serif">开发者</text>
-                <rect x="210" y="10" width="380" height="380" rx="0" fill="#f3f4f6" opacity="0.3"/>
-                <text x="400" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="#374151" font-family="-apple-system, PingFang SC, sans-serif">Build</text>
-                <rect x="610" y="10" width="240" height="380" rx="0" fill="#d1fae5" opacity="0.3"/>
-                <text x="730" y="35" text-anchor="middle" font-size="12" font-weight="700" fill="#059669" font-family="-apple-system, PingFang SC, sans-serif">Console</text>
-
-                <rect x="50" y="55" width="120" height="34" rx="6" fill="#1a56db"/>
-                <text x="110" y="77" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">开发 Skill</text>
-                <path d="M170 72 L250 72" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-
-                <rect x="255" y="55" width="280" height="34" rx="6" fill="white" stroke="#e5e7eb"/>
-                <text x="395" y="77" text-anchor="middle" fill="#374151" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">对话：这个 Skill 是否需要展示 UI 给用户？</text>
-
-                <rect x="50" y="110" width="120" height="34" rx="6" fill="#1a56db"/>
-                <text x="110" y="132" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">需要 UI 卡片</text>
-                <path d="M170 127 L250 127" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-
-                <rect x="255" y="110" width="180" height="34" rx="6" fill="white" stroke="#e5e7eb"/>
-                <text x="345" y="132" text-anchor="middle" fill="#374151" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">拉取已上架组件列表</text>
-                <path d="M437 127 L620 127" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
-
-                <rect x="625" y="110" width="200" height="34" rx="6" fill="#059669"/>
-                <text x="725" y="132" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">返回可用 APPS 列表</text>
-                <path d="M625 150 L437 165" stroke="#374151" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowGrayBack)"/>
-
-                <rect x="255" y="165" width="280" height="34" rx="6" fill="white" stroke="#e5e7eb"/>
-                <text x="395" y="187" text-anchor="middle" fill="#374151" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">展示组件列表供选择（含项目内未提交的）</text>
-
-                <rect x="50" y="220" width="140" height="34" rx="6" fill="#1a56db"/>
-                <text x="120" y="242" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">选择"工单确认卡"</text>
-                <path d="M192 237 L250 237" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-
-                <rect x="255" y="220" width="280" height="34" rx="6" fill="white" stroke="#7c3aed"/>
-                <text x="395" y="242" text-anchor="middle" fill="#5b21b6" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">自动写入 SKILL.md 的 allowed-tools</text>
-
-                <rect x="50" y="280" width="140" height="34" rx="6" fill="#1a56db"/>
-                <text x="120" y="302" text-anchor="middle" fill="white" font-size="10" font-family="-apple-system, PingFang SC, sans-serif">配置提示词</text>
-
-                <rect x="255" y="340" width="280" height="40" rx="6" fill="#d97706"/>
-                <text x="395" y="362" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">🧪 对话测试：触发 Skill → 渲染 APPS → 验证</text>
-            </svg>
-        </div>
-
-        <h3 class="section-subtitle">7.3 联调测试流程</h3>
-        <div class="diagram-container">
-            <svg width="880" height="120" viewBox="0 0 880 120" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <marker id="arrowFlow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-                        <polygon points="0 0, 8 3, 0 6" fill="#1a56db"/>
-                    </marker>
-                </defs>
-
-                <!-- Nodes -->
-                <rect x="10" y="35" width="80" height="50" rx="8" fill="#1a56db"/>
-                <text x="50" y="58" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">开发者</text>
-                <text x="50" y="73" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-family="-apple-system, PingFang SC, sans-serif">输入测试话术</text>
-                <path d="M90 60 L115 60" stroke="#1a56db" stroke-width="1.5" marker-end="url(#arrowFlow)"/>
-
-                <rect x="120" y="35" width="80" height="50" rx="8" fill="#7c3aed"/>
-                <text x="160" y="58" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">对话框</text>
-                <text x="160" y="73" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-family="-apple-system, PingFang SC, sans-serif">意图路由</text>
-                <path d="M200 60 L225 60" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrowFlow)"/>
-
-                <rect x="230" y="35" width="80" height="50" rx="8" fill="#7c3aed"/>
-                <text x="270" y="58" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">智能体</text>
-                <text x="270" y="73" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-family="-apple-system, PingFang SC, sans-serif">触发 Skill</text>
-                <path d="M310 60 L335 60" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrowFlow)"/>
-
-                <rect x="340" y="35" width="80" height="50" rx="8" fill="#059669"/>
-                <text x="380" y="58" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">Skill</text>
-                <text x="380" y="73" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-family="-apple-system, PingFang SC, sans-serif">调用 entryTool</text>
-                <path d="M420 60 L445 60" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowFlow)"/>
-
-                <rect x="450" y="35" width="100" height="50" rx="8" fill="#d97706"/>
-                <text x="500" y="55" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">APPS 组件</text>
-                <text x="500" y="73" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-family="-apple-system, PingFang SC, sans-serif">渲染UI+用户操作</text>
-                <path d="M550 60 L575 60" stroke="#d97706" stroke-width="1.5" marker-end="url(#arrowFlow)"/>
-
-                <rect x="580" y="35" width="100" height="50" rx="8" fill="#dc2626"/>
-                <text x="630" y="55" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">MCP Server</text>
-                <text x="630" y="73" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-family="-apple-system, PingFang SC, sans-serif">callServerTool</text>
-                <path d="M680 60 L705 60" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrowFlow)"/>
-
-                <rect x="710" y="35" width="100" height="50" rx="8" fill="#059669"/>
-                <text x="760" y="55" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="-apple-system, PingFang SC, sans-serif">结果展示</text>
-                <text x="760" y="73" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9" font-family="-apple-system, PingFang SC, sans-serif">更新 UI ✓</text>
-
-                <!-- Bottom label -->
-                <text x="440" y="108" text-anchor="middle" font-size="11" fill="#6b7280" font-family="-apple-system, PingFang SC, sans-serif">开发者 → 对话框 → 智能体 → Skill → APPS组件 → MCP Server → 结果展示</text>
-            </svg>
-        </div>
-    </div>
-
-    <!-- Section 9: 兼容性 -->
-    <div class="section">
-        <h2 class="section-title">九、兼容性</h2>
-        <table>
-            <thead><tr><th>现有机制</th><th>方案兼容策略</th></tr></thead>
-            <tbody>
-                <tr><td>本地 IDE 开发 + zip 上传</td><td>继续支持。Build 只是新增了一条路径，不取代本地开发方式</td></tr>
-                <tr><td>KDManage 上传</td><td>KDManage 作为金蝶内部管理工具继续存在。Console 是面向租户的开放入口</td></tr>
-                <tr><td>lg_mcpapp_cdn 本地调试</td><td>Build 的预览功能内置了类似机制，无需手动加 URL 参数</td></tr>
-                <tr><td>info.json 规范</td><td>完全复用现有规范，Build 只是提供了可视化编辑界面</td></tr>
-                <tr><td>@modelcontextprotocol/ext-apps SDK</td><td>完全复用，Build 项目模板中直接引入</td></tr>
-                <tr><td>SKILL.md 格式</td><td>完全复用，Build 在引用 APPS 时自动生成</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Section 10: 任务拆解 -->
-    <div class="section">
-        <h2 class="section-title">十、任务拆解</h2>
-        <table>
-            <thead><tr><th>#</th><th>任务</th><th>归属团队</th><th>前置依赖</th></tr></thead>
-            <tbody>
-                <tr><td>1</td><td>Console 提供组件上传 API（接收 zip + 注册）</td><td>Console/TManage</td><td>—</td></tr>
-                <tr><td>2</td><td>Console 提供组件列表查询 API</td><td>Console/TManage</td><td>—</td></tr>
-                <tr><td>3</td><td>Console 租户级组件管理界面（上传/审核/版本/上下架）</td><td>Console/TManage</td><td>#1</td></tr>
-                <tr><td>4</td><td>MCP APPS 开发规范文档对外公开</td><td>APPS 平台</td><td>—</td></tr>
-                <tr><td>5</td><td>SDK 版本化公开发布</td><td>APPS 平台</td><td>—</td></tr>
-                <tr><td>6</td><td>Build 新增"创建 MCP APPS 项目"入口 + 模板生成</td><td>Build</td><td>#4, #5</td></tr>
-                <tr><td>7</td><td>Build APPS 代码编辑器（含对话辅助生成）</td><td>Build</td><td>#6</td></tr>
-                <tr><td>8</td><td>Build APPS 预览（沙箱 iframe + 模拟 toolInput）</td><td>Build</td><td>#6</td></tr>
-                <tr><td>9</td><td>Build APPS 构建打包（vite build → zip）</td><td>Build</td><td>#6</td></tr>
-                <tr><td>10</td><td>Build 一键提交到 Console（调用上传 API）</td><td>Build</td><td>#1, #9</td></tr>
-                <tr><td>11</td><td>Build 从 Console 拉取组件列表（调用查询 API）</td><td>Build</td><td>#2</td></tr>
-                <tr><td>12</td><td>Build Skill 编辑中引用 APPS 组件（写入 allowed-tools）</td><td>Build</td><td>#11</td></tr>
-                <tr><td>13</td><td>Build 端到端联调测试环境</td><td>Build</td><td>#8, #12</td></tr>
-                <tr><td>14</td><td>Build APPS + Skill + 智能体统一项目结构支持</td><td>Build</td><td>#6, #12</td></tr>
-                <tr><td>15</td><td>Build APPS 模板库（表单/列表/图表等预置模板）</td><td>Build</td><td>#6</td></tr>
-                <tr><td>16</td><td>组件版本管理（Console 侧 + Build 侧展示）</td><td>Console + Build</td><td>#3</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Section 11: 风险与待确认 -->
-    <div class="section">
-        <h2 class="section-title">十一、风险与待确认项</h2>
-        <table>
-            <thead><tr><th>#</th><th>风险/待确认</th><th>影响</th><th>建议</th></tr></thead>
-            <tbody>
-                <tr><td>1</td><td>Build 是否具备运行前端构建工具（vite）的能力</td><td>决定 #9 的实现方式</td><td>如无法运行 vite，改为服务端构建后返回 zip</td></tr>
-                <tr><td>2</td><td>Console 上传 API 的鉴权和权限模型</td><td>决定租户只能管理自己的组件</td><td>需 Console 团队确认 API 权限设计</td></tr>
-                <tr><td>3</td><td>Build 沙箱预览是否支持真实 MCP Tool 调用</td><td>决定预览是"UI only"还是"全功能联调"</td><td>分两级：快速预览（mock）+ 联调测试（真实调用）</td></tr>
-                <tr><td>4</td><td>APPS 引用的 MCP 工具是否必须在集群中已存在</td><td>影响开发阶段能否预览</td><td>预览阶段允许 mock，提交时校验工具存在性</td></tr>
-                <tr><td>5</td><td>同一项目中 APPS + Skill 的发布顺序依赖</td><td>APPS 需先上架才能被 Skill 引用</td><td>Build 应感知依赖关系，自动先提交 APPS 再提交 Skill</td></tr>
-                <tr><td>6</td><td>架构师资源</td><td>会议中提到需架构师介入对齐规范</td><td>需高翔协调</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Appendix: API -->
-    <div class="section">
-        <h2 class="section-title">附录：API 接口</h2>
-
-        <h3 class="section-subtitle">Build → Console（提交组件）</h3>
-        <div class="code-block"><span class="keyword">POST</span> /api/v1/mcp-apps/upload
-<span class="comment">Content-Type: multipart/form-data</span>
-
-<span class="comment">// Request</span>
-{
-  <span class="key">"file"</span>: <span class="string">"&lt;zip binary&gt;"</span>,
-  <span class="key">"tenantId"</span>: <span class="string">"xxx"</span>,
-  <span class="key">"operatorId"</span>: <span class="string">"xxx"</span>,
-  <span class="key">"description"</span>: <span class="string">"工单确认卡组件 v1.1"</span>,
-  <span class="key">"autoApprove"</span>: <span class="keyword">false</span>
-}
-
-<span class="comment">// Response</span>
-{
-  <span class="key">"appCode"</span>: <span class="string">"zcy_kingdee_mcpapp_test"</span>,
-  <span class="key">"version"</span>: <span class="string">"1.1.0"</span>,
-  <span class="key">"status"</span>: <span class="string">"pending_review"</span> | <span class="string">"approved"</span>,
-  <span class="key">"uploadTime"</span>: <span class="string">"2026-08-01T10:00:00Z"</span>
-}</div>
-
-        <h3 class="section-subtitle">Console → Build（查询组件列表）</h3>
-        <div class="code-block"><span class="keyword">GET</span> /api/v1/mcp-apps/list?tenantId=xxx&amp;status=approved
-
-<span class="comment">// Response</span>
-{
-  <span class="key">"components"</span>: [
-    {
-      <span class="key">"appCode"</span>: <span class="string">"zcy_kingdee_mcpapp_test"</span>,
-      <span class="key">"appName"</span>: <span class="string">"工单确认卡"</span>,
-      <span class="key">"description"</span>: <span class="string">"展示工单草稿并支持编辑确认"</span>,
-      <span class="key">"version"</span>: <span class="string">"1.0.0"</span>,
-      <span class="key">"runMode"</span>: <span class="string">"message"</span>,
-      <span class="key">"capabilityDescription"</span>: {
-        <span class="key">"support"</span>: <span class="string">"表单交互"</span>,
-        <span class="key">"notSupport"</span>: <span class="string">"图表"</span>
-      },
-      <span class="key">"relateTools"</span>: [<span class="string">"Create_Ticket"</span>, <span class="string">"Get_Ticket_Schema"</span>],
-      <span class="key">"status"</span>: <span class="string">"approved"</span>,
-      <span class="key">"updatedAt"</span>: <span class="string">"2026-07-28T10:00:00Z"</span>
-    }
-  ]
-}</div>
-    </div>
-
-    <!-- Footer -->
-    <div style="text-align: center; padding: 30px; color: var(--text-light); font-size: 0.85em;">
-        <p>Build 构建 MCP APPS 方案设计 · 方案初稿 · 待各方评审对齐</p>
-    </div>
+<div style="text-align:center;padding:30px;color:var(--text-light);font-size:.85em">
+<p>Build 构建 MCP APPS 方案设计 · 方案初稿 · 待各方评审对齐</p>
+</div>
 
 </div>
 </body>
