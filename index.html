@@ -364,6 +364,10 @@
     <div class="sidebar-title" style="margin-top:20px;">关联文档</div>
     <a href="振兴HelpDesk客户沟通会议纪要.html" style="color:var(--primary);">📋 客户沟通会议纪要</a>
     <a href="灵基Build生产化问题清单.html" style="color:var(--primary);">🔧 标品生产化问题清单</a>
+    <div class="sidebar-title" style="margin-top:20px;">重难点问题推进</div>
+    <a href="重难点问题推进/灵基消息与事件推送能力方案设计.html" style="color:var(--primary);">📨 消息与事件推送方案</a>
+    <a href="重难点问题推进/Build构建MCPAPPS方案设计.html" style="color:var(--primary);">🧩 Build构建MCP APPS方案</a>
+    <a href="重难点问题推进/Build统一版本管理能力方案设计.html" style="color:var(--primary);">🔄 Build统一版本管理方案</a>
 </nav>
 
 <div class="container">
@@ -427,7 +431,7 @@
         <tr><td>服务对象</td><td>内部员工（上千人）</td><td>同左，推广至全员</td></tr>
         <tr><td>服务范围</td><td>IT 系统使用（核心）、HR、财务</td><td>同左 + 行政等扩展领域</td></tr>
         <tr><td>处理团队</td><td>IT + HR 部门……</td><td>同左，效率提升后可扩展</td></tr>
-        <tr><td>知识库</td><td>SharePoint（总量 2TB）</td><td>灵基 DC 统一管理 + AI 检索</td></tr>
+        <tr><td>知识库</td><td>SharePoint</td><td>灵基 DC 统一管理 + AI 检索</td></tr>
         <tr><td>SLA 管理</td><td>无系统化管控</td><td>自动化 SLA 考核 + 仪表盘</td></tr>
         <tr><td>知识沉淀</td><td>人工维护 SharePoint</td><td>AI 自动沉淀 + 知识飞轮</td></tr>
     </table>
@@ -1119,7 +1123,7 @@
         <tr><td>权限管控</td><td>按部门/角色/智能体实例控制知识访问权限</td><td>2.0</td></tr>
         <tr><td>知识回写（外部推送）</td><td>后台应用/MCP Server 通过 API 向指定智能体知识库写入新知识</td><td>2.0</td></tr>
         <tr><td>智能体自动沉淀</td><td>智能体运行中生成的高频问题/处理结论自动写入所属知识库</td><td>2.0</td></tr>
-        <tr><td>SharePoint 同步</td><td>增量同步 SharePoint 文档到 DC（推拉结合）</td><td>3.0</td></tr>
+       <!--<tr><td>SharePoint 同步</td><td>增量同步 SharePoint 文档到 DC（推拉结合）</td><td>3.0</td></tr>-->
         <tr><td>知识质量管理</td><td>新旧知识冲突检测、知识更新版本化</td><td>后续</td></tr>
     </table>
 
@@ -1270,13 +1274,13 @@
             </div>
         </div>
         <div class="timeline-item milestone">
-            <div class="timeline-title">SharePoint 同步 — 知识体系全面打通</div>
+            <div class="timeline-title">知识体系打通</div>
             <div class="timeline-content">
                 <ul>
-                    <li>SharePoint → 灵基 DC 增量同步方案落地</li>
+                    <!--<li>SharePoint → 灵基 DC 增量同步方案落地</li>-->
                     <li>数据安全方案通过客户审核</li>
                     <li>成本评估与优化方案确认</li>
-                    <li>时效性 SLA 达标（同步延迟可控）</li>
+                    <li>时效性 SLA 达标</li>
                     <li>知识回写机制上线（知识飞轮启动）</li>
                 </ul>
             </div>
@@ -1316,11 +1320,11 @@
     <h4>第三阶段：待定</h4>
     <table>
         <tr><th>任务</th><th>说明</th></tr>
-        <tr><td>SharePoint 同步方案设计</td><td>含安全/成本/时效性</td></tr>
+        <!--<tr><td>SharePoint 同步方案设计</td><td>含安全/成本/时效性</td></tr>-->
         <tr><td>测试样例准备</td><td>客户要求看到实际效果</td></tr>
         <tr><td>与客户专项会议</td><td>方案确认 + 安全评审</td></tr>
         <tr><td>SharePoint API 权限获取</td><td>需 Cyber Security Director 审批</td></tr>
-        <tr><td>增量同步开发与测试</td><td>推拉结合机制</td></tr>
+        <!--<tr><td>增量同步开发与测试</td><td>推拉结合机制</td></tr>-->
         <tr><td>知识回写功能上线</td><td>DC 8月底初版</td></tr>
     </table>
 </div>
@@ -1350,12 +1354,12 @@
             <td>高</td>
             <td>提前与 Julian 沟通推进。短期不影响 1.0/2.0，与第三阶段解耦</td>
         </tr>
-        <tr>
+        <!--<tr>
             <td>2TB 数据同步成本超预期</td>
             <td><span class="tag tag-p1">中</span> 可能影响方案选择</td>
             <td>中</td>
             <td>提前测算并给出分级方案。Chris 已同意 MCP 相关费用由客户承担</td>
-        </tr>
+        </tr>-->
         <tr>
             <td>灵基用户无苍穹身份</td>
             <td><span class="tag tag-p0">高</span> 后台应用不可用</td>

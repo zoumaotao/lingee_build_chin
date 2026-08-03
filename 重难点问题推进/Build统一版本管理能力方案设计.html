@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build 统一版本管理能力方案设计</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, 'PingFang SC', 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a56db 0%, #6d28d9 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.4em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .header .meta {
+            font-size: 0.9em;
+            opacity: 0.75;
+        }
+
+        .header .meta span {
+            margin: 0 12px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #1a56db;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #1a56db;
+        }
+
+        .subsection-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: #374151;
+            margin: 28px 0 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-highlight {
+            border-left: 4px solid #1a56db;
+        }
+
+        .card-warning {
+            border-left: 4px solid #d97706;
+            background: #fffbeb;
+        }
+
+        .card-success {
+            border-left: 4px solid #059669;
+            background: #ecfdf5;
+        }
+
+        .card-danger {
+            border-left: 4px solid #dc2626;
+            background: #fef2f2;
+        }
+
+        .card-urgent {
+            border: 2px solid #dc2626;
+            background: linear-gradient(135deg, #fef2f2, #fff);
+        }
+
+        .card-urgent .card-badge {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.92em;
+        }
+
+        table thead th {
+            background: #f3f4f6;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        table tbody td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .tag-blue { background: #dbeafe; color: #1e40af; }
+        .tag-green { background: #d1fae5; color: #065f46; }
+        .tag-yellow { background: #fef3c7; color: #92400e; }
+        .tag-red { background: #fee2e2; color: #991b1b; }
+        .tag-purple { background: #ede9fe; color: #5b21b6; }
+
+        .conclusion-box {
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border: 1px solid #93c5fd;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .conclusion-box strong {
+            color: #1a56db;
+        }
+
+        .key-findings {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .key-findings h4 {
+            color: #059669;
+            margin-bottom: 12px;
+        }
+
+        .key-findings ol {
+            padding-left: 20px;
+        }
+
+        .key-findings li {
+            margin-bottom: 8px;
+        }
+
+        .competitor-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .competitor-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border-top: 3px solid #1a56db;
+        }
+
+        .competitor-card h4 {
+            color: #1a56db;
+            margin-bottom: 8px;
+        }
+
+        .competitor-card .approach {
+            font-size: 0.9em;
+            color: #4b5563;
+            margin-bottom: 10px;
+        }
+
+        .competitor-card .pros-cons {
+            display: flex;
+            gap: 12px;
+            font-size: 0.85em;
+        }
+
+        .competitor-card .pros {
+            color: #059669;
+        }
+
+        .competitor-card .cons {
+            color: #dc2626;
+        }
+
+        .svg-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .svg-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .wireframe {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 16px 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+        }
+
+        .wireframe-title {
+            background: #e2e8f0;
+            margin: -20px -20px 16px;
+            padding: 10px 20px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .wireframe-body {
+            color: #334155;
+        }
+
+        .wireframe-row {
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .wireframe-btn {
+            display: inline-block;
+            background: #1a56db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin: 2px 4px;
+        }
+
+        .wireframe-btn-outline {
+            display: inline-block;
+            border: 1px solid #1a56db;
+            color: #1a56db;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin: 2px 4px;
+        }
+
+        .phase-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .phase-1a { background: #fee2e2; color: #991b1b; }
+        .phase-1b { background: #fef3c7; color: #92400e; }
+        .phase-2 { background: #dbeafe; color: #1e40af; }
+        .phase-3 { background: #ede9fe; color: #5b21b6; }
+
+        ul, ol {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        pre {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85em;
+            line-height: 1.6;
+            margin: 16px 0;
+        }
+
+        .json-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.82em;
+            line-height: 1.5;
+            margin: 16px 0;
+        }
+
+        .json-key { color: #7dd3fc; }
+        .json-string { color: #86efac; }
+        .json-value { color: #fbbf24; }
+
+        .status-table td:first-child {
+            font-weight: 600;
+        }
+
+        @media print {
+            body { background: white; font-size: 12px; }
+            .header { padding: 30px 20px; }
+            .card { box-shadow: none; border: 1px solid #e5e7eb; }
+            .container { padding: 20px; }
+            .section { page-break-inside: avoid; }
+            .svg-container { box-shadow: none; border: 1px solid #e5e7eb; }
+        }
+
+        @media (max-width: 768px) {
+            .competitor-cards { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8em; }
+            .container { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <h1>Build 统一版本管理能力方案设计</h1>
+    <div class="subtitle">灵基 Build 全制品类型的版本管理能力顶层设计</div>
+    <div class="meta">
+        <span>面向：Build产品团队、Harness团队、Console团队</span>
+        <span>|</span>
+        <span>日期：2026-08-03</span>
+        <span>|</span>
+        <span>状态：方案初稿，待评审</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- Section 1: 问题定义 -->
+<div class="section">
+    <h2 class="section-title">一、问题定义</h2>
+
+    <h3 class="subsection-title">1.1 现状</h3>
+    <div class="card card-danger">
+        <p><strong>灵基 Build 当前对所有制品类型的存储机制：每次保存直接覆盖上一次，无任何历史记录。</strong></p>
+        <ul style="margin-top: 12px;">
+            <li>开发者误操作无法回退</li>
+            <li>无法对比"上次能跑的版本"和"这次改坏的版本"</li>
+            <li>发布到 Work 后发现问题无法回滚</li>
+            <li>AI 自动生成代码后，人无法审查"改了什么"</li>
+            <li>多人协作会互相覆盖</li>
+            <li>无法满足企业级审计要求（谁、什么时候、改了什么）</li>
+        </ul>
+    </div>
+
+    <h3 class="subsection-title">1.2 客户真实需求（振兴集团提出）</h3>
+    <div class="card card-highlight">
+        <p style="color: #6b7280; margin-bottom: 12px;"><em>原始需求：Skill 需要支持研发版本化。发布出去的 Skill/Agent 在重新编辑重新发布后，状态需要调整，体现已被重新编辑。再次发布后，版本编号需要跟上次有差异。</em></p>
+        <p style="font-weight: 600; margin-bottom: 8px;">功能要求：</p>
+        <ol>
+            <li>发布后编辑时状态变为"编辑中"</li>
+            <li>再次发布时版本号递增（如 v1.0 → v1.1）</li>
+            <li>支持查看版本历史</li>
+            <li>支持一键恢复历史版本</li>
+        </ol>
+    </div>
+
+    <h3 class="subsection-title">1.3 范围</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>制品类型</th><th>文件形态</th><th>典型大小</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>智能体（Agent）</td><td>agent.md + assistant.json + 配置</td><td><span class="tag tag-green">小（KB级）</span></td></tr>
+                <tr><td>技能（Skill）</td><td>SKILL.md + manifest.yaml + response.json</td><td><span class="tag tag-green">小（KB级）</span></td></tr>
+                <tr><td>通用应用</td><td>前端/后端代码工程</td><td><span class="tag tag-yellow">中大（MB级）</span></td></tr>
+                <tr><td>苍穹应用</td><td>元数据 + 插件代码</td><td><span class="tag tag-blue">中（KB-MB）</span></td></tr>
+                <tr><td>MCP APPS</td><td>React/Vue 代码 + info.json</td><td><span class="tag tag-blue">中（KB-MB）</span></td></tr>
+                <tr><td>MCP Server</td><td>后端服务代码</td><td><span class="tag tag-yellow">中大（MB级）</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section 2: 设计约束与前提 -->
+<div class="section">
+    <h2 class="section-title">二、设计约束与前提</h2>
+    <p style="margin-bottom: 16px;">以下 7 个 Build 平台特征是本方案的核心设计约束，所有方案选型都围绕它们展开：</p>
+
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>平台特征</th><th>对版本管理方案的影响</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>用户分层极大</strong> — 从零代码业务专家到全栈开发者</td><td>必须按用户类型分层暴露能力（简洁/专业/管理员模式）</td></tr>
+                <tr><td>2</td><td><strong>制品类型多</strong> — 至少 6 类制品</td><td>版本管理模型必须统一抽象，不能每种制品单独设计</td></tr>
+                <tr><td>3</td><td><strong>制品有依赖关系</strong> — Agent→Skill→MCP</td><td>发布时必须记录依赖快照；回滚时整体恢复</td></tr>
+                <tr><td>4</td><td><strong>双轨并行</strong> — 苍穹生态轨 + 通用技术栈轨</td><td>需同时适配"元数据配置"和"代码工程"两种形态</td></tr>
+                <tr><td>5</td><td><strong>AI 驱动开发</strong> — 对话式生成，结果不确定</td><td>更需要自动版本保存兜底；需区分"人改的"和"AI 生成的"</td></tr>
+                <tr><td>6</td><td><strong>有发布上线流程</strong> — Build → Console → Work</td><td>需覆盖"开发态"和"发布态"两层版本</td></tr>
+                <tr><td>7</td><td><strong>企业级治理</strong> — 审计、权限、灰度、回滚</td><td>所有操作留痕可追溯，支持权限控制</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="conclusion-box">
+        <strong>这些约束决定了：</strong>不能简单照搬任何一家竞品的方案。Dify/Coze 太简单（无法覆盖多制品+企业治理），Mendix/OutSystems 太重（不适合 AI 驱动+对话式开发）。建议需要走<strong>"底层 Git + 上层分层抽象 + 快照式依赖管理"</strong>的组合路线。
+    </div>
+</div>
+
+<!-- Section 3: 业界方案调研 -->
+<div class="section">
+    <h2 class="section-title">三、业界方案调研</h2>
+
+    <h3 class="subsection-title">3.1 产品规划竞品分析</h3>
+    <div class="competitor-cards">
+        <div class="competitor-card">
+            <h4>WorkBuddy（腾讯）</h4>
+            <div class="approach">本地沙箱运行，无明确版本管理体系；Agent 部署通过 Cloud Studio 一键部署，无版本回滚能力</div>
+            <div class="pros-cons">
+                <div class="pros">✓ 部署简单，一键上云</div>
+                <div class="cons">✗ 无版本历史、无回滚、无审计</div>
+            </div>
+        </div>
+        <div class="competitor-card">
+            <h4>Claude Code</h4>
+            <div class="approach">底层完全基于 Git：每次 AI 修改自动 commit，会话历史持久化。社区补充 Checkpoints 工具</div>
+            <div class="pros-cons">
+                <div class="pros">✓ Git-native，天然支持分支/回滚/diff</div>
+                <div class="cons">✗ 无"发布版本"概念，需懂 Git</div>
+            </div>
+        </div>
+        <div class="competitor-card">
+            <h4>Codex（OpenAI）</h4>
+            <div class="approach">深度集成 GitHub/GitLab：每个任务自动创建分支、生成 PR、支持 code review 和自动合并</div>
+            <div class="pros-cons">
+                <div class="pros">✓ PR 工作流成熟；CI/CD 集成完整</div>
+                <div class="cons">✗ 仅覆盖代码类制品，完全依赖外部 Git</div>
+            </div>
+        </div>
+        <div class="competitor-card">
+            <h4>AgentKit（OpenAI 2026.7）</h4>
+            <div class="approach">可视化画布构建 Agent 工作流，支持 preview runs + inline eval + full versioning；发布不可变快照</div>
+            <div class="pros-cons">
+                <div class="pros">✓ 快照式版本管理+预览+评测一体</div>
+                <div class="cons">✗ 仅覆盖 Agent 工作流，不含代码/Skill</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="key-findings">
+        <h4>🔍 关键发现</h4>
+        <ol>
+            <li><strong>没有竞品已经做到"多制品类型统一版本管理"</strong> — Claude Code/Codex 只管代码，AgentKit 只管 Agent 工作流</li>
+            <li><strong>"AI 自动 commit"已成行业共识</strong> — Claude Code 和 Codex 都在 AI 修改后自动创建 Git 记录</li>
+            <li><strong>"不可变快照发布"是 Agent 平台的正确方向</strong> — AgentKit、Claude Managed Agents、ElevenLabs 都采用</li>
+            <li><strong>灵基有机会做差异化</strong> — 统一 6 类制品 + 分层用户体验 + 企业治理 = 竞品覆盖不了的空间</li>
+        </ol>
+    </div>
+
+    <h3 class="subsection-title">3.2 低代码/AI 平台参考</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>平台</th><th>做法</th><th>优点</th><th>缺点</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Mendix</strong></td><td>内置 Git（Team Server），每个项目自动创建 Git 仓库</td><td>专业级能力完整；多人协作好</td><td>对非技术用户门槛高</td></tr>
+                <tr><td><strong>OutSystems</strong></td><td>LifeTime 管理环境流转（Dev→QA→Prod）</td><td>对业务用户友好；环境管理强</td><td>不暴露底层版本控制</td></tr>
+                <tr><td><strong>Salesforce</strong></td><td>DevOps Center（Git-based）+ Change Sets 双轨</td><td>兼顾两类用户；Agent ALM 5 阶段生命周期</td><td>体系复杂，学习成本高</td></tr>
+                <tr><td><strong>Dify</strong></td><td>track changes / publish / restore，快照不可变</td><td>简单直观；快照式好理解</td><td>无分支；无多人并行</td></tr>
+                <tr><td><strong>Coze/扣子</strong></td><td>发布版本号管理，支持回滚历史版本</td><td>极简；用户无感</td><td>仅发布态回滚，开发过程无版本</td></tr>
+                <tr><td><strong>Claude Managed Agents</strong></td><td>不可变版本，每次更新产生新版本 ID</td><td>简洁安全；回滚即切换指针</td><td>偏 API 化，无可视化</td></tr>
+                <tr><td><strong>ElevenLabs</strong></td><td>分支+流量百分比部署</td><td>支持 A/B 测试和渐进发布</td><td>仅针对 Agent 单一制品</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">3.3 AI Agent 版本管理特殊性</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>特殊点</th><th>说明</th><th>影响</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>非确定性</strong></td><td>同一版本的智能体，行为也可能不同（模型温度、上下文）</td><td>版本 ≠ 行为一致性，需配合评测</td></tr>
+                <tr><td><strong>复合系统</strong></td><td>Agent = Prompt + Model + Tools + Knowledge + Memory</td><td>版本需要是"全量快照"而非单文件</td></tr>
+                <tr><td><strong>隐式变更</strong></td><td>底层模型升级、知识库更新导致行为变化</td><td>需记录"环境指纹"（模型版本、知识库版本）</td></tr>
+                <tr><td><strong>行为漂移</strong></td><td>长期运行后记忆积累导致行为偏移</td><td>需要能"重置到某版本的初始状态"</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">3.4 行业共识</h3>
+    <div class="card card-success">
+        <ol>
+            <li><strong>发布态必须是不可变快照（Immutable Snapshot）</strong> — 这是所有平台的共识</li>
+            <li><strong>开发过程需要变更追溯</strong> — 至少要有"谁在什么时候改了什么"</li>
+            <li><strong>回滚是核心能力</strong> — 线上出问题时能秒回上一版</li>
+            <li><strong>对非技术用户屏蔽复杂性</strong> — Git 概念太重，需要包装</li>
+            <li><strong>制品粒度版本 + 整体发布包</strong> — 两层都需要</li>
+        </ol>
+    </div>
+</div>
+
+<!-- Section 4: 方案设计 -->
+<div class="section">
+    <h2 class="section-title">四、方案设计</h2>
+
+    <h3 class="subsection-title">4.1 核心设计原则</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>原则</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>两层版本</strong></td><td>制品级版本（开发时）+ 发布包版本（上线时），分层管理</td></tr>
+                <tr><td><strong>底层 Git，上层包装</strong></td><td>存储用 Git 保证可靠性和扩展性，用户界面做简化抽象</td></tr>
+                <tr><td><strong>快照即版本</strong></td><td>每个"版本"是制品全量状态的不可变快照，不是 diff</td></tr>
+                <tr><td><strong>按用户分层暴露</strong></td><td>业务用户看"版本列表+回滚"；技术用户可选深入到分支/diff</td></tr>
+                <tr><td><strong>统一模型</strong></td><td>6 种制品用同一套版本管理机制，体验一致</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">4.2 整体架构</h3>
+    <div class="svg-container">
+        <svg width="900" height="580" viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg">
+            <!-- 用户交互层 -->
+            <rect x="20" y="20" width="860" height="180" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+            <text x="450" y="50" text-anchor="middle" font-size="16" font-weight="bold" fill="#1e40af">用户交互层</text>
+
+            <!-- 简洁模式 -->
+            <rect x="60" y="70" width="220" height="110" rx="8" fill="white" stroke="#60a5fa" stroke-width="1.5"/>
+            <text x="170" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e40af">简洁模式</text>
+            <text x="170" y="113" text-anchor="middle" font-size="11" fill="#6b7280">（业务用户）</text>
+            <text x="80" y="135" font-size="11" fill="#374151">· 版本列表</text>
+            <text x="80" y="153" font-size="11" fill="#374151">· 一键回滚</text>
+            <text x="80" y="171" font-size="11" fill="#374151">· 发布标记</text>
+
+            <!-- 专业模式 -->
+            <rect x="320" y="70" width="220" height="110" rx="8" fill="white" stroke="#60a5fa" stroke-width="1.5"/>
+            <text x="430" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e40af">专业模式</text>
+            <text x="430" y="113" text-anchor="middle" font-size="11" fill="#6b7280">（开发者）</text>
+            <text x="340" y="135" font-size="11" fill="#374151">· 变更 diff</text>
+            <text x="340" y="153" font-size="11" fill="#374151">· 分支管理</text>
+            <text x="340" y="171" font-size="11" fill="#374151">· 合并冲突</text>
+
+            <!-- 管理员模式 -->
+            <rect x="580" y="70" width="220" height="110" rx="8" fill="white" stroke="#60a5fa" stroke-width="1.5"/>
+            <text x="690" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e40af">管理员模式</text>
+            <text x="690" y="113" text-anchor="middle" font-size="11" fill="#6b7280">（IT管理员）</text>
+            <text x="600" y="135" font-size="11" fill="#374151">· 审计日志</text>
+            <text x="600" y="153" font-size="11" fill="#374151">· 权限控制</text>
+            <text x="600" y="171" font-size="11" fill="#374151">· 合规报告</text>
+
+            <!-- 箭头 -->
+            <line x1="450" y1="200" x2="450" y2="230" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+            <!-- 版本管理服务层 -->
+            <rect x="20" y="230" width="860" height="140" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+            <text x="450" y="260" text-anchor="middle" font-size="16" font-weight="bold" fill="#065f46">版本管理服务层</text>
+
+            <!-- 4 services -->
+            <rect x="60" y="280" width="170" height="70" rx="8" fill="white" stroke="#34d399" stroke-width="1.5"/>
+            <text x="145" y="310" text-anchor="middle" font-size="12" font-weight="bold" fill="#059669">版本快照</text>
+            <text x="145" y="330" text-anchor="middle" font-size="11" fill="#6b7280">Service</text>
+
+            <rect x="260" y="280" width="170" height="70" rx="8" fill="white" stroke="#34d399" stroke-width="1.5"/>
+            <text x="345" y="310" text-anchor="middle" font-size="12" font-weight="bold" fill="#059669">变更追踪</text>
+            <text x="345" y="330" text-anchor="middle" font-size="11" fill="#6b7280">Service</text>
+
+            <rect x="460" y="280" width="170" height="70" rx="8" fill="white" stroke="#34d399" stroke-width="1.5"/>
+            <text x="545" y="310" text-anchor="middle" font-size="12" font-weight="bold" fill="#059669">发布管理</text>
+            <text x="545" y="330" text-anchor="middle" font-size="11" fill="#6b7280">Service</text>
+
+            <rect x="660" y="280" width="170" height="70" rx="8" fill="white" stroke="#34d399" stroke-width="1.5"/>
+            <text x="745" y="310" text-anchor="middle" font-size="12" font-weight="bold" fill="#059669">依赖快照</text>
+            <text x="745" y="330" text-anchor="middle" font-size="11" fill="#6b7280">Service</text>
+
+            <!-- 箭头 -->
+            <line x1="450" y1="370" x2="450" y2="400" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+            <!-- 存储层 -->
+            <rect x="20" y="400" width="860" height="160" rx="12" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+            <text x="450" y="430" text-anchor="middle" font-size="16" font-weight="bold" fill="#92400e">存储层</text>
+
+            <rect x="80" y="445" width="740" height="100" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="450" y="472" text-anchor="middle" font-size="14" font-weight="bold" fill="#92400e">Git 仓库（每个项目一个 repo）</text>
+            <text x="120" y="498" font-size="12" fill="#374151">· 自动 commit（用户每次保存 / AI 每次生成）</text>
+            <text x="120" y="518" font-size="12" fill="#374151">· tag 标记发布版本</text>
+            <text x="500" y="498" font-size="12" fill="#374151">· branch 支持并行开发（专业模式）</text>
+            <text x="500" y="518" font-size="12" fill="#374151">· 增量存储，空间高效</text>
+
+            <!-- Arrow marker -->
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#9ca3af"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+
+    <h3 class="subsection-title">4.3 制品生命周期状态机</h3>
+    <div class="svg-container">
+        <svg width="850" height="380" viewBox="0 0 850 380" xmlns="http://www.w3.org/2000/svg">
+            <!-- 新建 -->
+            <rect x="40" y="80" width="120" height="50" rx="25" fill="#e0e7ff" stroke="#6366f1" stroke-width="2"/>
+            <text x="100" y="110" text-anchor="middle" font-size="14" font-weight="bold" fill="#4338ca">新建</text>
+
+            <!-- 箭头: 新建→开发中 -->
+            <line x1="160" y1="105" x2="240" y2="105" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow-purple)"/>
+            <text x="200" y="95" text-anchor="middle" font-size="11" fill="#6366f1">保存</text>
+
+            <!-- 开发中 -->
+            <rect x="240" y="80" width="120" height="50" rx="25" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+            <text x="300" y="110" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e40af">开发中</text>
+
+            <!-- 箭头: 开发中→已发布 -->
+            <line x1="360" y1="105" x2="500" y2="105" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)"/>
+            <text x="430" y="95" text-anchor="middle" font-size="11" fill="#059669">发布 (v1.0)</text>
+
+            <!-- 已发布 -->
+            <rect x="500" y="80" width="130" height="50" rx="25" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+            <text x="565" y="110" text-anchor="middle" font-size="14" font-weight="bold" fill="#065f46">已发布</text>
+
+            <!-- 箭头: 已发布→编辑中 -->
+            <path d="M 565 130 L 565 200 L 430 200" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#arrow-orange)"/>
+            <text x="540" y="170" font-size="11" fill="#d97706">再次编辑</text>
+
+            <!-- 编辑中 -->
+            <rect x="280" y="175" width="150" height="50" rx="25" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="355" y="200" text-anchor="middle" font-size="13" font-weight="bold" fill="#92400e">编辑中</text>
+            <text x="355" y="217" text-anchor="middle" font-size="10" fill="#92400e">(有未发布的修改)</text>
+
+            <!-- 箭头: 编辑中→已发布(新版本) -->
+            <line x1="430" y1="200" x2="500" y2="200" stroke="#059669" stroke-width="0" />
+            <path d="M 355 225 L 355 300 L 565 300 L 565 270" fill="none" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)"/>
+            <text x="460" y="290" text-anchor="middle" font-size="11" fill="#059669">发布 (v1.1)</text>
+
+            <!-- 已发布(新版本) -->
+            <rect x="500" y="245" width="130" height="50" rx="25" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+            <text x="565" y="270" text-anchor="middle" font-size="13" font-weight="bold" fill="#065f46">已发布</text>
+            <text x="565" y="287" text-anchor="middle" font-size="10" fill="#065f46">(新版本)</text>
+
+            <!-- 回滚路径 -->
+            <rect x="700" y="80" width="120" height="50" rx="25" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+            <text x="760" y="110" text-anchor="middle" font-size="13" font-weight="bold" fill="#991b1b">已回滚</text>
+
+            <path d="M 630 105 L 700 105" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-red)"/>
+            <text x="665" y="95" text-anchor="middle" font-size="10" fill="#dc2626">被替代</text>
+
+            <!-- Legend -->
+            <rect x="40" y="320" width="770" height="45" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+            <text x="60" y="347" font-size="11" fill="#6b7280">状态图例：</text>
+            <rect x="140" y="333" width="16" height="16" rx="8" fill="#e0e7ff" stroke="#6366f1"/>
+            <text x="162" y="347" font-size="11" fill="#374151">初始</text>
+            <rect x="210" y="333" width="16" height="16" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+            <text x="232" y="347" font-size="11" fill="#374151">开发</text>
+            <rect x="280" y="333" width="16" height="16" rx="8" fill="#d1fae5" stroke="#059669"/>
+            <text x="302" y="347" font-size="11" fill="#374151">已发布</text>
+            <rect x="365" y="333" width="16" height="16" rx="8" fill="#fef3c7" stroke="#d97706"/>
+            <text x="387" y="347" font-size="11" fill="#374151">编辑中</text>
+            <rect x="450" y="333" width="16" height="16" rx="8" fill="#fee2e2" stroke="#dc2626"/>
+            <text x="472" y="347" font-size="11" fill="#374151">已回滚</text>
+
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#6366f1"/>
+                </marker>
+                <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+                </marker>
+                <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#d97706"/>
+                </marker>
+                <marker id="arrow-red" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>状态</th><th>含义</th><th>用户可见标识</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="tag tag-purple">新建</span></td><td>刚创建，从未保存</td><td>—</td></tr>
+                <tr><td><span class="tag tag-blue">开发中</span></td><td>有保存但从未发布</td><td>"草稿"</td></tr>
+                <tr><td><span class="tag tag-green">已发布</span></td><td>当前线上运行的版本 = 最后保存的版本</td><td>"已发布 v1.2.0"</td></tr>
+                <tr><td><span class="tag tag-yellow">编辑中</span></td><td>已发布后又有了新修改，线上 ≠ 当前编辑</td><td>"已发布 v1.2.0 · 有未发布的修改"</td></tr>
+                <tr><td><span class="tag tag-red">已回滚</span></td><td>曾经发布但被回滚替代的旧版本</td><td>"v1.2.0 (已回滚)"</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">4.4 两层版本模型</h3>
+
+    <h4 style="margin: 20px 0 12px; color: #1a56db;">第一层：开发版本（Draft Version）</h4>
+    <div class="card">
+        <p><strong>触发时机：</strong>用户每次保存 / AI 每次完成一轮生成</p>
+        <ul style="margin: 12px 0;">
+            <li>自动创建一个 commit（用户无感）</li>
+            <li>记录：谁（用户/AI）、什么时间、改了什么文件</li>
+            <li>自动生成变更摘要（AI 生成一句话描述本次变更）</li>
+        </ul>
+    </div>
+
+    <div class="json-block">
+{
+  <span class="json-key">"versionId"</span>: <span class="json-string">"dv-20260803-001"</span>,
+  <span class="json-key">"artifactType"</span>: <span class="json-string">"skill"</span>,
+  <span class="json-key">"artifactId"</span>: <span class="json-string">"create-ticket-skill"</span>,
+  <span class="json-key">"projectId"</span>: <span class="json-string">"helpdesk-project"</span>,
+  <span class="json-key">"author"</span>: {
+    <span class="json-key">"type"</span>: <span class="json-string">"ai"</span>,
+    <span class="json-key">"userId"</span>: <span class="json-string">"user-123"</span>,
+    <span class="json-key">"name"</span>: <span class="json-string">"张三"</span>
+  },
+  <span class="json-key">"timestamp"</span>: <span class="json-string">"2026-08-03T10:30:00Z"</span>,
+  <span class="json-key">"summary"</span>: <span class="json-string">"修改了工单创建的必填字段校验逻辑"</span>,
+  <span class="json-key">"snapshot"</span>: {
+    <span class="json-key">"files"</span>: [
+      { <span class="json-key">"path"</span>: <span class="json-string">"SKILL.md"</span>, <span class="json-key">"hash"</span>: <span class="json-string">"abc123"</span> },
+      { <span class="json-key">"path"</span>: <span class="json-string">"manifest.yaml"</span>, <span class="json-key">"hash"</span>: <span class="json-string">"def456"</span> }
+    ]
+  },
+  <span class="json-key">"parentVersionId"</span>: <span class="json-string">"dv-20260803-000"</span>,
+  <span class="json-key">"gitCommitSha"</span>: <span class="json-string">"a1b2c3d4..."</span>
+}
+    </div>
+
+    <h4 style="margin: 20px 0 12px; color: #059669;">第二层：发布版本（Release Version）</h4>
+    <div class="card">
+        <p><strong>触发时机：</strong>用户点击"发布"</p>
+        <ul style="margin: 12px 0;">
+            <li>创建不可变快照（Immutable Snapshot）</li>
+            <li>生成语义化版本号（v1.0.0 / v1.1.0 / v2.0.0）</li>
+            <li>记录发布时的完整环境指纹（模型版本、知识库版本、依赖版本）</li>
+            <li>推送到 Console 或 Work 运行时</li>
+        </ul>
+    </div>
+
+    <div class="json-block">
+{
+  <span class="json-key">"releaseId"</span>: <span class="json-string">"rv-1.2.0"</span>,
+  <span class="json-key">"version"</span>: <span class="json-string">"1.2.0"</span>,
+  <span class="json-key">"artifactType"</span>: <span class="json-string">"agent"</span>,
+  <span class="json-key">"artifactId"</span>: <span class="json-string">"helpdesk-assistant"</span>,
+  <span class="json-key">"releasedBy"</span>: <span class="json-string">"user-123"</span>,
+  <span class="json-key">"releasedAt"</span>: <span class="json-string">"2026-08-03T14:00:00Z"</span>,
+  <span class="json-key">"releaseNotes"</span>: <span class="json-string">"新增 SLA 超时告警能力，修复多轮对话丢失上下文问题"</span>,
+  <span class="json-key">"environment"</span>: {
+    <span class="json-key">"modelVersion"</span>: <span class="json-string">"claude-5-20260701"</span>,
+    <span class="json-key">"knowledgeBaseVersion"</span>: <span class="json-string">"kb-v3"</span>,
+    <span class="json-key">"dependencies"</span>: [
+      { <span class="json-key">"type"</span>: <span class="json-string">"skill"</span>, <span class="json-key">"id"</span>: <span class="json-string">"create-ticket-skill"</span>, <span class="json-key">"version"</span>: <span class="json-string">"1.1.0"</span> },
+      { <span class="json-key">"type"</span>: <span class="json-string">"skill"</span>, <span class="json-key">"id"</span>: <span class="json-string">"knowledge-qa-skill"</span>, <span class="json-key">"version"</span>: <span class="json-string">"2.0.0"</span> },
+      { <span class="json-key">"type"</span>: <span class="json-string">"mcpapp"</span>, <span class="json-key">"id"</span>: <span class="json-string">"ticket-confirm-card"</span>, <span class="json-key">"version"</span>: <span class="json-string">"1.0.0"</span> }
+    ]
+  },
+  <span class="json-key">"status"</span>: <span class="json-string">"active"</span>,
+  <span class="json-key">"immutable"</span>: <span class="json-value">true</span>
+}
+    </div>
+
+    <h3 class="subsection-title">4.5 依赖管理策略（渐进式）</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>阶段</th><th>策略</th><th>用户体验</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="tag tag-green">第一阶段</span></td>
+                    <td><strong>快照式</strong> — 发布时自动记录引用的各依赖当前版本，回滚时整体回滚</td>
+                    <td>用户无感，系统自动处理</td>
+                </tr>
+                <tr>
+                    <td><span class="tag tag-blue">第二阶段</span></td>
+                    <td><strong>提示式</strong> — 依赖更新时提示"Skill X 有新版本，是否更新引用？"</td>
+                    <td>用户看到更新提示，自主决策</td>
+                </tr>
+                <tr>
+                    <td><span class="tag tag-purple">第三阶段</span></td>
+                    <td><strong>锁定式</strong> — 支持手动锁定依赖版本，依赖冲突自动检测</td>
+                    <td>类似 npm lock，适合复杂项目</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">4.6 用户交互设计</h3>
+
+    <h4 style="margin: 16px 0 12px; color: #374151;">4.6.1 简洁模式 — 版本列表</h4>
+    <div class="wireframe">
+        <div class="wireframe-title">📱 工单确认卡 (MCP APP)</div>
+        <div class="wireframe-body">
+            <div class="wireframe-row" style="padding: 10px 0;">
+                <strong>当前版本: v1.2.0</strong> <span style="color: #6b7280;">(发布于 2026-08-01)</span><br>
+                <span style="color: #d97706;">● 开发状态: 有未发布的修改</span>
+            </div>
+            <div class="wireframe-row" style="padding: 10px 0;">
+                <span class="wireframe-btn">发布新版本</span>
+                <span class="wireframe-btn-outline">查看版本历史</span>
+            </div>
+            <div style="border-top: 2px solid #e2e8f0; margin-top: 12px; padding-top: 12px;">
+                <strong>版本历史</strong>
+            </div>
+            <div class="wireframe-row" style="padding: 8px 0;">
+                📌 <strong>v1.2.0</strong> (当前线上) &nbsp;&nbsp; 2026-08-01<br>
+                <span style="color: #6b7280; margin-left: 24px;">新增附件预览功能</span><br>
+                <span class="wireframe-btn-outline" style="margin-left: 24px; margin-top: 4px;">回滚到此版本</span>
+            </div>
+            <div class="wireframe-row" style="padding: 8px 0;">
+                ○ <strong>v1.1.0</strong> &nbsp;&nbsp; 2026-07-25<br>
+                <span style="color: #6b7280; margin-left: 24px;">修复提交按钮点击两次问题</span><br>
+                <span class="wireframe-btn-outline" style="margin-left: 24px; margin-top: 4px;">回滚到此版本</span>
+                <span class="wireframe-btn-outline" style="margin-top: 4px;">查看变更</span>
+            </div>
+            <div class="wireframe-row" style="padding: 8px 0;">
+                ○ <strong>v1.0.0</strong> &nbsp;&nbsp; 2026-07-20<br>
+                <span style="color: #6b7280; margin-left: 24px;">首次发布</span><br>
+                <span class="wireframe-btn-outline" style="margin-left: 24px; margin-top: 4px;">回滚到此版本</span>
+                <span class="wireframe-btn-outline" style="margin-top: 4px;">查看变更</span>
+            </div>
+        </div>
+    </div>
+
+    <h4 style="margin: 16px 0 12px; color: #374151;">4.6.2 开发过程自动保存时间线</h4>
+    <div class="wireframe">
+        <div class="wireframe-title">⏱ 修改历史 (自动保存)</div>
+        <div class="wireframe-body">
+            <div class="wireframe-row">⏱ <strong>10:30</strong> · <span class="tag tag-purple">AI</span> 生成了表单校验逻辑</div>
+            <div class="wireframe-row">⏱ <strong>10:25</strong> · <span class="tag tag-blue">你</span> 修改了提交按钮样式</div>
+            <div class="wireframe-row">⏱ <strong>10:20</strong> · <span class="tag tag-purple">AI</span> 生成了初始组件代码</div>
+            <div class="wireframe-row">⏱ <strong>10:15</strong> · <span class="tag tag-blue">你</span> 创建了项目</div>
+            <div style="margin-top: 12px;">
+                <span class="wireframe-btn-outline">恢复到 10:25 的状态</span>
+            </div>
+        </div>
+    </div>
+
+    <h4 style="margin: 16px 0 12px; color: #374151;">4.6.3 专业模式 — 分支管理</h4>
+    <div class="wireframe">
+        <div class="wireframe-title">🔀 分支管理</div>
+        <div class="wireframe-body">
+            <div style="padding: 12px 0; font-family: monospace;">
+                <span style="color: #059669; font-weight: bold;">main</span> ────●────●────●──── <span class="tag tag-green">v1.2.0 线上</span><br>
+                <span style="margin-left: 88px; color: #9ca3af;">\</span><br>
+                <span style="color: #d97706; font-weight: bold;">feature/sla</span> ──●────●──── <span class="tag tag-yellow">开发中</span>
+            </div>
+            <div style="margin-top: 12px;">
+                <span class="wireframe-btn">合并到 main</span>
+                <span class="wireframe-btn-outline">查看 diff</span>
+                <span class="wireframe-btn-outline">删除分支</span>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="subsection-title">4.7 发布流程</h3>
+    <div class="svg-container">
+        <svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+            <!-- Start -->
+            <rect x="300" y="20" width="200" height="44" rx="22" fill="#1a56db" stroke="none"/>
+            <text x="400" y="47" text-anchor="middle" font-size="13" font-weight="bold" fill="white">开发者点击"发布"</text>
+
+            <line x1="400" y1="64" x2="400" y2="90" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+            <!-- Process box -->
+            <rect x="180" y="90" width="440" height="250" rx="10" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+            <text x="400" y="115" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">系统自动执行</text>
+
+            <rect x="220" y="130" width="360" height="34" rx="6" fill="#dbeafe"/>
+            <text x="240" y="152" font-size="12" fill="#1e40af">1. 构建/打包（应用类制品）</text>
+
+            <rect x="220" y="172" width="360" height="34" rx="6" fill="#dbeafe"/>
+            <text x="240" y="194" font-size="12" fill="#1e40af">2. 质量检测（如果已配置质量门禁）</text>
+
+            <rect x="220" y="214" width="360" height="34" rx="6" fill="#dbeafe"/>
+            <text x="240" y="236" font-size="12" fill="#1e40af">3. 生成版本号（自动递增 / 用户指定）</text>
+
+            <rect x="220" y="256" width="360" height="34" rx="6" fill="#d1fae5"/>
+            <text x="240" y="278" font-size="12" fill="#065f46">4. 创建不可变快照（含依赖指纹）</text>
+
+            <rect x="220" y="298" width="360" height="34" rx="6" fill="#d1fae5"/>
+            <text x="240" y="320" font-size="12" fill="#065f46">5. 推送到 Console / Work + 标记 Git Tag</text>
+
+            <line x1="400" y1="340" x2="400" y2="370" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+            <!-- Release notes -->
+            <rect x="240" y="370" width="320" height="44" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="400" y="397" text-anchor="middle" font-size="12" fill="#92400e">用户填写发布说明（可选，AI 自动生成草稿）</text>
+
+            <line x1="400" y1="414" x2="400" y2="444" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+            <!-- End -->
+            <rect x="290" y="444" width="220" height="44" rx="22" fill="#059669" stroke="none"/>
+            <text x="400" y="471" text-anchor="middle" font-size="13" font-weight="bold" fill="white">✓ 新版本在 Work 中生效</text>
+
+            <defs>
+                <marker id="arrow-gray" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+
+    <h3 class="subsection-title">4.8 回滚流程</h3>
+    <div class="svg-container">
+        <svg width="800" height="480" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">
+            <!-- Start -->
+            <rect x="240" y="20" width="320" height="44" rx="22" fill="#dc2626" stroke="none"/>
+            <text x="400" y="47" text-anchor="middle" font-size="13" font-weight="bold" fill="white">管理员点击"回滚到 v1.1.0"</text>
+
+            <line x1="400" y1="64" x2="400" y2="94" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow-gray2)"/>
+
+            <!-- Confirmation -->
+            <rect x="180" y="94" width="440" height="90" rx="10" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+            <text x="400" y="118" text-anchor="middle" font-size="12" font-weight="600" fill="#991b1b">系统确认提示</text>
+            <text x="210" y="140" font-size="11" fill="#374151">"当前线上版本 v1.2.0 将被替换为 v1.1.0。</text>
+            <text x="210" y="158" font-size="11" fill="#374151"> 影响范围：所有使用该智能体的用户。确认回滚？"</text>
+            <text x="210" y="176" font-size="11" fill="#6b7280">[确认回滚] [取消]</text>
+
+            <line x1="400" y1="184" x2="400" y2="214" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow-gray2)"/>
+
+            <!-- Process box -->
+            <rect x="180" y="214" width="440" height="190" rx="10" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+            <text x="400" y="240" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">确认后执行</text>
+
+            <rect x="220" y="255" width="360" height="32" rx="6" fill="#dbeafe"/>
+            <text x="240" y="276" font-size="12" fill="#1e40af">1. 将 v1.1.0 的快照设为活跃版本</text>
+
+            <rect x="220" y="295" width="360" height="32" rx="6" fill="#dbeafe"/>
+            <text x="240" y="316" font-size="12" fill="#1e40af">2. Work 运行时切换到 v1.1.0</text>
+
+            <rect x="220" y="335" width="360" height="32" rx="6" fill="#fef3c7"/>
+            <text x="240" y="356" font-size="12" fill="#92400e">3. 记录回滚操作到审计日志</text>
+
+            <rect x="220" y="375" width="360" height="32" rx="6" fill="#fee2e2"/>
+            <text x="240" y="396" font-size="12" fill="#991b1b">4. v1.2.0 状态标记为 "rolled-back"</text>
+
+            <line x1="400" y1="404" x2="400" y2="434" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow-gray2)"/>
+
+            <!-- End -->
+            <rect x="280" y="434" width="240" height="44" rx="22" fill="#059669" stroke="none"/>
+            <text x="400" y="461" text-anchor="middle" font-size="13" font-weight="bold" fill="white">✓ 回滚完成（秒级生效）</text>
+
+            <defs>
+                <marker id="arrow-gray2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+</div>
+
+<!-- Section 5: 各制品类型差异化处理 -->
+<div class="section">
+    <h2 class="section-title">五、各制品类型差异化处理</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>制品类型</th><th>版本粒度</th><th>发布目标</th><th>特殊考虑</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>智能体</strong></td><td>整个智能体（含 Skill 引用快照）</td><td>Work 运行时</td><td>需记录模型版本+知识库版本作为环境指纹</td></tr>
+                <tr><td><strong>Skill</strong></td><td>单个 Skill</td><td>智能体引用/Skill 市场</td><td>被多个智能体引用时，版本升级需通知引用方</td></tr>
+                <tr><td><strong>通用应用</strong></td><td>整个应用工程</td><td>部署环境（容器/CDN）</td><td>需要构建步骤（build），产物较大</td></tr>
+                <tr><td><strong>苍穹应用</strong></td><td>元数据 + 插件</td><td>苍穹云部署</td><td>需兼容苍穹自身的版本管理机制</td></tr>
+                <tr><td><strong>MCP APPS</strong></td><td>整个 APPS 项目</td><td>Console 组件仓库</td><td>需 vite build → zip → 上传，版本由 Console 管理</td></tr>
+                <tr><td><strong>MCP Server</strong></td><td>服务端代码</td><td>部署环境</td><td>需构建+部署，版本与 API 兼容性关联</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section 6: 技术选型 -->
+<div class="section">
+    <h2 class="section-title">六、技术选型</h2>
+
+    <h3 class="subsection-title">6.1 存储层方案对比</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>考虑</th><th>Git</th><th>自建版本存储</th><th>数据库快照</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>成熟度</strong></td><td>★★★★★</td><td>★★</td><td>★★★</td></tr>
+                <tr><td><strong>diff 能力</strong></td><td>★★★★★</td><td>需自建</td><td>无</td></tr>
+                <tr><td><strong>分支合并</strong></td><td>★★★★★</td><td>需自建</td><td>无</td></tr>
+                <tr><td><strong>生态工具</strong></td><td>★★★★★</td><td>无</td><td>有限</td></tr>
+                <tr><td><strong>大文件</strong></td><td>★★★ (Git LFS)</td><td>可定制</td><td>★★★★</td></tr>
+                <tr><td><strong>对用户透明</strong></td><td>需包装</td><td>完全可控</td><td>完全可控</td></tr>
+                <tr><td><strong>开发成本</strong></td><td>低（现成库）</td><td>高（从零开始）</td><td>中</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="conclusion-box">
+        <strong>结论：用 Git 作为底层存储，上层做 UI 抽象。</strong><br><br>
+        理由：Git 是行业标准（Mendix、Salesforce 都走了这条路）；diff、分支、合并等能力不需要重新发明；未来可对接外部 Git 服务（GitHub/GitLab），满足企业 DevOps 需求；对非技术用户完全屏蔽 Git 概念，只暴露"版本列表"和"回滚"。
+    </div>
+
+    <h3 class="subsection-title">6.2 用户界面抽象程度</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>用户类型</th><th>看到什么</th><th>不看到什么</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>业务专家/全员开发</strong></td><td>版本列表、回滚按钮、变更时间线</td><td>Git、commit、branch、merge</td></tr>
+                <tr><td><strong>开发者（可选开启）</strong></td><td>上述 + diff 视图、分支管理</td><td>raw git 命令行</td></tr>
+                <tr><td><strong>IT 管理员</strong></td><td>上述 + 审计日志、权限控制、合规报告</td><td>—</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section 7: 分阶段实施计划 -->
+<div class="section">
+    <h2 class="section-title">七、分阶段实施计划</h2>
+
+    <h3 class="subsection-title">Phase 1a：最小可行交付</h3>
+    <div class="card card-urgent">
+        <div class="card-badge">⚡ 目标：解决振兴刚需</div>
+        <p style="margin-bottom: 16px; color: #991b1b; font-weight: 600;">不用 Git、不用重构底层，用最轻量的方式先交付：</p>
+        <table>
+            <thead>
+                <tr><th>#</th><th>功能</th><th>实现方式</th><th>工期</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><strong>发布版本号递增</strong></td><td>发布时写一条版本记录到数据库（版本号+时间+操作人+快照 URL）</td><td>2-3 天</td></tr>
+                <tr><td>2</td><td><strong>制品状态变更</strong></td><td>制品增加 status 字段：draft/published/editing。编辑已发布制品时自动切为 editing</td><td>1-2 天</td></tr>
+                <tr><td>3</td><td><strong>版本历史列表</strong></td><td>从数据库查版本记录，展示列表（版本号+时间+操作人）</td><td>2-3 天</td></tr>
+                <tr><td>4</td><td><strong>一键回滚</strong></td><td>将历史版本的快照还原为当前版本，推送到运行时</td><td>2-3 天</td></tr>
+            </tbody>
+        </table>
+        <div style="margin-top: 16px; padding: 12px; background: #f3f4f6; border-radius: 8px;">
+            <strong>技术实现（极简版）：</strong>
+            <ul style="margin-top: 8px;">
+                <li>每次"发布"时，将制品全部文件打包存到对象存储（OSS/S3），数据库记录版本元数据</li>
+                <li>回滚 = 取出历史快照覆盖当前 + 通知运行时重新加载</li>
+                <li>不改底层存储架构，不引入 Git，不做 diff</li>
+            </ul>
+            <p style="margin-top: 8px;"><strong>覆盖范围：</strong>先只做 Skill + Agent（振兴当前需要的）</p>
+        </div>
+    </div>
+
+    <h3 class="subsection-title">Phase 1b：补齐基础能力</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>功能</th><th>描述</th><th>价值</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>5</td><td><strong>自动保存历史</strong></td><td>每次保存自动存快照，用户可查看修改时间线</td><td>误操作可回退（不只是发布态）</td></tr>
+                <tr><td>6</td><td><strong>变更摘要</strong></td><td>AI 自动生成每次变更的一句话描述</td><td>可追溯</td></tr>
+                <tr><td>7</td><td><strong>覆盖更多制品</strong></td><td>扩展到通用应用、MCP APPS 等</td><td>统一体验</td></tr>
+                <tr><td>8</td><td><strong>底层切 Git（可选）</strong></td><td>评估是否需要将存储改为 Git</td><td>技术债预防</td></tr>
+            </tbody>
+        </table>
+        <div class="conclusion-box" style="margin-top: 16px;">
+            <strong>决策点：</strong>Phase 1b 做完后评估是否需要切 Git。如果业务上不需要 diff/分支/多人协作，数据库快照方案可以长期用下去。
+        </div>
+    </div>
+
+    <h3 class="subsection-title">Phase 2：协作与追溯 </h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>功能</th><th>描述</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>7</td><td><strong>变更 diff</strong></td><td>可视化对比两个版本的差异（逐行/结构化）</td></tr>
+                <tr><td>8</td><td><strong>审计日志</strong></td><td>完整记录谁、什么时候、做了什么操作</td></tr>
+                <tr><td>9</td><td><strong>发布说明</strong></td><td>发布时填写/AI 生成 Release Notes</td></tr>
+                <tr><td>10</td><td><strong>依赖快照</strong></td><td>发布时自动记录所依赖的其他制品版本</td></tr>
+                <tr><td>11</td><td><strong>版本对比评测</strong></td><td>Skill/智能体两个版本的效果对比（集成 Eval）</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">Phase 3：高级能力</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>功能</th><th>描述</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>12</td><td><strong>分支开发</strong></td><td>支持创建分支并行开发，合并回主线</td></tr>
+                <tr><td>13</td><td><strong>环境管理</strong></td><td>开发→测试→生产 多环境版本流转</td></tr>
+                <tr><td>14</td><td><strong>灰度发布</strong></td><td>按百分比/租户/组织灰度切换新版本</td></tr>
+                <tr><td>15</td><td><strong>外部 Git 对接</strong></td><td>支持对接 GitHub/GitLab，双向同步</td></tr>
+                <tr><td>16</td><td><strong>依赖更新提示</strong></td><td>引用的 Skill/APPS 有新版时通知更新</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section 8: 对各方需求 -->
+<div class="section">
+    <h2 class="section-title">八、对各方的需求</h2>
+
+    <h3 class="subsection-title">8.1 Build 产品团队</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>需求</th><th>优先级</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>B1</td><td>设计版本管理的 UI 交互规范</td><td><span class="tag tag-red">P0</span></td><td>版本列表、时间线、回滚确认的交互稿</td></tr>
+                <tr><td>B2</td><td>确定"保存"→"commit"映射逻辑</td><td><span class="tag tag-red">P0</span></td><td>哪些操作触发自动保存？频率？</td></tr>
+                <tr><td>B3</td><td>确定版本号策略</td><td><span class="tag tag-red">P0</span></td><td>自动递增 / 语义化 / 用户自定义？</td></tr>
+                <tr><td>B4</td><td>设计发布流程的质量门禁集成点</td><td><span class="tag tag-yellow">P1</span></td><td>发布前是否必须通过质量检测？</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">8.2 Build 工程团队</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>需求</th><th>优先级</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>E1</td><td>底层存储改造为 Git</td><td><span class="tag tag-red">P0</span></td><td>每个项目自动初始化 Git 仓库</td></tr>
+                <tr><td>E2</td><td>版本管理服务开发</td><td><span class="tag tag-red">P0</span></td><td>快照、commit、tag、回滚的 API</td></tr>
+                <tr><td>E3</td><td>存量项目迁移方案</td><td><span class="tag tag-red">P0</span></td><td>已有项目如何平滑切换到新存储</td></tr>
+                <tr><td>E4</td><td>diff 服务</td><td><span class="tag tag-yellow">P1</span></td><td>支持文本 diff + 结构化 diff（JSON/YAML）</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">8.3 Console 团队</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>需求</th><th>优先级</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>C1</td><td>组件版本管理 API</td><td><span class="tag tag-yellow">P1</span></td><td>支持同一 appCode 上传多个版本，列表/回滚</td></tr>
+                <tr><td>C2</td><td>Build 提交时传入版本号</td><td><span class="tag tag-red">P0</span></td><td>上传 API 增加 version 参数</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="subsection-title">8.4 Harness / Work 运行时</h3>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>需求</th><th>优先级</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>H1</td><td>支持按版本号加载智能体/Skill</td><td><span class="tag tag-red">P0</span></td><td>运行时能指定加载哪个版本</td></tr>
+                <tr><td>H2</td><td>版本热切换</td><td><span class="tag tag-yellow">P1</span></td><td>回滚时运行时能不重启切换版本</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section 9: 开放问题 -->
+<div class="section">
+    <h2 class="section-title">九、开放问题（待讨论）</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>#</th><th>问题</th><th>影响</th><th>建议</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Q1</td><td>Git 仓库托管在哪？Build 服务器内置还是对接外部 Git 服务？</td><td>架构设计、私有化部署</td><td>建议内置（Gitea/GitLab CE），减少外部依赖</td></tr>
+                <tr><td>Q2</td><td>自动保存的频率？每次改动？每次对话轮次？手动保存？</td><td>性能、存储成本</td><td>建议：手动保存 + AI 生成完成时自动保存</td></tr>
+                <tr><td>Q3</td><td>版本存储保留策略？保留多少个开发版本？</td><td>存储成本</td><td>建议：开发版本保留 90 天或 100 个；发布版本永久</td></tr>
+                <tr><td>Q4</td><td>苍穹应用是否有自己的版本管理机制需要兼容？</td><td>苍穹轨实现方式</td><td>需与苍穹团队确认</td></tr>
+                <tr><td>Q5</td><td>AI 生成的代码，"作者"记为 AI 还是触发 AI 的用户？</td><td>审计追溯</td><td>建议记为"AI (triggered by 用户)"双标记</td></tr>
+                <tr><td>Q6</td><td>灰度发布的具体方案（按用户%/按租户/按环境）</td><td>Phase 3 设计</td><td>待讨论，暂不在本阶段决策</td></tr>
+                <tr><td>Q7</td><td>是否需要支持"锁定版本不允许修改"的合规需求？</td><td>金融/央企场景</td><td>建议 Phase 2 支持"冻结版本"标记</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section 10: 风险评估 -->
+<div class="section">
+    <h2 class="section-title">十、风险评估</h2>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>风险</th><th>概率</th><th>影响</th><th>应对措施</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>底层改 Git 对已有项目有破坏性</td>
+                    <td><span class="tag tag-yellow">中</span></td>
+                    <td><span class="tag tag-red">高</span></td>
+                    <td>需设计无损迁移方案，灰度切换</td>
+                </tr>
+                <tr>
+                    <td>Git 对大型应用项目性能不佳</td>
+                    <td><span class="tag tag-green">低</span></td>
+                    <td><span class="tag tag-yellow">中</span></td>
+                    <td>大文件用 Git LFS，代码类无问题</td>
+                </tr>
+                <tr>
+                    <td>非技术用户不理解"版本"概念</td>
+                    <td><span class="tag tag-yellow">中</span></td>
+                    <td><span class="tag tag-yellow">中</span></td>
+                    <td>UI 极简化，默认隐藏所有 Git 概念</td>
+                </tr>
+                <tr>
+                    <td>各制品类型的版本管理需求差异大</td>
+                    <td><span class="tag tag-yellow">中</span></td>
+                    <td><span class="tag tag-yellow">中</span></td>
+                    <td>统一底层模型，表层按类型微调</td>
+                </tr>
+                <tr>
+                    <td>版本存储成本增长</td>
+                    <td><span class="tag tag-green">低</span></td>
+                    <td><span class="tag tag-green">低</span></td>
+                    <td>Git 增量存储天然高效；加过期策略</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div><!-- end container -->
+
+<!-- Footer -->
+<div style="background: #1f2937; color: #9ca3af; padding: 30px; text-align: center; font-size: 0.85em;">
+    <p>Build 统一版本管理能力方案设计 · 灵基 Build 产品团队</p>
+    <p style="margin-top: 8px;">文档版本：v1.0 · 日期：2026-08-03 · 状态：方案初稿，待评审</p>
+</div>
+
+</body>
+</html>
