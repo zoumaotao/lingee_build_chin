@@ -53,9 +53,38 @@ tbody tr:hover{background:#f8fafc}
 .card-title{font-weight:600;color:var(--text);margin-bottom:8px}
 @media print{body{background:#fff;font-size:12px}.container{padding:0}.section{box-shadow:none;border:1px solid #ddd}.header{box-shadow:none;padding:30px 20px}}
 @media(max-width:768px){.container{padding:16px}.header{padding:30px 20px}.header h1{font-size:1.6em}.section{padding:20px}table{font-size:.82em}.chat-msg{max-width:95%}}
+
+/* 侧边栏目录 */
+.sidebar{position:fixed;left:0;top:0;width:200px;height:100vh;background:white;border-right:1px solid #e5e7eb;overflow-y:auto;padding:16px 0;z-index:100;box-shadow:2px 0 8px rgba(0,0,0,.05)}
+.sidebar-back{display:block;padding:8px 14px 12px;color:#1a56db;text-decoration:none;font-size:.82rem;font-weight:500;border-bottom:1px solid #e5e7eb;margin-bottom:10px}
+.sidebar-back:hover{color:#dc2626}
+.sidebar-title{font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;padding:0 14px;margin:12px 0 6px}
+.sidebar a.nav-link{display:block;padding:5px 14px;color:#374151;text-decoration:none;font-size:.8rem;transition:all .2s;border-left:3px solid transparent}
+.sidebar a.nav-link:hover{background:#e8f0fe;color:#1a56db;border-left-color:#1a56db}
+.container{margin-left:210px}
+@media print{.sidebar{display:none}.container{margin-left:auto}}
+@media(max-width:900px){.sidebar{display:none}.container{margin-left:auto}}
 </style>
 </head>
 <body>
+
+<nav class="sidebar">
+    <a href="../index.html" class="sidebar-back">← 返回项目计划书</a>
+    <div class="sidebar-title">目录</div>
+    <a href="#sec1" class="nav-link">一、背景与目标</a>
+    <a href="#sec2" class="nav-link">二、APPS 机制介绍</a>
+    <a href="#sec3" class="nav-link">三、角色定义</a>
+    <a href="#sec4" class="nav-link">四、生命周期流转</a>
+    <a href="#sec5" class="nav-link">五、用户体验设计</a>
+    <a href="#sec6" class="nav-link">六、内部能力设计</a>
+    <a href="#sec7" class="nav-link">七、端到端流程</a>
+    <a href="#sec8" class="nav-link">八、项目结构规范</a>
+    <a href="#sec9" class="nav-link">九、各系统能力要求</a>
+    <a href="#sec10" class="nav-link">十、兼容策略</a>
+    <a href="#sec11" class="nav-link">十一、任务拆解</a>
+    <a href="#sec12" class="nav-link">十二、风险与待确认</a>
+</nav>
+
 <div class="container">
 
 <div class="header">
@@ -68,7 +97,7 @@ tbody tr:hover{background:#f8fafc}
 </div>
 
 <!-- Section 1 -->
-<div class="section">
+<div class="section" id="sec1">
 <h2 class="section-title">一、背景与目标</h2>
 <h3 class="section-subtitle">1.1 当前现状与问题</h3>
 <p style="margin-bottom:12px;color:var(--text-light)">MCP APPS 是灵基智能体与用户之间的可视化交互层，当前开发流程如下：</p>
@@ -140,7 +169,7 @@ tbody tr:hover{background:#f8fafc}
 </div>
 
 <!-- Section 3: User Experience -->
-<div class="section">
+<div class="section" id="sec3">
 <h2 class="section-title">三、角色定义</h2>
 <table>
 <thead><tr><th>角色</th><th>说明</th><th>典型操作</th></tr></thead>
@@ -154,7 +183,7 @@ tbody tr:hover{background:#f8fafc}
 </div>
 
 <!-- Section 4: Lifecycle -->
-<div class="section">
+<div class="section" id="sec4">
 <h2 class="section-title">四、组件生命周期状态流转</h2>
 <div class="diagram">
 <svg width="880" height="260" viewBox="0 0 880 260" xmlns="http://www.w3.org/2000/svg">
@@ -197,7 +226,7 @@ tbody tr:hover{background:#f8fafc}
 </div>
 
 <!-- Section 5: User Experience -->
-<div class="section">
+<div class="section" id="sec5">
 <h2 class="section-title">五、用户体验设计（用户视角）</h2>
 <h3 class="section-subtitle">3.1 整体开发流程</h3>
 <div class="diagram">
@@ -280,7 +309,7 @@ tbody tr:hover{background:#f8fafc}
 </div>
 
 <!-- Section 4: Internal Design -->
-<div class="section">
+<div class="section" id="sec6">
 <h2 class="section-title">六、Build 内部能力设计（平台视角）</h2>
 <h3 class="section-subtitle">4.1 支撑 MCP APPS 开发所需的 Skill</h3>
 <table>
@@ -335,7 +364,7 @@ tbody tr:hover{background:#f8fafc}
 </div>
 
 <!-- Section 5: E2E Flow -->
-<div class="section">
+<div class="section" id="sec7">
 <h2 class="section-title">七、端到端流程设计</h2>
 <h3 class="section-subtitle">5.1 目标流程全景</h3>
 <div class="diagram">
@@ -424,7 +453,7 @@ tbody tr:hover{background:#f8fafc}
 </div>
 
 <!-- Section 6: Project Structure -->
-<div class="section">
+<div class="section" id="sec8">
 <h2 class="section-title">八、APPS 项目结构与规范</h2>
 
 <h3 class="section-subtitle">6.1 项目文件结构</h3>
@@ -478,7 +507,7 @@ Call the MCP tool `{appCode}` with the following arguments:
 </div>
 
 <!-- Section 7: System Requirements -->
-<div class="section">
+<div class="section" id="sec9">
 <h2 class="section-title">九、各系统能力要求</h2>
 <h3 class="section-subtitle">7.1 Build 侧</h3>
 <table>
@@ -525,7 +554,7 @@ Call the MCP tool `{appCode}` with the following arguments:
 </div>
 
 <!-- Section 10: Compatibility -->
-<div class="section">
+<div class="section" id="sec10">
 <h2 class="section-title">十、与现有机制的兼容</h2>
 <table>
 <thead><tr><th>现有机制</th><th>方案兼容策略</th></tr></thead>
@@ -542,7 +571,7 @@ Call the MCP tool `{appCode}` with the following arguments:
 </div>
 
 <!-- Section 11: Task Breakdown -->
-<div class="section">
+<div class="section" id="sec11">
 <h2 class="section-title">十一、任务拆解</h2>
 <table>
 <thead><tr><th>#</th><th>任务</th><th>归属团队</th><th>前置依赖</th></tr></thead>
@@ -568,7 +597,7 @@ Call the MCP tool `{appCode}` with the following arguments:
 </div>
 
 <!-- Section 12: Risks -->
-<div class="section">
+<div class="section" id="sec12">
 <h2 class="section-title">十二、风险与待确认项</h2>
 <table>
 <thead><tr><th>#</th><th>风险/待确认</th><th>影响</th><th>建议</th></tr></thead>

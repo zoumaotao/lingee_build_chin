@@ -369,9 +369,36 @@
             .header h1 { font-size: 1.8em; }
             .container { padding: 20px 16px; }
         }
+
+        /* 侧边栏目录 */
+        .sidebar{position:fixed;left:0;top:0;width:200px;height:100vh;background:white;border-right:1px solid #e5e7eb;overflow-y:auto;padding:16px 0;z-index:100;box-shadow:2px 0 8px rgba(0,0,0,.05)}
+        .sidebar-back{display:block;padding:8px 14px 12px;color:#1a56db;text-decoration:none;font-size:.82rem;font-weight:500;border-bottom:1px solid #e5e7eb;margin-bottom:10px}
+        .sidebar-back:hover{color:#dc2626}
+        .sidebar-title{font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;padding:0 14px;margin:12px 0 6px}
+        .sidebar a.nav-link{display:block;padding:5px 14px;color:#374151;text-decoration:none;font-size:.8rem;transition:all .2s;border-left:3px solid transparent}
+        .sidebar a.nav-link:hover{background:#e8f0fe;color:#1a56db;border-left-color:#1a56db}
+        .container{margin-left:210px}
+        .header{margin-left:210px}
+        @media print{.sidebar{display:none}.container,.header{margin-left:auto}}
+        @media(max-width:900px){.sidebar{display:none}.container,.header{margin-left:auto}}
     </style>
 </head>
 <body>
+
+<nav class="sidebar">
+    <a href="../index.html" class="sidebar-back">← 返回项目计划书</a>
+    <div class="sidebar-title">目录</div>
+    <a href="#sec1" class="nav-link">一、问题定义</a>
+    <a href="#sec2" class="nav-link">二、设计约束</a>
+    <a href="#sec3" class="nav-link">三、业界调研</a>
+    <a href="#sec4" class="nav-link">四、方案设计</a>
+    <a href="#sec5" class="nav-link">五、制品差异化</a>
+    <a href="#sec6" class="nav-link">六、技术选型</a>
+    <a href="#sec7" class="nav-link">七、分阶段实施</a>
+    <a href="#sec8" class="nav-link">八、对各方需求</a>
+    <a href="#sec9" class="nav-link">九、开放问题</a>
+    <a href="#sec10" class="nav-link">十、风险评估</a>
+</nav>
 
 <!-- Header -->
 <div class="header">
@@ -389,7 +416,7 @@
 <div class="container">
 
 <!-- Section 1: 问题定义 -->
-<div class="section">
+<div class="section" id="sec1">
     <h2 class="section-title">一、问题定义</h2>
 
     <h3 class="subsection-title">1.1 现状</h3>
@@ -436,7 +463,7 @@
 </div>
 
 <!-- Section 2: 设计约束与前提 -->
-<div class="section">
+<div class="section" id="sec2">
     <h2 class="section-title">二、设计约束与前提</h2>
     <p style="margin-bottom: 16px;">以下 7 个 Build 平台特征是本方案的核心设计约束，所有方案选型都围绕它们展开：</p>
 
@@ -463,7 +490,7 @@
 </div>
 
 <!-- Section 3: 业界方案调研 -->
-<div class="section">
+<div class="section" id="sec3">
     <h2 class="section-title">三、业界方案调研</h2>
 
     <h3 class="subsection-title">3.1 产品规划竞品分析</h3>
@@ -558,7 +585,7 @@
 </div>
 
 <!-- Section 4: 方案设计 -->
-<div class="section">
+<div class="section" id="sec4">
     <h2 class="section-title">四、方案设计</h2>
 
     <h3 class="subsection-title">4.1 核心设计原则</h3>
@@ -1013,7 +1040,7 @@
 </div>
 
 <!-- Section 5: 各制品类型差异化处理 -->
-<div class="section">
+<div class="section" id="sec5">
     <h2 class="section-title">五、各制品类型差异化处理</h2>
     <div class="card">
         <table>
@@ -1033,7 +1060,7 @@
 </div>
 
 <!-- Section 6: 技术选型 -->
-<div class="section">
+<div class="section" id="sec6">
     <h2 class="section-title">六、技术选型</h2>
 
     <h3 class="subsection-title">6.1 存储层方案对比</h3>
@@ -1075,7 +1102,7 @@
 </div>
 
 <!-- Section 7: 分阶段实施计划 -->
-<div class="section">
+<div class="section" id="sec7">
     <h2 class="section-title">七、分阶段实施计划</h2>
 
     <h3 class="subsection-title">Phase 1a：最小可行交付</h3>
@@ -1156,40 +1183,29 @@
 </div>
 
 <!-- Section 8: 对各方需求 -->
-<div class="section">
+<div class="section" id="sec8">
     <h2 class="section-title">八、对各方的需求</h2>
 
-    <h3 class="subsection-title">8.1 Build 产品团队</h3>
+    <h3 class="subsection-title">8.1 Build 团队</h3>
     <div class="card">
         <table>
             <thead>
-                <tr><th>#</th><th>需求</th><th>优先级</th><th>说明</th></tr>
+                <tr><th>#</th><th>需求</th><th>类型</th><th>优先级</th><th>说明</th></tr>
             </thead>
             <tbody>
-                <tr><td>B1</td><td>设计版本管理的 UI 交互规范</td><td><span class="tag tag-red">P0</span></td><td>版本列表、时间线、回滚确认的交互稿</td></tr>
-                <tr><td>B2</td><td>确定"保存"→"commit"映射逻辑</td><td><span class="tag tag-red">P0</span></td><td>哪些操作触发自动保存？频率？</td></tr>
-                <tr><td>B3</td><td>确定版本号策略</td><td><span class="tag tag-red">P0</span></td><td>自动递增 / 语义化 / 用户自定义？</td></tr>
-                <tr><td>B4</td><td>设计发布流程的质量门禁集成点</td><td><span class="tag tag-yellow">P1</span></td><td>发布前是否必须通过质量检测？</td></tr>
+                <tr><td>B1</td><td>设计版本管理的 UI 交互规范</td><td>产品设计</td><td><span class="tag tag-red">P0</span></td><td>版本列表、时间线、回滚确认的交互稿</td></tr>
+                <tr><td>B2</td><td>确定"保存"→"commit"映射逻辑</td><td>产品设计</td><td><span class="tag tag-red">P0</span></td><td>哪些操作触发自动保存？频率？</td></tr>
+                <tr><td>B3</td><td>确定版本号策略</td><td>产品设计</td><td><span class="tag tag-red">P0</span></td><td>自动递增 / 语义化 / 用户自定义？</td></tr>
+                <tr><td>B4</td><td>设计发布流程的质量门禁集成点</td><td>产品设计</td><td><span class="tag tag-yellow">P1</span></td><td>发布前是否必须通过质量检测？</td></tr>
+                <tr><td>B5</td><td>底层存储改造为 Git</td><td>工程实现</td><td><span class="tag tag-red">P0</span></td><td>每个项目自动初始化 Git 仓库</td></tr>
+                <tr><td>B6</td><td>版本管理服务开发</td><td>工程实现</td><td><span class="tag tag-red">P0</span></td><td>快照、commit、tag、回滚的 API</td></tr>
+                <tr><td>B7</td><td>存量项目迁移方案</td><td>工程实现</td><td><span class="tag tag-red">P0</span></td><td>已有项目如何平滑切换到新存储</td></tr>
+                <tr><td>B8</td><td>diff 服务</td><td>工程实现</td><td><span class="tag tag-yellow">P1</span></td><td>支持文本 diff + 结构化 diff（JSON/YAML）</td></tr>
             </tbody>
         </table>
     </div>
 
-    <h3 class="subsection-title">8.2 Build 工程团队</h3>
-    <div class="card">
-        <table>
-            <thead>
-                <tr><th>#</th><th>需求</th><th>优先级</th><th>说明</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>E1</td><td>底层存储改造为 Git</td><td><span class="tag tag-red">P0</span></td><td>每个项目自动初始化 Git 仓库</td></tr>
-                <tr><td>E2</td><td>版本管理服务开发</td><td><span class="tag tag-red">P0</span></td><td>快照、commit、tag、回滚的 API</td></tr>
-                <tr><td>E3</td><td>存量项目迁移方案</td><td><span class="tag tag-red">P0</span></td><td>已有项目如何平滑切换到新存储</td></tr>
-                <tr><td>E4</td><td>diff 服务</td><td><span class="tag tag-yellow">P1</span></td><td>支持文本 diff + 结构化 diff（JSON/YAML）</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <h3 class="subsection-title">8.3 Console 团队</h3>
+    <h3 class="subsection-title">8.2 Console 团队</h3>
     <div class="card">
         <table>
             <thead>
@@ -1217,7 +1233,7 @@
 </div>
 
 <!-- Section 9: 开放问题 -->
-<div class="section">
+<div class="section" id="sec9">
     <h2 class="section-title">九、开放问题（待讨论）</h2>
     <div class="card">
         <table>
@@ -1238,7 +1254,7 @@
 </div>
 
 <!-- Section 10: 风险评估 -->
-<div class="section">
+<div class="section" id="sec10">
     <h2 class="section-title">十、风险评估</h2>
     <div class="card">
         <table>
