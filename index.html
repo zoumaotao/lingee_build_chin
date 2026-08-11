@@ -362,6 +362,7 @@
     <a href="#sec9"><span class="num">09</span>风险管理</a>
     <a href="#sec10"><span class="num">10</span>验收标准</a>
     <div class="sidebar-title" style="margin-top:20px;">关联文档</div>
+    <a href="HelpDesk月底上线冲刺计划.md" style="color:var(--danger);font-weight:600;">🚀 月底上线冲刺计划</a>
     <a href="振兴HelpDesk客户沟通会议纪要.html" style="color:var(--primary);">📋 客户沟通会议纪要</a>
     <a href="灵基Build生产化问题清单.html" style="color:var(--primary);">🔧 标品生产化问题清单</a>
     <div class="sidebar-title" style="margin-top:20px;">重难点问题推进</div>
@@ -378,8 +379,8 @@
     <div class="subtitle">基于灵基平台的 AI-Native 企业服务台解决方案</div>
     <div class="meta">
         <span>客户：振兴集团</span>
-        <span>版本：v1.0</span>
-        <span>日期：2025年7月</span>
+        <span>版本：v1.1</span>
+        <span>更新：2026年8月11日</span>
     </div>
 </div>
 
@@ -1044,7 +1045,8 @@
         <strong>核心定位：</strong>灵基平台级的消息中枢，承接后台应用事件、智能体间通信、系统通知的统一路由与投递。不仅服务于 HelpDesk，也是灵基作为"唯一工作台"的基础设施。
     </div>
     <div class="highlight highlight-red">
-        <strong>⚠️ 当前状态：灵基标品尚不具备此能力（对应问题清单 #31）。</strong>以下为目标架构设计，需标品补齐后方可实现。1.0 阶段工单通知暂退化为邮件（SMTP）方式。
+        <strong>⚠️ 当前状态：灵基标品尚不具备此能力（对应问题清单 #31）。</strong>以下为目标架构设计，需标品补齐后方可实现。1.0 阶段工单通知暂退化为邮件（SMTP）方式。<br><br>
+        <strong>8.11 更新：</strong>经与彭卫华老师当面沟通确认，灵基开放 API 给外部调用涉及<strong>商业模式定义</strong>，目前没有定论。月底上线目标已剥离"工作台发起智能体会话处理"和事件驱动能力。
     </div>
     <h4>职责</h4>
     <table>
@@ -1251,17 +1253,23 @@
     <h3>7.1 三阶段里程碑</h3>
     <div class="timeline">
         <div class="timeline-item milestone">
+            <div class="timeline-date">目标：8月底</div>
             <div class="timeline-title">HelpDesk 1.0 — 聚焦 IT 领域，快速上线验证</div>
             <div class="timeline-content">
                 <ul>
                     <li>灵基智能体上线（知识问答 + 交互式提单 + 查单）</li>
-                    <li>苍穹/云端工单后台上线（列表/详情/自动分配/状态流转/答复通知）</li>
+                    <li>工单后台应用上线（列表/详情/自动分配/状态流转/答复通知）</li>
+                    <li>工作台页面上线（"我的工单"/"我的任务"嵌入 Work，单点登录）</li>
                     <li>IT 域知识库初始化（手动上传 20-25 份 PDF）</li>
-                    <li>标品 P0 能力全部就绪</li>
+                    <li>海外沙箱 POC 跑通</li>
+                    <li><s>工作台发起智能体会话处理</s>（已剥离：灵基 API 开放属商业模式范畴，暂无定论）</li>
+                    <li><s>事件驱动 MCP 推送</s>（已剥离：同上原因）</li>
                 </ul>
+                <p style="margin-top:12px;font-size:0.85rem;color:var(--danger);">⚠️ 阻塞项：后台应用部署方案待定（非 ERP 用户无法使用苍穹）、海外 mcpapps 不支持 mcp 服务实例</p>
             </div>
         </div>
         <div class="timeline-item milestone">
+            <div class="timeline-date">目标：上线后迭代</div>
             <div class="timeline-title">HelpDesk 2.0 — 扩大领域，快速推广</div>
             <div class="timeline-content">
                 <ul>
@@ -1274,6 +1282,7 @@
             </div>
         </div>
         <div class="timeline-item milestone">
+            <div class="timeline-date">目标：方案成熟后</div>
             <div class="timeline-title">知识体系打通</div>
             <div class="timeline-content">
                 <ul>
@@ -1333,7 +1342,75 @@
 <div class="section" id="sec8">
     <h2>08 团队分工与协作</h2>
     
-    <h3>待定</h3>
+    <h3>8.1 月底上线冲刺分工（2026-08-11 确定）</h3>
+    <table>
+        <tr><th>工作项</th><th>责任人</th><th>时间</th><th>状态</th></tr>
+        <tr><td>工单应用需求澄清与功能搭建</td><td>@吴宏超 @黄军桦</td><td>8/12 客户沟通，之后持续开发</td><td><span class="tag tag-doing">进行中</span></td></tr>
+        <tr><td>海外沙箱 HelpDesk POC 跑通</td><td>@邹茂桃 @梁平贤</td><td>8/12</td><td><span class="tag tag-doing">进行中</span></td></tr>
+        <tr><td>处理人"我的任务"页 + 用户"我的工单"页</td><td>@梁平贤 @荆龙刚</td><td>8/12</td><td><span class="tag tag-doing">进行中</span></td></tr>
+        <tr><td>通用应用部署方案 & 服务器采购沟通</td><td>@吴宏超 @荆龙刚</td><td>尽快</td><td><span class="tag tag-p0">阻塞</span></td></tr>
+        <tr><td>标品补齐持续跟进</td><td>@邹茂桃 及其他相关人</td><td>8/14 联调节点</td><td><span class="tag tag-doing">进行中</span></td></tr>
+    </table>
+
+    <h3>8.2 标品补齐进度跟踪</h3>
+    <table>
+        <tr><th>标品能力项</th><th>目标时间</th><th>当前进度</th><th>状态</th></tr>
+        <tr><td>Console 级 MCP 服务实例（手工导入）</td><td><s>8/14</s> → <strong>8/11 晚 release</strong></td><td>已提前完成</td><td><span class="tag tag-done">已就绪</span></td></tr>
+        <tr><td><strong>MCP APP 使用 MCP 服务实例的 Tool</strong></td><td>未排期</td><td><strong>还没做</strong> @赵清伟 @何翘楚 @武晨曦</td><td><span class="tag tag-p0">紧急</span></td></tr>
+        <tr><td>Console 级业务组件</td><td>8/14 联调</td><td>已进联调，但问题较多</td><td><span class="tag tag-p1">问题中</span></td></tr>
+        <tr><td>Build 构建业务组件</td><td>8/14 联调</td><td>已支持对话式开发</td><td><span class="tag tag-done">顺利</span></td></tr>
+        <tr><td>通过 API 写入知识到 DC</td><td>—</td><td><strong>暂无计划与方案</strong></td><td><span class="tag tag-p0">无进展</span></td></tr>
+    </table>
+    <div class="highlight highlight-red">
+        <strong>⚠️ 关键缺口：</strong>MCP 服务实例 8.11 晚 release，但 mcpapp 使用 mcp 服务实例 tool 的能力<strong>还没做</strong>。客户自建 mcpapps + 导入实例后实际<strong>调不通</strong>。需 @赵清伟 @何翘楚 @武晨曦 紧急安排。
+    </div>
+
+    <h3>8.2 智能体能力分工</h3>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-title">员工智能体（Helpdesk Assistant）</div>
+            <div class="card-body">
+                <ul style="margin:0;padding-left:16px;">
+                    <li>问询知识库</li>
+                    <li>创建 & 提交工单</li>
+                    <li>查看工单（详情/列表）</li>
+                </ul>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">处理人智能体（Agent Workbench）</div>
+            <div class="card-body">
+                <ul style="margin:0;padding-left:16px;">
+                    <li>答复工单</li>
+                    <li>查看工单（详情/列表）</li>
+                    <li>转派工单</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>8.3 关键风险与阻塞</h3>
+    <div class="highlight highlight-red">
+        <strong>阻塞项 1：</strong>MCP APP 使用 MCP 服务实例的 Tool <strong>还没做</strong> → 实例 release 了但调不通，整条链路断裂。需 @赵清伟 @何翘楚 @武晨曦 紧急安排
+    </div>
+    <div class="highlight highlight-red">
+        <strong>阻塞项 2：</strong>海外 mcpapps 不支持 mcp 服务实例 → 影响 POC 跑通，需讨论方案
+    </div>
+    <div class="highlight highlight-red">
+        <strong>阻塞项 3：</strong>后台应用部署方案未定 → 非 ERP 用户无法访问，需客户沟通服务器采购（@吴宏超 @荆龙刚）
+    </div>
+    <div class="highlight highlight-yellow">
+        <strong>关注项：</strong>Console 级业务组件已进联调但问题较多，需集中攻关
+    </div>
+    <div class="highlight highlight-yellow">
+        <strong>已剥离：</strong>
+        <ul style="margin:8px 0 0 16px;">
+            <li>工作台发起智能体会话处理 — 灵基 API 开放属商业模式范畴，暂无定论</li>
+            <li>工单知识沉淀写入 — DC 写入 API <strong>暂无计划与方案</strong>，月底不包含</li>
+        </ul>
+    </div>
+
+    <p>👉 完整冲刺计划详见 <a href="HelpDesk月底上线冲刺计划.md" style="color:var(--danger);font-weight:600;">《HelpDesk月底上线冲刺计划》</a></p>
 </div>
 
 <!-- Section 9: 风险管理 -->
@@ -1343,10 +1420,34 @@
     <table>
         <tr><th>风险</th><th>影响</th><th>概率</th><th>应对策略</th></tr>
         <tr>
+            <td><strong>后台应用部署方案缺失</strong></td>
+            <td><span class="tag tag-p0">高</span> 非 ERP 用户无法访问后台</td>
+            <td>高</td>
+            <td>本周内确定部署方案（独立部署/灵基托管），启动服务器采购。苍穹方案已确认不可行</td>
+        </tr>
+        <tr>
+            <td><strong>海外 mcpapps 不支持 mcp 服务实例</strong></td>
+            <td><span class="tag tag-p0">高</span> POC 无法跑通</td>
+            <td>高</td>
+            <td>立即讨论替代方案（代理/独立部署/等待修复）</td>
+        </tr>
+        <tr>
             <td>标品 P0 能力未按时就绪</td>
             <td><span class="tag tag-p0">高</span> 阻塞上线</td>
             <td>中</td>
             <td>每日跟踪标品进度，提前识别延期风险。准备降级方案（如先用研发环境演示）</td>
+        </tr>
+        <tr>
+            <td>灵基 API 开放无时间表</td>
+            <td><span class="tag tag-p1">中</span> 工作台智能体辅助场景缺失</td>
+            <td>高</td>
+            <td>已从月底目标剥离。属商业模式范畴，暂不阻塞 MVP</td>
+        </tr>
+        <tr>
+            <td>DC 知识写入 API 月底才出初版</td>
+            <td><span class="tag tag-p1">中</span> 知识沉淀功能可能不完整</td>
+            <td>中</td>
+            <td>确认是否为硬性验收点；预留对接时间。DC 团队 8 月底初版</td>
         </tr>
         <tr>
             <td>SharePoint API 安全审批耗时</td>
@@ -1354,17 +1455,11 @@
             <td>高</td>
             <td>提前与 Julian 沟通推进。短期不影响 1.0/2.0，与第三阶段解耦</td>
         </tr>
-        <!--<tr>
-            <td>2TB 数据同步成本超预期</td>
-            <td><span class="tag tag-p1">中</span> 可能影响方案选择</td>
-            <td>中</td>
-            <td>提前测算并给出分级方案。Chris 已同意 MCP 相关费用由客户承担</td>
-        </tr>-->
         <tr>
             <td>灵基用户无苍穹身份</td>
             <td><span class="tag tag-p0">高</span> 后台应用不可用</td>
             <td>高</td>
-            <td>推动 Build 支持非苍穹部署。短期可用灵基自身托管能力</td>
+            <td>推动 Build 支持非苍穹部署。方案选型中</td>
         </tr>
         <tr>
             <td>产品成熟度不达标</td>
