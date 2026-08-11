@@ -1,0 +1,37 @@
+{
+  "cloud": "zcy",
+  "domain": "kingdee",
+  "appCode": "zcy_kingdee_helpdesk_ticket",
+  "appName": "Helpdesk工单卡片",
+  "description": "Helpdesk智能助手工单表单与提交结果展示组件",
+  "capabilityDescription": {
+    "support": "工单创建表单、工单提交结果展示",
+    "notSupport": "工单列表查询、工单详情查看"
+  },
+  "mcpConnector": {
+    "type": "XK",
+    "code": "feature_vb_test"
+  },
+  "runMode": "message",
+  "version": "1.0.0",
+  "dependsOnApp": {
+    "appCode": "",
+    "writeArtifactTool": ""
+  },
+  "relateTools": [
+    {
+      "name": "kdtest_zx_kdtest_wo1_post_v2_kdtest_wo1_ticket_save",
+      "writeArtifact": "false"
+    },
+    {
+      "name": "kdtest_zx_kdtest_wo1_post_v2_kdtest_wo1_ticket_submit",
+      "writeArtifact": "false"
+    }
+  ],
+  "entryTool": {
+    "virtual": {
+      "inputSchema": "{\"type\":\"object\",\"properties\":{\"requestBody\":{\"type\":\"object\",\"description\":\"工单卡片输入参数\",\"properties\":{\"view\":{\"type\":\"string\",\"description\":\"展示视图：form(表单) 或 receipt(提交结果)\"},\"locale\":{\"type\":\"string\",\"description\":\"UI语言，根据用户对话语言传入。zh-CN(中文) 或 en-US(英文)\"},\"formData\":{\"type\":\"object\",\"description\":\"表单预填数据\",\"properties\":{\"requesterName\":{\"type\":\"string\"},\"requesterEmail\":{\"type\":\"string\"},\"requesterCompany\":{\"type\":\"string\"},\"requesterDept\":{\"type\":\"string\"},\"title\":{\"type\":\"string\"},\"category\":{\"type\":\"string\"},\"priority\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"}}},\"receiptData\":{\"type\":\"object\",\"description\":\"提交结果数据\",\"properties\":{\"ticketId\":{\"type\":\"string\"},\"assignedTeam\":{\"type\":\"string\"},\"requesterName\":{\"type\":\"string\"},\"requesterEmail\":{\"type\":\"string\"},\"requesterCompany\":{\"type\":\"string\"},\"createdAt\":{\"type\":\"string\"},\"status\":{\"type\":\"string\",\"description\":\"success 或 failed\"},\"errorMessage\":{\"type\":\"string\",\"description\":\"失败原因\"},\"ticketUrl\":{\"type\":\"string\",\"description\":\"工单详情页链接\"}}}},\"required\":[\"view\",\"locale\"]}},\"required\":[\"requestBody\"]}",
+      "outputSchema": "{\"type\":\"object\",\"properties\":{\"responseBody\":{\"type\":\"object\",\"description\":\"工单操作结果\",\"properties\":{\"action\":{\"type\":\"string\"},\"ticketData\":{\"type\":\"object\"}}}}}"
+    }
+  }
+}

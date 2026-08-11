@@ -1,0 +1,37 @@
+{
+  "cloud": "zcy",
+  "domain": "kingdee",
+  "appCode": "zcy_kingdee_helpdesk_manager_team_tickets",
+  "appName": "HelpDesk团队风险工单卡",
+  "description": "在 Agent 对话中展示需要经理关注的团队工单摘要",
+  "capabilityDescription": {
+    "support": "团队风险工单摘要",
+    "notSupport": "完整后台页面、批量操作及当前卡片之外的业务流程"
+  },
+  "mcpConnector": {
+    "type": "XK",
+    "code": "feature_vb_test"
+  },
+  "runMode": "message",
+  "version": "2.0.0",
+  "dependsOnApp": {
+    "appCode": "",
+    "writeArtifactTool": ""
+  },
+  "relateTools": [
+    {
+      "name": "List_Team_Tickets",
+      "writeArtifact": "false"
+    },
+    {
+      "name": "Get_Ticket_Detail",
+      "writeArtifact": "false"
+    }
+  ],
+  "entryTool": {
+    "virtual": {
+      "inputSchema": "{\"type\":\"object\",\"properties\":{\"requestBody\":{\"type\":\"object\",\"description\":\"HelpDesk团队风险工单卡输入参数；该入口固定展示此单张卡片\",\"properties\":{\"locale\":{\"type\":\"string\",\"enum\":[\"zh-CN\",\"en-US\"],\"description\":\"界面语言\"},\"data\":{\"type\":\"object\",\"description\":\"团队风险工单摘要所需的当前业务数据\"}},\"required\":[\"locale\"]}},\"required\":[\"requestBody\"]}",
+      "outputSchema": "{\"type\":\"object\",\"properties\":{\"responseBody\":{\"type\":\"object\",\"description\":\"用户完成当前卡片操作后回传给 Agent 的结构化结果\",\"properties\":{\"action\":{\"type\":\"string\",\"description\":\"用户在当前卡片执行的动作\"},\"payload\":{\"type\":\"object\",\"description\":\"当前卡片收集或确认的业务数据\"},\"success\":{\"type\":\"boolean\"}},\"required\":[\"action\",\"payload\",\"success\"]}},\"required\":[\"responseBody\"]}"
+    }
+  }
+}
