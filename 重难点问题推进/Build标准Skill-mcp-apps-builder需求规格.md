@@ -37,17 +37,18 @@
 | Preview | 指定修订对应的本地预览服务和访问 URL |
 | Build | 对指定修订执行的可复现构建记录 |
 | Artifact | 构建后可上传的 ZIP 及其摘要 |
-| Submission | 用户发起的 Console 提交记录 |
+| SandboxDeployment | 用户发起的沙箱上传记录；与生产 Submission 独立，不进入生产审核 |
+| Submission | 用户发起的生产 Console 提交记录 |
 | Local Check | Build 本地执行的 `info.json`、目录、资源、Schema 等检查 |
 | Console Check | Console 返回的 Connector/Tool 存在性、权限或提交前检查 |
 
 建议核心标识：
 
 ```text
-projectId + draftRevision + buildId + submissionId
+projectId + draftRevision + buildId + sandboxDeploymentId + submissionId
 ```
 
-所有异步命令必须携带 `projectId` 和目标 `draftRevision`，防止多项目、多窗口或旧请求覆盖新结果。
+所有异步命令必须携带 `projectId` 和目标 `draftRevision`，防止多项目、多窗口或旧请求覆盖新结果。沙箱上传结果还必须校验 `buildId + artifactSha256 + sandboxDeploymentId`；生产提交结果必须校验 `submissionId`，两类结果不可互相覆盖或混用。
 
 ## 3. 总体流程与状态机
 
@@ -77,13 +78,17 @@ CLARIFYING
   -> VERIFIED
 
 VERIFIED -> VERIFIED_DRAFT                           （用户暂不打包）
-VERIFIED | VERIFIED_DRAFT -> PACKAGING -> PACKAGED  （用户选择打包）
-PACKAGED -> READY_TO_SUBMIT                         （本地与 Console 门禁通过）
+VERIFIED | VERIFIED_DRAFT -> PACKAGING -> PACKAGED  （用户选择打包，或显式点击“测试”触发打包）
+PACKAGED -> SANDBOX_UPLOADING                        （用户点击“测试”）
+  -> SANDBOX_READY | SANDBOX_UPLOAD_FAILED
+PACKAGED -> READY_TO_SUBMIT                         （生产提交门禁通过）
 READY_TO_SUBMIT -> SUBMITTING
   -> PENDING_REVIEW | PUBLISHED | SUBMIT_FAILED
 ```
 
-`PACKAGED` 仅表示制品已生成，不表示可以提交。每次进入详情或准备提交时执行门禁：全部通过才进入 `READY_TO_SUBMIT`；任何门禁失败或检查结果过期都回到 `PACKAGED`，并在“检查”Tab 展示原因。
+`PACKAGED` 仅表示制品已生成，不表示已上传沙箱或可以提交生产。“测试”是用户显式选择阶段 4 的入口：当前合格修订尚未打包或产物已过期时，点击后先执行构建打包，再上传沙箱；不得在无用户动作时后台打包上传。沙箱上传与生产提交为两个独立动作，进入 `SANDBOX_READY` 不会进入生产审核，也不代表 Skill 已制作或端到端测试通过。
+
+每次进入详情或准备提交生产时执行生产门禁：全部通过才进入 `READY_TO_SUBMIT`；任何门禁失败或检查结果过期都回到 `PACKAGED`，并在“检查”Tab 展示原因。
 
 异常状态：
 
@@ -284,7 +289,8 @@ MCP App ZIP 解压后的一级目录只允许包含：
 - 名称。
 - 10–15 字描述。
 - 当前状态：生成中、可预览、预览中、检查失败、已打包等。
-- 三个操作入口：**启动预览**、**停止预览**、**详情**。启动和停止可根据状态互斥展示，但协议中是两个独立 action。
+- 四个操作入口：**启动预览**、**停止预览**、**测试**、**详情**。启动和停止可根据状态互斥展示，但协议中是两个独立 action。
+- “测试”表示将当前合格 MCP App 制品上传到沙箱，不表示直接运行完整测试，也不自动打开或跳转沙箱 Work。
 - 打包后重新推送更新后的同一项目卡，而不是创建无法关联的新卡。
 
 建议卡片协议：
@@ -304,9 +310,11 @@ MCP App ZIP 解压后的一级目录只允许包含：
     "startedAt": "2026-08-11T10:00:00Z"
   },
   "artifact": null,
+  "sandboxDeployment": null,
   "actions": [
     { "id": "start_preview", "label": "启动预览", "enabled": true },
     { "id": "stop_preview", "label": "停止预览", "enabled": false },
+    { "id": "test_sandbox", "label": "测试", "enabled": true },
     { "id": "open_detail", "label": "详情", "enabled": true }
   ]
 }
@@ -322,6 +330,19 @@ MCP App ZIP 解压后的一级目录只允许包含：
 | `DEGRADED` | 可用；先尝试恢复，失败则新端口 | 可用 | 可用 |
 | `STOPPING` | 禁用 | 禁用，显示停止中 | 可用 |
 | `STALE` | 可用；为新修订启动 | 可停止旧实例 | 可用 |
+
+“测试”使用独立状态矩阵：
+
+| 当前修订/沙箱状态 | 测试按钮 | 点击行为与反馈 |
+|---|---|---|
+| 未到 `VERIFIED` | 禁用 | 提示先完成当前修订预览与检查 |
+| `VERIFIED`/`VERIFIED_DRAFT`，无有效 Artifact | 可用 | 显式触发阶段 4 构建打包，成功后继续上传 |
+| `PACKAGING` | 禁用，显示“构建中” | 留在当前 Build 页面 |
+| `PACKAGED` | 可用 | 进入 `SANDBOX_UPLOADING` |
+| `SANDBOX_UPLOADING` | 禁用，显示“上传中” | 合并重复点击，不创建第二次上传 |
+| `SANDBOX_READY`，制品哈希未变 | 可用，显示“已上传” | 可复用真实回执或执行幂等重传；仍不跳转 |
+| `SANDBOX_UPLOAD_FAILED` | 可用，显示“重试” | 保留当前页面、制品和错误详情 |
+| `STALE` | 禁用 | 提示重新完成检查/预览后再测试，旧制品不可上传 |
 
 ### 6.3 Preview Manager
 
@@ -416,16 +437,28 @@ ALLOCATING -> STARTING -> HEALTHY -> DEGRADED -> STOPPING -> STOPPED
 - 重新推送同一 `projectId` 的更新卡片。
 - 卡片状态先更新为 `PACKAGED`；本地与 Console 门禁全部通过后再更新为 `READY_TO_SUBMIT`。
 - 显示版本、构建时间和产物状态。
-- 详情中的产物路径、SHA-256、更新日志和提交按钮刷新。
-- 若源码随后变化，Artifact 标记 `STALE`，提交按钮禁用，必须重新经过阶段 2、3、4。
+- 详情中的产物路径、SHA-256、更新日志、测试按钮和生产提交按钮刷新。
+- 若源码随后变化，Artifact 标记 `STALE`，测试与生产提交按钮禁用，必须重新经过阶段 2、3、4。
+
+### 7.5 测试并上传沙箱
+
+1. 入口展示名固定为 **“测试”**，结果卡和详情面板均可提供；两处共享同一 `SandboxDeployment` 状态。
+2. 用户点击后保持当前 Build 页面，不打开新页面、不切换路由，也不自动跳转沙箱 Work。
+3. 当前修订为 `VERIFIED`/`VERIFIED_DRAFT` 且无有效 Artifact 时，该次点击视为用户明确选择阶段 4：先构建打包，校验成功后继续上传；Artifact 已过期或当前修订不合格时不得上传旧包。
+4. Build 以 `sandboxDeploymentId` 和 `tenant + appCode + artifactSha256 + sandboxEnvironment` 生成幂等键，调用 Console 沙箱上传接口。连续点击、刷新重试或异步回调不得产生无法识别的重复版本。
+5. 仅当 Console 返回真实成功回执，且回执与当前 `projectId + draftRevision + buildId + artifactSha256` 一致时，进入 `SANDBOX_READY`。建议回执至少包含沙箱组件/App ID、沙箱版本、Artifact SHA-256、Console request ID 和完成时间。
+6. 成功后在当前页面显示绿色成功提示，原文必须为：**“已经上传到沙箱，您可以开始制作技能进行测试”**。
+7. 该提示仅表示当前制品已在沙箱就绪；不表示 Skill 已制作、不表示端到端测试通过、不表示生产提交或发布成功。
+8. 超时、接口不可用、权限失败、哈希不一致或回执字段缺失时进入 `SANDBOX_UPLOAD_FAILED`，原页显示可重试错误并保留 Artifact；不得显示绿色成功提示，也不得由模型补写成功状态。
+9. 上传操作必须经过服务端鉴权、租户与环境隔离、制品完整性校验和审计。前端不得持有 Console 长期凭据。
 
 ## 8. 业务组件详情
 
-点击卡片“详情”，在右侧详情面板打开。面板包含顶部提交按钮及两个 Tab：**概览**、**检查**。
+点击卡片“详情”，在右侧详情面板打开。面板顶部提供两个相互独立的动作：**测试**（上传沙箱、原页反馈）和**提交生产**（生产 Console 提交与审核）；下方包含两个 Tab：**概览**、**检查**。
 
-### 8.1 顶部提交按钮
+### 8.1 顶部动作
 
-按钮规则：
+**测试按钮**遵循 §6.2 独立状态矩阵与 §7.5 沙箱上传协议，始终留在当前页面反馈；**提交生产按钮**遵循以下规则：
 
 1. 未打包：可点击，但弹出黄色提示，原文为：**“请先构建打包，再发起提交”**。
 2. Artifact 已过期：黄色提示“当前产物已过期，请重新构建打包”。
@@ -493,6 +526,15 @@ Console 不可用时状态为 `unavailable`，不得显示“通过”；用户�
 - 日志和错误信息必须脱敏，不回传 Token、Cookie、密钥或本地敏感路径。
 - 高风险发布操作不得仅凭模型文本确认成功。
 
+### 9.4 沙箱上传协议
+
+- 沙箱上传与生产 Submission 使用不同接口语义、记录类型、权限和状态，不得以沙箱成功回执推进生产审核状态。
+- 请求必须携带 `sandboxDeploymentId`、环境标识、`projectId`、`draftRevision`、`buildId`、`appCode` 和 `artifactSha256`。
+- 服务端以 `tenant + sandboxEnvironment + appCode + artifactSha256` 幂等；同一进行中请求应返回原任务，同一已成功制品应返回可验证的既有回执。
+- 成功判定只接受 Console 沙箱服务的结构化回执；回执中的 App/组件 ID、版本、哈希、request ID 和环境必须持久化并可审计。
+- 回调到达时重新核对当前修订和制品哈希。旧修订成功只能写入历史记录，不得覆盖新卡片状态或触发当前页面绿色提示。
+- Console 接口不可用时显示 `unavailable`/上传失败并允许重试，禁止降级为本地假成功。
+
 ## 10. Skill 内部能力建议
 
 `mcp-apps-builder` 对用户保持一个 Skill，对内建议分为以下服务：
@@ -502,12 +544,34 @@ Console 不可用时状态为 `unavailable`，不得显示“通过”；用户�
 3. `Static Validator`：`info.json`、Schema、目录和资源检查。
 4. `Preview Manager`：动态端口、进程、健康检查和 URL。
 5. `Build Manager`：可复现构建、净化、ZIP、哈希和日志。
-6. `Console Gateway`：Connector/Tool 检查和提交。
-7. `Project Card Presenter`：结果卡、详情面板和状态更新。
+6. `Console Gateway`：Connector/Tool 检查、独立的沙箱上传与生产提交；校验真实回执并隔离两类状态。
+7. `Project Card Presenter`：结果卡、详情面板、测试按钮、绿色原页反馈和状态更新。
 
 服务失败必须返回结构化错误，不要求模型从非结构化日志中猜测真实状态。
 
 ## 11. 与当前 HelpDesk 工程的映射
+
+### 11.1 最新交付里程碑与业务范围
+
+- 最新项目计划要求 **2026-08-14** 完成 Build 构建业务组件能力节点，并在 Console 管理构建结果。
+- 该日期是交付/验收目标，不证明本规格中的 Preview Manager、沙箱上传 API、状态回调等能力已经实现；必须按本文 P0 标准逐项验收。
+- HelpDesk 本次验收范围为 11 类业务组件：
+  1. 知识检索卡；
+  2. 工单草稿卡（含附件）；
+  3. 附件确认卡；
+  4. 工单回执卡；
+  5. 员工工单列表卡；
+  6. 员工工单详情卡（含进度）；
+  7. 工单评价卡；
+  8. 工单答复卡；
+  9. 处理人工单列表卡；
+  10. 处理人工单详情卡（含转派）；
+  11. 知识产物卡。
+- 上述 11 类是**业务验收类型**；参考工程中的 26 个原子组件是**实现颗粒度**，二者不能按数量直接等同。8/14 前必须形成 `业务类型 → appCode/view → 复用原子组件 → 依赖 Tool → 责任人 → 验收结果` 映射。
+- 工单草稿卡、附件确认卡和知识产物卡依赖 MCP Apps 使用会话附件：8/13 对齐方案和效果，8/14 为原计划发布日期；未取得发布记录和 UAT 前，这三类不得以模拟附件冒充生产通过。
+- 知识产物卡只承载产物展示/确认，不决定哪些工单可生成知识。定时触发、对话触发或组合触发及 eligible ticket 规则由处理人 Skill/产品另行确认。
+
+### 11.2 当前参考工程
 
 当前参考工程：
 
@@ -538,7 +602,8 @@ helpdesk-pro/交互式卡片/helpdesk-components/
 - 上传 ZIP 生成器、目录白名单和 SHA-256。
 - 标准检查报告存储与详情面板。
 - Console Connector/Tool 检查 API。
-- 提交 API、权限、审计、幂等和状态回调。
+- Console 沙箱上传 API、服务端鉴权、幂等、审计和真实状态回调。
+- 生产提交 API、权限、审计、幂等和状态回调。
 - 标准 Skill 自身的注册、状态持久化和卡片协议实现。
 
 ## 12. P0 验收标准
@@ -576,12 +641,24 @@ helpdesk-pro/交互式卡片/helpdesk-components/
 6. 双击提交只产生一个 Console Submission。
 7. 提交结果必须来自 Console，不允许模型直接标记已发布。
 
-### 12.5 结果卡与详情
+### 12.5 测试并上传沙箱
 
-1. 卡片包含背景图、名称、10–15 字描述、启动预览、停止预览、详情。
+1. 结果卡和详情均提供展示名为“测试”的按钮，且与“提交生产”是独立动作。
+2. 点击“测试”后始终保持当前 Build 页面，不自动打开或跳转沙箱 Work。
+3. 当前修订合格但未打包时，只有该次用户点击可显式触发构建打包并继续上传；后台不得无操作自动上传。
+4. 仅收到与当前制品匹配的真实 Console 沙箱成功回执后，显示绿色原文：**“已经上传到沙箱，您可以开始制作技能进行测试”**。
+5. 成功提示不得解释为 Skill 已制作、端到端测试通过或生产发布成功。
+6. 上传失败、超时、Console 不可用、回执缺失或哈希不匹配时不得显示成功；页面保留 Artifact、错误详情和重试入口。
+7. 连续点击同一制品只产生一个有效 `SandboxDeployment`；旧修订回执不得覆盖新修订状态。
+
+### 12.6 结果卡与详情
+
+1. 卡片包含背景图、名称、10–15 字描述、启动预览、停止预览、测试、详情。
 2. 打包后更新并再次推送同一项目卡片。
-3. 详情包含概览/检查两个 Tab 和一个提交按钮。
-4. 概览字段、检查来源和更新时间清晰可追溯。
+3. 详情包含概览/检查两个 Tab，以及测试和提交生产两个独立动作。
+4. 概览字段、检查来源、沙箱上传回执和更新时间清晰可追溯。
+5. HelpDesk 11 类业务组件均有唯一 appCode/view、依赖 Tool、复用原子组件和验收结果映射；不得用“参考工程已有 26 个原子组件”代替业务类型验收。
+6. 依赖会话附件的组件在 8/13 方案对齐、实际发布和 UAT 通过前必须标记阻塞或演示态，不得宣称生产可用。
 
 ## 13. 建议研发拆分
 
@@ -594,7 +671,9 @@ helpdesk-pro/交互式卡片/helpdesk-components/
 - Preview Manager 动态端口、启动/停止/复用。
 - 结果卡和详情双 Tab。
 - Release build、ZIP、SHA-256、更新日志。
-- Console Tool 检查与人工提交。
+- 结果卡/详情“测试”按钮、`SandboxDeployment` 状态与原页绿色反馈。
+- Console 沙箱上传的服务端鉴权、真实回执、幂等、审计与回调。
+- Console Tool 检查与人工生产提交。
 
 ### P1：效率与治理
 
@@ -696,7 +775,9 @@ Preview Manager 的动态端口、实例复用、停止恢复、反向代理和�
 | MCP App 项目卡、action、双 Tab | PROPOSED | 需产品和渲染协议评审 |
 | MCP App validator/output_check | PROPOSED | 需独立实现，不复用 Skill 校验规则冒充通过 |
 | ZIP 净化、SHA-256、制品存储 | PROPOSED | 需新增 Build/Artifact Manager |
-| Console 检查、提交、审核回调 | TBD | 无正式 API 前显示 `unavailable`，默认阻断自动提交 |
+| 结果卡“测试”按钮与原页反馈 | PROPOSED | 上传沙箱后不跳转；需产品和渲染协议评审 |
+| Console 沙箱上传、真实回执与状态回调 | TBD | 无正式 API 前不得显示“已经上传到沙箱” |
+| Console 检查、生产提交、审核回调 | TBD | 无正式 API 前显示 `unavailable`，默认阻断自动提交 |
 
 ### 14.6 仍需 Agent/Application Creator 验证的范围
 

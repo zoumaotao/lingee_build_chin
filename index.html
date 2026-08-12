@@ -380,7 +380,7 @@
     <div class="meta">
         <span>客户：振兴集团</span>
         <span>版本：v1.1</span>
-        <span>更新：2026年8月11日</span>
+        <span>更新：2026年8月12日</span>
     </div>
 </div>
 
@@ -857,9 +857,9 @@
       <!-- 路径3: 工单沉淀 -->
       <rect x="670" y="50" width="180" height="50" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
       <text x="760" y="72" font-size="10" fill="#065f46" text-anchor="middle" font-weight="600">③ 工单处理沉淀</text>
-      <text x="760" y="88" font-size="8" fill="#6b7280" text-anchor="middle">处理结论 → 知识回写 API</text>
-      <rect x="673" y="103" width="50" height="14" rx="3" fill="#ecfdf5" stroke="#10b981"/>
-      <text x="698" y="113" font-size="7" fill="#065f46" text-anchor="middle">Phase 2</text>
+      <text x="760" y="88" font-size="8" fill="#6b7280" text-anchor="middle">产物/附件一键上传企业知识</text>
+      <rect x="673" y="103" width="80" height="14" rx="3" fill="#fef3c7" stroke="#f59e0b"/>
+      <text x="713" y="113" font-size="7" fill="#92400e" text-anchor="middle">8/21 PLANNED</text>
 
       <!-- ===== DC 加工层 ===== -->
       <rect x="250" y="225" width="580" height="80" rx="10" fill="#faf5ff" stroke="#a78bfa" stroke-width="1.5"/>
@@ -925,7 +925,7 @@
       <text x="380" y="157" font-size="7.5" fill="#6b7280">8.7 手动上传</text>
       <rect x="475" y="147" width="50" height="14" rx="3" fill="#ecfdf5" stroke="#10b981"/>
       <text x="500" y="157" font-size="7" fill="#065f46" text-anchor="middle">Phase 2</text>
-      <text x="540" y="157" font-size="7.5" fill="#6b7280">8.15 知识回写</text>
+      <text x="540" y="157" font-size="7.5" fill="#6b7280">8/21 一键上传（待验收）</text>
       <!--<rect x="635" y="147" width="50" height="14" rx="3" fill="#fff1f2" stroke="#fb7185"/>
       <text x="660" y="157" font-size="7" fill="#9f1239" text-anchor="middle">Phase 3</text>
       <text x="700" y="157" font-size="7.5" fill="#6b7280">8.30 SharePoint 同步</text>-->
@@ -968,7 +968,7 @@
         <span class="flow-arrow">→</span>
         <span class="flow-step">提问人评价打分</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">知识沉淀入库</span>
+        <span class="flow-step">一键上传企业知识<br><small>有智能体自动归属；无智能体游离</small></span>
     </div>
 
     <h4>场景四：查询工单进度</h4>
@@ -982,7 +982,8 @@
 
     <h3>3.5 知识流转说明</h3>
     <p>短期（1.0）：手动上传政策类文档（20-25 份 PDF）到 DC，完成知识初始化<br>
-    中期（2.0）：扩展 HR/行政/财务文档，知识回写机制上线（工单处理→新知识入库）<br>
+    标准能力（计划 2026-08-21）：产物和附件可一键上传企业知识；有智能体上下文时自动进入/关联该智能体知识，无智能体时作为租户企业知识游离。当前为 PLANNED，须在发布后完成权限、回执、解析/索引和检索验收<br>
+    中期（2.0）：在标准上传基础上补齐智能体主动候选、冲突去重、审核运营和效果回流，形成完整知识飞轮<br>
     <!--长期（3.0）：SharePoint MCP 自动增量同步，知识飞轮自动运转，新知识可选归档回 SharePoint</p>-->
 </div>
 
@@ -1029,7 +1030,7 @@
         <tr><td><strong>Workbench Agent</strong></td><td>处理人统一工作台入口</td><td>接收新工单分配通知（MCP 推送）、工单队列管理、处理状态路由</td></tr>
         <tr><td>Ticket Process Skill</td><td>工单处理与答复</td><td>查看工单详情/提问上下文/对话历史，编写答复并推送给提问人，更新工单状态</td></tr>
         <tr><td>Ticket Reassign Skill</td><td>工单转派</td><td>经理/分发员可将工单重新分配给其他处理人</td></tr>
-        <tr><td>Knowledge Contribute Skill</td><td>知识沉淀</td><td>将处理结论/通用 FAQ 写入 DC 知识库，标记来源工单，形成知识飞轮</td></tr>
+        <tr><td>Knowledge Contribute Skill</td><td>知识沉淀</td><td>将已确认处理产物/附件一键上传企业知识；有智能体上下文时自动归属，无智能体时游离。计划 8/21 发布，真实回执与检索验收前不得标记已上线</td></tr>
         <tr><td>Workload Dashboard Skill</td><td>工作看板（对话内轻量查询）</td><td>处理人在对话中快速查看本人待办数量/SLA 临近工单/处理统计。<em>注：完整管理大屏见 4.6 第 9 项"仪表盘"，面向经理角色</em></td></tr>
     </table>
     <h4>关键规则</h4>
@@ -1112,7 +1113,7 @@
         <tr><td>8</td><td>评分系统</td><td>1-5 星满意度评价 + KPI 统计</td><td>2.0</td></tr>
         <tr><td>9</td><td>仪表盘</td><td>已解决/未解决/SLA 超时/满意度等统计大屏</td><td>2.0</td></tr>
         <tr><td>10</td><td>自动关单</td><td>超时无回复自动关闭 + 通知提问人</td><td>2.0</td></tr>
-        <tr><td>11</td><td>知识回写</td><td>处理结果通过 API 写入 DC 知识库</td><td>2.0</td></tr>
+        <tr><td>11</td><td>企业知识一键上传</td><td>处理产物/附件上传 DC；有智能体自动归属，无智能体游离。标准能力计划 2026-08-21 发布，是否进入 1.0 以联调/UAT 为准</td><td>PLANNED</td></tr>
         <tr><td>12</td><td>业务线隔离</td><td>Tech GBS / People GBS / BP 三线独立管理</td><td>2.0</td></tr>
         <tr><td>13</td><td>审批流程</td><td>IT Service Request 部分需 L1/L2 审批</td><td>2.0</td></tr>
     </table>
@@ -1123,8 +1124,9 @@
         <tr><td>知识初始化</td><td>手动上传 SharePoint 文档（PDF），自动解析+向量化</td><td>1.0</td></tr>
         <tr><td>语义检索</td><td>智能体调用 DC 进行语义搜索，返回匹配内容+来源</td><td>1.0</td></tr>
         <tr><td>权限管控</td><td>按部门/角色/智能体实例控制知识访问权限</td><td>2.0</td></tr>
-        <tr><td>知识回写（外部推送）</td><td>后台应用/MCP Server 通过 API 向指定智能体知识库写入新知识</td><td>2.0</td></tr>
-        <tr><td>智能体自动沉淀</td><td>智能体运行中生成的高频问题/处理结论自动写入所属知识库</td><td>2.0</td></tr>
+        <tr><td>企业知识一键上传</td><td>产物和附件上传 DC；有智能体上下文时自动进入/关联该智能体知识，无智能体时作为租户企业知识游离</td><td>PLANNED 2026-08-21</td></tr>
+        <tr><td>知识归属与状态回执</td><td>返回真实知识标识、归属类型及处理/索引状态；游离知识可后续查看并关联智能体</td><td>8/21 后验收</td></tr>
+        <tr><td>智能体主动沉淀</td><td>基于高频问题和已确认解决方案生成受治理候选，补齐审核、冲突和效果回流</td><td>后续飞轮能力</td></tr>
        <!--<tr><td>SharePoint 同步</td><td>增量同步 SharePoint 文档到 DC（推拉结合）</td><td>3.0</td></tr>-->
         <tr><td>知识质量管理</td><td>新旧知识冲突检测、知识更新版本化</td><td>后续</td></tr>
     </table>
@@ -1196,10 +1198,10 @@
         <tr><td>交互式卡片（自定义表单/工单卡）</td><td>⚠️ 仅标品预置组件</td><td>#1 不支持租户级自定义 APPS</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>APPS 数据传递给 LLM</td><td>⚠️ 卡片填写内容不入上下文</td><td>#2 卡片内容不作为上下文<br>#2b 全量消息无精简机制</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>APPS 渲染稳定性</td><td>❌ 偶发白屏/不回显</td><td>#3 渲染性能差<br>#4 提交后用户手填内容不回显</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>APPS 操作对话附件（图片/文件）</td><td>❌ 不支持</td><td>#32 APPS 无法从上下文获取附件、无法展示/管理附件、无法随表单传递</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>APPS 操作对话附件（图片/文件）</td><td>🟡 8/13 对齐方案/效果；8/14 为原计划发布日</td><td>#32 待实际发布与 HelpDesk UAT；未取得证据前不得标记已解决</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>Agent 感知 APPS 逻辑</td><td>❌ 仅知入参出参</td><td>#6 无结构化能力描述</td><td><span class="tag tag-p3">P3</span></td></tr>
-        <tr><td>DC 海外可用</td><td>✅ 已完成</td><td>#7 已解决</td><td>—</td></tr>
-        <tr><td>知识回写（知识飞轮）</td><td>❌ 无写入 API</td><td>#8 DC 不支持第三方写入</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>DC 海外可用</td><td>🟡 新加坡节点已部署，8/13 验证 HelpDesk 连通性</td><td>#7 部署完成不等于业务链路已验收</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>企业知识一键上传（知识飞轮基础路径）</td><td>🟡 方案已确认，计划 2026-08-21 发布；尚未上线/UAT</td><td>#8 产物/附件一键上传；有智能体自动归属，无智能体游离。高级治理和主动候选仍见 #8b/#9</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>知识权限管控</td><td>❌ 存在越权</td><td>#9 检索越权</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>应用部署（非 ERP 用户可用）</td><td>❌ 仅支持苍穹</td><td>#10 部署强绑苍穹<br>#20 实例创建依赖苍穹</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>多语言（海外客户）</td><td>❌ 多处 Bug</td><td>#12-#15 翻译错误/AI 中英夹杂/语言切换</td><td><span class="tag tag-p1">P1</span></td></tr>
@@ -1223,9 +1225,9 @@
         </ol>
     </div>
     <div class="highlight highlight-yellow">
-        <strong>P1 — 影响交付质量（建议 8.15 前解决）：</strong>
+        <strong>P1 — 影响交付质量（按最新节点持续验收）：</strong>
         <ol>
-            <li><strong>#8</strong> DC 知识回写 API（知识飞轮基础）</li>
+            <li><strong>#8</strong> 企业知识一键上传标准能力（计划 8/21，发布后完成归属/权限/回执/检索验收）</li>
             <li><strong>#9</strong> 知识检索权限管控（安全底线）</li>
             <li><strong>#3 / #4</strong> APPS 渲染稳定性 + 提交内容回显</li>
             <li><strong>#32</strong> APPS 操作对话附件能力（截图+描述→提单场景）</li>
@@ -1253,19 +1255,19 @@
     <h3>7.1 三阶段里程碑</h3>
     <div class="timeline">
         <div class="timeline-item milestone">
-            <div class="timeline-date">目标：8月底</div>
-            <div class="timeline-title">HelpDesk 1.0 — 聚焦 IT 领域，快速上线验证</div>
+            <div class="timeline-date">当前基线：8/13—8/31</div>
+            <div class="timeline-title">HelpDesk 1.0 — 验收、部署并上线试运行</div>
             <div class="timeline-content">
                 <ul>
-                    <li>灵基智能体上线（知识问答 + 交互式提单 + 查单）</li>
-                    <li>工单后台应用上线（列表/详情/自动分配/状态流转/答复通知）</li>
-                    <li>工作台页面上线（"我的工单"/"我的任务"嵌入 Work，单点登录）</li>
-                    <li>IT 域知识库初始化（手动上传 20-25 份 PDF）</li>
-                    <li>海外沙箱 POC 跑通</li>
-                    <li><s>工作台发起智能体会话处理</s>（已剥离：灵基 API 开放属商业模式范畴，暂无定论）</li>
-                    <li><s>事件驱动 MCP 推送</s>（已剥离：同上原因）</li>
+                    <li><strong>8/13：</strong>完成需求 checklist、海外 DC 连通验证、部署方案第二次客户沟通，并对齐会话附件/上下文方案与效果</li>
+                    <li><strong>8/14：</strong>Foundation Console 级 MCP 服务实例和业务组件、Build 构建业务组件、工单系统优化、Work 菜单/SSO/权限/一键会话、员工 Skill；明确工单系统验收范围</li>
+                    <li><strong>8/17：</strong>处理人 Skill（提问、回复、转派、查单、生成知识产物入口）</li>
+                    <li><strong>8/18：</strong>明确灵基交互验收范围与要求</li>
+                    <li><strong>8/20：</strong>明确 UAT 时间和试运行范围，完成客户上线前演示与汇报</li>
+                    <li><strong>8/21：</strong>Foundation + DC 智能体产物/附件写入 DC 计划发布，保持 PLANNED，发布后验收归属、权限、回执、索引与检索</li>
+                    <li><strong>8/31：</strong>验收、部署并上线试运行，不表述为无条件正式上线</li>
                 </ul>
-                <p style="margin-top:12px;font-size:0.85rem;color:var(--danger);">⚠️ 阻塞项：后台应用部署方案待定（非 ERP 用户无法使用苍穹）、海外 mcpapps 不支持 mcp 服务实例</p>
+                <p style="margin-top:12px;font-size:0.85rem;color:var(--danger);">⚠️ 未决边界：工单用户按灵基用户初始化为 TBD；一键会话是否携带 ticketId/描述/附件待 8/13 对齐；知识产物触发方式与 eligible ticket 未定；Build 能力交接培训负责人和日期 TBD。</p>
             </div>
         </div>
         <div class="timeline-item milestone">
@@ -1290,13 +1292,34 @@
                     <li>数据安全方案通过客户审核</li>
                     <li>成本评估与优化方案确认</li>
                     <li>时效性 SLA 达标</li>
-                    <li>知识回写机制上线（知识飞轮启动）</li>
+                    <li>高级知识飞轮上线（智能体主动候选、审核治理、冲突处理和效果回流）</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <h3>7.2 详细任务拆解</h3>
+    <h3>7.2 当前执行基线与业务组件</h3>
+    <div class="highlight highlight-blue">
+        <strong>口径说明：</strong>以下节点覆盖早期 8/12、8/15、8/25、8/29 等排期；日期均为目标，不代表已完成。
+    </div>
+    <table>
+        <tr><th>领域</th><th>责任人</th><th>目标</th></tr>
+        <tr><td>工单系统</td><td>@黄军桦开发；@荆龙刚配合</td><td>需求澄清/checklist 8/13；优化完成 8/14；用户按灵基初始化 TBD</td></tr>
+        <tr><td>灵基交互</td><td>@张乐 @黄军桦开发；@荆龙刚配合</td><td>Work 菜单/SSO/权限/一键会话与员工 Skill 8/14；处理人 Skill 8/17</td></tr>
+        <tr><td>海外 DC</td><td>@邹茂桃</td><td>8/13 验证 HelpDesk 连通性</td></tr>
+        <tr><td>部署方案</td><td>@荆龙刚 @吴宏超</td><td>8/13 第二次客户沟通</td></tr>
+        <tr><td>UAT/试运行</td><td>@高翔 @部伟及项目组</td><td>8/14 工单范围、8/18 灵基交互范围、8/20 演示/UAT/试运行范围、8/31 上线试运行</td></tr>
+    </table>
+    <h4>11 类业务组件</h4>
+    <ol>
+        <li>知识检索卡</li><li>工单草稿卡（含附件）</li><li>附件确认卡</li><li>工单回执卡</li><li>员工工单列表卡</li><li>员工工单详情卡（含进度）</li><li>工单评价卡</li><li>工单答复卡</li><li>处理人工单列表卡</li><li>处理人工单详情卡（含转派）</li><li>知识产物卡</li>
+    </ol>
+    <p>11 类是业务验收类型，不等同参考工程 26 个原子组件；每类需映射 appCode/view、依赖 Tool、责任人和验收结果。</p>
+    <div class="highlight highlight-yellow">
+        <strong>一键会话边界：</strong>入口纳入 8/14 目标；是否携带 ticketId、描述和附件等受控上下文待 8/13 对齐。若未确认，只交付明确提示“不携带当前工单上下文”的通用新会话，不得把敏感内容直接拼入 URL。
+    </div>
+
+    <h3>7.3 详细任务拆解</h3>
     
     <h4>第一阶段</h4>
     <table>
@@ -1308,7 +1331,7 @@
         <tr><td>智能体开发与自测</td><td>技能就绪</td><td><span class="tag tag-doing">进行中</span></td></tr>
         <tr><td>工单后台应用开发</td><td>—</td><td><span class="tag tag-doing">进行中</span></td></tr>
         <tr><td>工单 MCP Server 开发</td><td>—</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>DC 海外部署</td><td>—</td><td><span class="tag tag-done">已完成</span></td></tr>
+        <tr><td>DC 海外部署及 HelpDesk 连通验证</td><td>—</td><td><span class="tag tag-doing">部署完成，8/13 待验收</span></td></tr>
         <tr><td>上传 DC 初始化知识</td><td>DC 海外就绪</td><td><span class="tag tag-todo">待启动</span></td></tr>
         <tr><td>端到端联调测试</td><td>全部就绪</td><td><span class="tag tag-todo">待启动</span></td></tr>
     </table>
@@ -1334,7 +1357,7 @@
         <tr><td>与客户专项会议</td><td>方案确认 + 安全评审</td></tr>
         <tr><td>SharePoint API 权限获取</td><td>需 Cyber Security Director 审批</td></tr>
         <!--<tr><td>增量同步开发与测试</td><td>推拉结合机制</td></tr>-->
-        <tr><td>知识回写功能上线</td><td>DC 8月底初版</td></tr>
+        <tr><td>高级知识飞轮能力</td><td>标准一键上传计划 8/21；后续补齐主动候选、审核治理和效果回流</td></tr>
     </table>
 </div>
 
@@ -1342,30 +1365,32 @@
 <div class="section" id="sec8">
     <h2>08 团队分工与协作</h2>
     
-    <h3>8.1 月底上线冲刺分工（2026-08-11 确定）</h3>
+    <h3>8.1 最新整体执行分工（2026-08-12 当前基线）</h3>
     <table>
         <tr><th>工作项</th><th>责任人</th><th>时间</th><th>状态</th></tr>
-        <tr><td>工单应用需求澄清与功能搭建</td><td>@吴宏超 @黄军桦</td><td>8/12 客户沟通，之后持续开发</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>海外沙箱 HelpDesk POC 跑通</td><td>@邹茂桃 @梁平贤</td><td>8/12</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>处理人"我的任务"页 + 用户"我的工单"页</td><td>@梁平贤 @荆龙刚</td><td>8/12</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>通用应用部署方案 & 服务器采购沟通</td><td>@吴宏超 @荆龙刚</td><td>尽快</td><td><span class="tag tag-p0">阻塞</span></td></tr>
-        <tr><td>标品补齐持续跟进</td><td>@邹茂桃 及其他相关人</td><td>8/14 联调节点</td><td><span class="tag tag-doing">进行中</span></td></tr>
+        <tr><td>工单需求澄清（含 checklist）/系统优化</td><td>@黄军桦开发；@荆龙刚配合</td><td>8/13 / 8/14</td><td><span class="tag tag-doing">目标节点</span></td></tr>
+        <tr><td>工单系统用户按灵基用户初始化</td><td>待明确</td><td>TBD</td><td><span class="tag tag-todo">待定</span></td></tr>
+        <tr><td>Work 菜单、SSO、数据权限、一键会话；员工 Skill</td><td>@张乐 @黄军桦开发；@荆龙刚配合</td><td>8/14</td><td><span class="tag tag-doing">目标节点</span></td></tr>
+        <tr><td>处理人 Skill（含生成知识产物入口）</td><td>@张乐 @黄军桦开发；@荆龙刚配合</td><td>8/17</td><td><span class="tag tag-doing">目标节点</span></td></tr>
+        <tr><td>海外 DC 连通性验证</td><td>@邹茂桃</td><td>8/13</td><td><span class="tag tag-doing">待验收</span></td></tr>
+        <tr><td>工单系统部署方案第二次客户沟通</td><td>@荆龙刚 @吴宏超</td><td>8/13</td><td><span class="tag tag-doing">待沟通</span></td></tr>
+        <tr><td>客户演示、UAT 与试运行范围</td><td>@高翔 @部伟及项目组</td><td>8/20</td><td><span class="tag tag-todo">待明确</span></td></tr>
+        <tr><td>验收、部署并上线试运行</td><td>项目组</td><td>8/31</td><td><span class="tag tag-todo">目标节点</span></td></tr>
     </table>
 
-    <h3>8.2 标品补齐进度跟踪</h3>
+    <h3>8.2 标品依赖进度跟踪</h3>
     <table>
-        <tr><th>标品能力项</th><th>目标时间</th><th>当前进度</th><th>状态</th></tr>
-        <tr><td>Console 级 MCP 服务实例（手工导入）</td><td><s>8/14</s> → <strong>8/11 晚 release</strong></td><td>已提前完成</td><td><span class="tag tag-done">已就绪</span></td></tr>
-        <tr><td><strong>MCP APP 使用 MCP 服务实例的 Tool</strong></td><td>未排期</td><td><strong>还没做</strong> @赵清伟 @何翘楚 @武晨曦</td><td><span class="tag tag-p0">紧急</span></td></tr>
-        <tr><td>Console 级业务组件</td><td>8/14 联调</td><td>已进联调，但问题较多</td><td><span class="tag tag-p1">问题中</span></td></tr>
-        <tr><td>Build 构建业务组件</td><td>8/14 联调</td><td>已支持对话式开发</td><td><span class="tag tag-done">顺利</span></td></tr>
-        <tr><td>通过 API 写入知识到 DC</td><td>—</td><td><strong>暂无计划与方案</strong></td><td><span class="tag tag-p0">无进展</span></td></tr>
+        <tr><th>标品能力项</th><th>目标时间</th><th>验收口径</th><th>状态</th></tr>
+        <tr><td>Foundation：Console 级 MCP 服务实例和业务组件</td><td>8/14</td><td>目标环境、目标租户真实链路验收；既有 release 记录不替代 HelpDesk 可用性</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
+        <tr><td>Build：构建业务组件</td><td>8/14</td><td>11 类业务组件使用 Build 构建并在 Console 管理，逐项映射和验收</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
+        <tr><td>MCP Apps 使用会话附件</td><td>8/13 对齐；原计划 8/14 发布</td><td>平台发布记录 + HelpDesk 附件 UAT；未取得证据前不得标记已解决</td><td><span class="tag tag-p1">待对齐/验收</span></td></tr>
+        <tr><td>Foundation + DC：智能体产物/附件写入 DC</td><td>2026-08-21 计划发布</td><td>有/无智能体归属、权限、真实回执、解析/索引和授权检索</td><td><span class="tag tag-p1">PLANNED</span></td></tr>
     </table>
     <div class="highlight highlight-red">
-        <strong>⚠️ 关键缺口：</strong>MCP 服务实例 8.11 晚 release，但 mcpapp 使用 mcp 服务实例 tool 的能力<strong>还没做</strong>。客户自建 mcpapps + 导入实例后实际<strong>调不通</strong>。需 @赵清伟 @何翘楚 @武晨曦 紧急安排。
+        <strong>⚠️ 完成判定：</strong>上述日期均为目标节点，不能以日期、方案确认、release 或对话式开发记录直接宣称 HelpDesk 已完成。
     </div>
 
-    <h3>8.2 智能体能力分工</h3>
+    <h3>8.3 智能体能力分工</h3>
     <div class="card-grid">
         <div class="card">
             <div class="card-title">员工智能体（Helpdesk Assistant）</div>
@@ -1381,32 +1406,29 @@
             <div class="card-title">处理人智能体（Agent Workbench）</div>
             <div class="card-body">
                 <ul style="margin:0;padding-left:16px;">
-                    <li>答复工单</li>
-                    <li>查看工单（详情/列表）</li>
-                    <li>转派工单</li>
+                    <li>提问、答复、查看和转派工单</li>
+                    <li>生成知识产物入口（触发方式与选单规则待定）</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <h3>8.3 关键风险与阻塞</h3>
+    <h3>8.4 关键风险与阻塞</h3>
     <div class="highlight highlight-red">
-        <strong>阻塞项 1：</strong>MCP APP 使用 MCP 服务实例的 Tool <strong>还没做</strong> → 实例 release 了但调不通，整条链路断裂。需 @赵清伟 @何翘楚 @武晨曦 紧急安排
+        <strong>阻塞项 1：</strong>Foundation/Build 8/14 节点须在目标环境逐项验收；release 或“已支持开发”不代表 11 类业务组件可用。
     </div>
     <div class="highlight highlight-red">
-        <strong>阻塞项 2：</strong>海外 mcpapps 不支持 mcp 服务实例 → 影响 POC 跑通，需讨论方案
+        <strong>阻塞项 2：</strong>MCP Apps 会话附件 8/13 待对齐、8/14 为原计划发布日期；未有实际发布和 UAT 时，含附件工单及知识产物链路仍受阻。
     </div>
     <div class="highlight highlight-red">
-        <strong>阻塞项 3：</strong>后台应用部署方案未定 → 非 ERP 用户无法访问，需客户沟通服务器采购（@吴宏超 @荆龙刚）
+        <strong>阻塞项 3：</strong>工单系统按灵基用户初始化的责任人、接口、权限映射和日期均为 TBD。
     </div>
     <div class="highlight highlight-yellow">
-        <strong>关注项：</strong>Console 级业务组件已进联调但问题较多，需集中攻关
-    </div>
-    <div class="highlight highlight-yellow">
-        <strong>已剥离：</strong>
+        <strong>待拍板：</strong>
         <ul style="margin:8px 0 0 16px;">
-            <li>工作台发起智能体会话处理 — 灵基 API 开放属商业模式范畴，暂无定论</li>
-            <li>工单知识沉淀写入 — DC 写入 API <strong>暂无计划与方案</strong>，月底不包含</li>
+            <li>一键会话是否携带 ticketId、描述和附件上下文；未确认时只提供明确标注的通用会话降级</li>
+            <li>知识产物采用定时、对话触发还是组合触发，以及哪些工单可生成</li>
+            <li>Build 能力交接培训负责人和日期</li>
         </ul>
     </div>
 
@@ -1426,10 +1448,10 @@
             <td>本周内确定部署方案（独立部署/灵基托管），启动服务器采购。苍穹方案已确认不可行</td>
         </tr>
         <tr>
-            <td><strong>海外 mcpapps 不支持 mcp 服务实例</strong></td>
-            <td><span class="tag tag-p0">高</span> POC 无法跑通</td>
-            <td>高</td>
-            <td>立即讨论替代方案（代理/独立部署/等待修复）</td>
+            <td><strong>海外 DC 连通性未通过验收</strong></td>
+            <td><span class="tag tag-p0">高</span> HelpDesk 无法访问目标知识链路</td>
+            <td>中</td>
+            <td>8/13 由 @邹茂桃使用目标环境身份验证网络、租户、权限和真实回执；部署完成不等于业务可用</td>
         </tr>
         <tr>
             <td>标品 P0 能力未按时就绪</td>
@@ -1438,16 +1460,16 @@
             <td>每日跟踪标品进度，提前识别延期风险。准备降级方案（如先用研发环境演示）</td>
         </tr>
         <tr>
-            <td>灵基 API 开放无时间表</td>
-            <td><span class="tag tag-p1">中</span> 工作台智能体辅助场景缺失</td>
+            <td>一键会话缺少正式上下文契约</td>
+            <td><span class="tag tag-p1">中</span> 用户误以为自动携带工单/附件，或产生敏感信息风险</td>
             <td>高</td>
-            <td>已从月底目标剥离。属商业模式范畴，暂不阻塞 MVP</td>
+            <td>8/13 对齐；若未确认，8/14 仅交付明确提示“不携当前工单上下文”的通用新会话入口</td>
         </tr>
         <tr>
-            <td>DC 知识写入 API 月底才出初版</td>
-            <td><span class="tag tag-p1">中</span> 知识沉淀功能可能不完整</td>
+            <td>Foundation + DC 8/21 能力未通过生产验收</td>
+            <td><span class="tag tag-p1">中</span> 知识沉淀闭环不能纳入 8/31 试运行</td>
             <td>中</td>
-            <td>确认是否为硬性验收点；预留对接时间。DC 团队 8 月底初版</td>
+            <td>保持 PLANNED；发布后验证归属、权限、真实回执、解析/索引和授权检索，失败时明确降级</td>
         </tr>
         <tr>
             <td>SharePoint API 安全审批耗时</td>

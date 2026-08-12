@@ -67,7 +67,7 @@
     <a href="#console" class="nav-link"><span class="num">02</span>Console（1项）</a>
     <a href="#apps" class="nav-link"><span class="num">03</span>MCP APPS（8项）</a>
     <a href="#dc" class="nav-link"><span class="num">04</span>DC 知识（5项）</a>
-    <a href="#deploy" class="nav-link"><span class="num">05</span>待讨论（2项）</a>
+    <a href="#deploy" class="nav-link"><span class="num">05</span>待讨论（3项）</a>
     <a href="#message" class="nav-link"><span class="num">06</span>消息与事件（1项）</a>
     <a href="#i18n" class="nav-link"><span class="num">07</span>国际化（4项）</a>
     <a href="#devops" class="nav-link"><span class="num">08</span>开发范式（15项）</a>
@@ -96,8 +96,8 @@
         <tbody>
             <tr><td>Console</td><td>#1b</td><td>1 项</td><td>组件上传入口未对租户开放</td></tr>
             <tr><td>MCP APPS</td><td>#1, #2–#6, #32</td><td>8 项</td><td>交互层能力未开放、上下文/附件传递不足</td></tr>
-            <tr><td>DC 知识平台</td><td>#7–#9</td><td>5 项</td><td>权限 / 写入 / 智能体沉淀 / 外部拉取</td></tr>
-            <tr><td>待讨论</td><td>#10, #34</td><td>2 项</td><td>部署绑定苍穹；苍穹二开应用无法透出 MCP</td></tr>
+            <tr><td>DC 知识平台</td><td>#7–#9</td><td>5 项</td><td>一键上传方案已确认、计划 8/21；生产验收 / 权限 / 智能体内驱 / 外部拉取仍待补齐</td></tr>
+            <tr><td>待讨论</td><td>#10, #34, #35</td><td>3 项</td><td>部署绑定苍穹；苍穹二开应用无法透出 MCP；一键会话上下文契约待确认</td></tr>
             <tr><td>消息与事件</td><td>#31</td><td>1 项</td><td>MCP 无主动推送 / 缺事件驱动</td></tr>
             <tr><td>国际化</td><td>#12–#15</td><td>4 项</td><td>翻译错误 / AI 语言不遵循配置</td></tr>
             <tr><td>开发范式</td><td>#16–#25, #28–#30, #33, #11</td><td>15 项</td><td>端到端断裂 / APPS 开发割裂 / 无版本管理 / 无协同</td></tr>
@@ -105,7 +105,10 @@
         </tbody>
     </table>
     <div class="highlight highlight-red">
-        <strong>核心结论：</strong>APPS 交互层 + DC 知识 + 平台消息能力 + Build 开发范式——四个维度共同构成灵基从"可演示"迈向"可生产、可协作、可持续运行"的关键缺口。
+        <strong>核心结论：</strong>APPS 交互层 + DC 知识 + 平台消息能力 + Build 开发范式——四个维度共同构成灵基从“可演示”迈向“可生产、可协作、可持续运行”的关键缺口。
+    </div>
+    <div class="highlight highlight-blue">
+        <strong>2026-08-12 最新项目口径：</strong>#7 海外 DC 基础部署已完成，但 HelpDesk 连通性 8/13 待验收；#32 会话附件 8/13 对齐方案/效果、8/14 为原计划发布日；#35 一键会话入口目标为 8/14，上下文能力需单独验收并保留通用会话降级。
     </div>
 </div>
 
@@ -134,18 +137,18 @@
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#6</span>Agent 无法感知 APPS 组件内部业务逻辑</span><span class="tag tag-p3">P3</span></div><div class="issue-card-body"><dt>现状</dt><dd>Agent 仅知道入参/出参和名称描述，无法知道组件内部交互元素和业务逻辑</dd><dt>应有能力</dt><dd>提供结构化组件能力描述（JSON Schema），让 Agent 精确理解组件能做什么</dd><dt>为什么是标品问题</dt><dd>Agent 只能靠文字猜测 = 编排精度受限 = AI 辅助开发的上限被锁死</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#32</span>APPS 无法访问和操作对话中的附件（图片/文件）</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户在对话中发送图片（如错误截图）或文件（如 PDF）后触发提单，APPS 工单确认卡渲染时：① 无法从上下文获取对话里已有附件；② 无法在卡片内展示附件供确认/增删；③ 提交后附件引用无法随表单传递给 MCP Tool</dd><dt>应有能力</dt><dd>① 组件渲染时从 Session 上下文读取附件列表<br>② 组件中展示/管理附件，支持追加<br>③ 提交时附件引用作为结构化字段传递<br>④ 若 LLM 支持多模态，可从图片提取信息辅助生成工单</dd><dt>为什么是标品问题</dt><dd>"截图+描述→提单"是企业服务最常见模式。APPS 无法操作附件 = 只能处理纯文本 = 与传统邮件工单无差异</dd><dt>振兴实际场景</dt><dd>PRD 要求：确认卡需展示全部字段和附件供确认；可追加（PDF/JPG）；附件全成功才建单。实际：员工发蓝屏截图+文字，提单后确认卡应自动带出截图，用户可确认/删除/追加后提交</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#32</span>APPS 无法访问和操作对话中的附件（图片/文件）</span><span class="tag tag-p1">P1 · 8/13 对齐 / 原计划 8/14 发布</span></div><div class="issue-card-body"><dt>现状</dt><dd>用户在对话中发送图片或文件后触发提单，APPS 工单确认卡当前无法可靠读取、展示、管理并将附件引用随表单传给 MCP Tool。</dd><dt>最新计划</dt><dd>8/13 对齐 MCP Apps 使用会话附件的方案和效果；8/14 是原计划发布日期。实际是否发布及可用必须以平台记录和 HelpDesk UAT 为准，未取得证据前不得标记已解决。</dd><dt>应有能力</dt><dd>① 从 Session 上下文读取附件列表；② 组件展示/管理并支持追加；③ 提交时传递结构化附件引用；④ 失败时保留草稿并明确提示。</dd><dt>振兴实际场景</dt><dd>工单草稿卡和附件确认卡需展示 PDF/JPG 附件，允许确认、删除、追加；附件全部上传成功才建单。</dd></div></div>
 </div>
 
 <!-- ===== 03 DC 知识 ===== -->
 <div class="section" id="dc">
     <h2>03 DC 知识平台能力（5 项）</h2>
 
-    <div class="issue-card" style="border-left:3px solid var(--secondary)"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#7</span>DC 海外部署</span><span class="tag tag-p3" style="background:#ecfdf5;color:var(--secondary)">已解决</span></div><div class="issue-card-body"><dt>现状</dt><dd>✅ 已完成海外部署（新加坡节点）</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#7</span>DC 海外部署与 HelpDesk 连通性</span><span class="tag tag-p1">部署完成 · 8/13 待验收</span></div><div class="issue-card-body"><dt>现状</dt><dd>海外 DC 基础部署已在新加坡节点完成；最新计划要求 8/13 由 @邹茂桃验证 HelpDesk 实际连通性。部署完成不等于目标租户、网络和身份链路业务可用。</dd><dt>验收</dt><dd>使用目标环境身份完成 DC 调用，取得真实成功或错误回执，并记录网络、租户、权限和环境差异。</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8</span>DC 缺少外部系统推送写入知识的能力</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>DC 不支持外部系统（如工单后台/MCP Server）通过 API 向指定智能体知识库推送知识。缺乏关联标识和版本管理</dd><dt>应有能力</dt><dd>标准写入 API，支持鉴权后的外部系统推送结构化知识到指定智能体知识库。需支持关联标识、增量更新、去重、版本管理<br><em>（实现上可与 #8b 合并为统一写入 API，通过调用方身份区分来源）</em></dd><dt>为什么是标品问题</dt><dd>工单处理结论、业务规则变更等需从后台实时写入。没有写入 API = 知识只能人工上传 = 无法形成飞轮</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8</span>企业知识（DC）一键上传标准能力</span><span class="tag tag-p1">P1 · PLANNED 8/21</span></div><div class="issue-card-body"><dt>最新结论</dt><dd><strong>方案已确认，计划 2026-08-21 发布：</strong>产物和附件可一键上传为企业知识；有智能体上下文时自动进入/关联该智能体知识，无智能体时作为当前租户企业知识游离。当前没有上线/UAT 证据，不能标记已解决。</dd><dt>HelpDesk 价值</dt><dd>可承接“工单处理 → 处理人确认产物/附件 → 上传 DC → 后续检索复用”的基础闭环。</dd><dt>验收边界</dt><dd>需验证有智能体/无智能体 × 产物/附件四条路径、权限、幂等、真实回执、游离知识管理、解析/索引和授权检索。“自动进入”只表示归属/挂载，不等于已发布或检索成功。</dd><dt>仍需补齐</dt><dd>高级自然语言/工单候选、冲突去重、审核运营、版本回滚、效果回流及与 #9 权限体系的闭环。</dd><dt>责任与时间</dt><dd>@武晨曦 @陆阳 支持推进；目标 2026-08-21。发布后须联调/UAT，未通过时保持 PLANNED。</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8b</span>DC 缺少灵基智能体运行时自动沉淀知识的能力</span><span class="tag tag-p1">P1</span></div><div class="issue-card-body"><dt>现状</dt><dd>灵基智能体在运行中（如对话识别到高频问题、处理人总结 FAQ），无法将生成的知识自动写入所属智能体知识库。智能体只能消费知识，不能生产知识</dd><dt>应有能力</dt><dd>智能体运行时可通过内部接口将知识写入 DC，支持标记来源（对话/工单）、质量审核机制（自动写入 vs 人工审核后写入）<br><em>（实现上可与 #8 合并为统一写入 API，智能体作为内部调用方走相同接口）</em></dd><dt>为什么是标品问题</dt><dd>智能体"越用越聪明"的核心 = 运行中自动沉淀。不能自动沉淀 = 无法自主进化 = 知识飞轮闭环的最后一环缺失</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8b</span>智能体运行时知识内化与完整知识飞轮</span><span class="tag tag-p1">P1 · 部分基础路径已确认</span></div><div class="issue-card-body"><dt>现状</dt><dd>8/21 计划能力补齐“上传 + 自动归属/游离”的基础路径，但尚不能证明智能体可主动识别高频问题、低命中、已验证方案和反馈并生成受治理候选，效果回流也未闭环。</dd><dt>应有能力</dt><dd>知识消费 → 服务执行 → 候选提炼 → 脱敏/去重/权限/审核 → DC 发布 → 再次检索 → 命中率和解决反馈持续优化。</dd><dt>边界</dt><dd>一键上传不等于智能体内驱候选、自动发布或完整知识飞轮已上线；高级能力仍依赖 #9 权限、审核、审计和效果度量。</dd></div></div>
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8c</span>DC 缺少主动拉取外部数据源的连接器框架</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>DC 无法主动从外部数据源（如 SharePoint、Confluence、Google Drive）拉取文档并增量同步。唯一方式是人工下载后手动上传</dd><dt>应有能力</dt><dd>通用连接器框架：① 对接主流文档平台（SharePoint/Confluence 等）；② OAuth 等标准认证；③ 增量变更检测（仅同步新增/修改）；④ 定时调度或 Webhook 触发；⑤ 同步后自动进入 DC 加工流程</dd><dt>为什么是标品问题</dt><dd>企业知识大量存在 SharePoint 等平台且持续更新。DC 不能主动拉取 = 知识只能一次性搬运 = 时效性无法保障。振兴 2TB SharePoint 是 Phase 3 核心需求，但连接器是通用平台能力</dd></div></div>
 
@@ -154,11 +157,13 @@
 
 <!-- ===== 04 待讨论 ===== -->
 <div class="section" id="deploy">
-    <h2>04 待讨论（2 项）</h2>
+    <h2>04 待讨论（3 项）</h2>
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#10</span>Build 开发的应用仅支持部署到苍穹</span><span class="tag tag-p0">待讨论</span></div><div class="issue-card-body"><dt>现状</dt><dd>Build 开发的后端应用只能托管到苍穹平台，而苍穹有独立的许可体系和账号体系。灵基用户（多数非 ERP 用户）没有苍穹账号，无法访问部署在苍穹上的应用</dd><dt>应有能力</dt><dd>Build 应支持将应用部署到多种目标环境：苍穹（现有）/ 灵基自身轻量级应用托管 / 客户自有云服务器。应用身份验证应直接基于灵基用户体系，不强制依赖苍穹身份</dd><dt>为什么是标品问题</dt><dd>灵基的目标用户群远大于 ERP 用户群。Build 应用只能跑在苍穹上 = 使用者必须有苍穹身份 = 灵基适用场景被限制在 ERP 用户圈内</dd><dt>待讨论</dt><dd>需先确认：灵基应用托管能力是否已在规划中？苍穹绑定是否有架构层面的必要性？确认后再定优先级</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#34</span>苍穹不支持客户二开应用透出 MCP 供灵基调用</span><span class="tag tag-p0">待讨论</span></div><div class="issue-card-body"><dt>现状</dt><dd>客户在苍穹上有二次开发的业务应用（自定义接口），但苍穹不支持将这些接口暴露为 MCP。灵基智能体只能连接标品预置的 MCP，无法调用客户在苍穹上已有的业务能力</dd><dt>应有能力</dt><dd>苍穹应支持客户将二开接口注册/透出为标准 MCP Server，使灵基智能体可直接连接调用。或灵基侧提供适配网关对接苍穹非 MCP 接口并转换为 MCP 协议</dd><dt>为什么是标品问题</dt><dd>大量企业客户在苍穹上已有定制化业务应用。这些已有能力无法被灵基调用 = 客户要么重新开发（重复建设），要么放弃智能体连接已有业务——两者都不可接受</dd><dt>待讨论</dt><dd>推动方向需确认：① 苍穹提供"自定义 MCP 透出"？② 灵基提供"苍穹接口→MCP"适配网关？③ 两者结合？</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#34</span>苍穹不支持客户二开应用透出 MCP 供灵基调用</span><span class="tag tag-p0">待讨论</span></div><div class="issue-card-body"><dt>现状</dt><dd>客户在苍穹上有二次开发的业务应用（自定义接口），但苍穹不支持将这些接口暴露为 MCP。灵基智能体只能连接标品预置的 MCP，无法调用客户在苍穹上已有的业务能力</dd><dt>应有能力</dt><dd>苍穹应支持客户将二开接口注册/透出为标准 MCP Server，使灵基智能体可直接连接调用。或灵基侧提供适配网关对接苍穹非 MCP 接口并转换为 MCP 协议</dd><dt>为什么是标品问题</dt><dd>大量企业客户在苍穹上已有定制化业务应用。这些已有能力无法被灵基调用 = 客户要么重新开发（重复建设），要么放弃智能体连接已有业务——两者都不可接受</dd><dt>待讨论</dt><dd>推动方向需确认：① 苍穹提供“自定义 MCP 透出”？② 灵基提供“苍穹接口→MCP”适配网关？③ 两者结合？</dd></div></div>
+
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#35</span>Work 一键发起会话缺少正式业务上下文契约</span><span class="tag tag-p1">8/14 入口目标 · 8/13 待对齐</span></div><div class="issue-card-body"><dt>最新计划</dt><dd>Work“我的工单 / 我的任务”一键发起会话纳入 8/14 目标；是否携带 ticketId、描述、附件引用和初始意图，需在 8/13 会话附件/上下文方案对齐后确认。</dd><dt>当前边界</dt><dd>候选地址 <code>/session/new?skillName=IT%20Knowledge%20Skill</code> 只能证明可尝试按 Skill 打开新会话，不能证明支持安全业务上下文。</dd><dt>降级</dt><dd>若 8/13 未确认正式契约，8/14 只交付“打开 IT 智能体”的通用新会话，并明确提示“不携带当前工单上下文”。不得称为“就此工单发起会话”，不得把敏感工单正文或附件地址直接拼入 URL。</dd><dt>验收要求</dt><dd>入口存在与上下文携带分别验收；正式方案需稳定 agent/skill 标识、签名或受控 contextRef、租户/权限校验、附件引用、审计和失败回执。</dd></div></div>
 </div>
 
 <!-- ===== 05 消息与多模态 ===== -->
@@ -253,14 +258,14 @@
     <div class="priority-group">
         <h3><span class="tag tag-p1">P1</span> 影响交付质量（8 项）</h3>
         <table><thead><tr><th>#</th><th>问题</th><th>一句话理由</th></tr></thead><tbody>
-            <tr><td>#8</td><td>DC 知识写入 API（外部推送）</td><td>知识飞轮基础</td></tr>
+            <tr><td>#8</td><td>企业知识一键上传（PLANNED 8/21）</td><td>方案已确认，待生产验收与治理闭环</td></tr>
             <tr><td>#8b</td><td>智能体运行时自动沉淀</td><td>知识飞轮闭环最后一环</td></tr>
             <tr><td>#9</td><td>知识检索越权</td><td>安全底线</td></tr>
             <tr><td>#3</td><td>APPS 渲染白屏</td><td>破坏用户操作</td></tr>
             <tr><td>#4</td><td>APPS 回显丢失</td><td>操作不可追溯</td></tr>
             <tr><td>#12–15</td><td>多语言（4项）</td><td>海外客户无法接受</td></tr>
             <tr><td>#17</td><td>同名 Skill 覆盖线上</td><td>生产安全红线</td></tr>
-            <tr><td>#32</td><td>APPS 无法操作对话附件</td><td>"截图+描述"提单走不通</td></tr>
+            <tr><td>#32</td><td>APPS 会话附件（8/13 对齐；原计划 8/14 发布）</td><td>未有实际发布/UAT 时含附件工单与知识产物链路受阻</td></tr>
         </tbody></table>
     </div>
 
