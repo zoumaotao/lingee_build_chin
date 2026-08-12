@@ -102,7 +102,7 @@ function createPreviewIndex(definitions) {
 
     function render(updateUrl = true) {
       const active = buttons.find((button) => button.dataset.card === selected);
-      const source = "./" + selected + "/dist/index.html?locale=" + encodeURIComponent(locale.value);
+      const source = "./" + selected + "/dist/index.html?preview=1&locale=" + encodeURIComponent(locale.value);
       buttons.forEach((button) => button.classList.toggle("active", button === active));
       title.textContent = active ? active.querySelector("span").textContent + " · " + selected : selected;
       frame.src = source;
