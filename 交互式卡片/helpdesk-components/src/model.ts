@@ -92,10 +92,12 @@ export const tickets = [
 ];
 
 export const timeline = [
-  { time: "09:18", titleZh: "工单已创建", titleEn: "Ticket created", descZh: "系统已自动分配至 IT Infrastructure", descEn: "Automatically routed to IT Infrastructure", kind: "done" },
-  { time: "09:21", titleZh: "处理人已接单", titleEn: "Agent accepted", descZh: "Alex Tan 开始处理", descEn: "Alex Tan started working", kind: "done" },
-  { time: "09:46", titleZh: "处理人答复", titleEn: "Agent replied", descZh: "请重新导入 VPN 配置文件，并确认 MFA 已通过。", descEn: "Please re-import the VPN profile and confirm MFA succeeds.", kind: "active" },
-  { time: "—", titleZh: "等待用户确认", titleEn: "Waiting for confirmation", descZh: "确认解决后将自动关闭并邀请评价", descEn: "The ticket closes after confirmation and requests a rating", kind: "pending" }
+  { time: "09:18", titleZh: "工单已提交", titleEn: "Ticket submitted", descZh: "用户提交工单，AI 识别分类为 IT / Network & VPN", descEn: "User submitted ticket, AI classified as IT / Network & VPN", kind: "done" },
+  { time: "09:19", titleZh: "自动分配", titleEn: "Auto-assigned", descZh: "按负载均衡分配给 Alex Tan (IT Infrastructure)", descEn: "Load-balanced to Alex Tan (IT Infrastructure)", kind: "done" },
+  { time: "09:46", titleZh: "处理人答复", titleEn: "Agent replied", descZh: "请重新导入 VPN 配置文件，并确认 MFA 已通过。", descEn: "Please re-import the VPN profile and confirm MFA succeeds.", kind: "done" },
+  { time: "10:15", titleZh: "用户补充信息", titleEn: "User replied", descZh: "已重新导入配置并完成 MFA，问题仍存在。", descEn: "Re-imported profile and completed MFA, issue persists.", kind: "done" },
+  { time: "11:30", titleZh: "处理人提交已解决", titleEn: "Agent marked resolved", descZh: "核实为 DNS 缓存问题，已远程清除并验证恢复。", descEn: "Confirmed DNS cache issue, remotely flushed and verified.", kind: "active" },
+  { time: "—", titleZh: "等待提交人确认", titleEn: "Awaiting user confirmation", descZh: "用户确认解决后工单关闭，可进行评价", descEn: "Ticket closes after user confirms; rating available", kind: "pending" }
 ];
 
 export const teamMembers = [
