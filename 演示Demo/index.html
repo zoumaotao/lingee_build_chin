@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HelpDesk 双智能体与外部工单应用四场景交互原型" />
+  <script>
+    if (window.location.protocol === "file:") {
+      window.location.replace("http://127.0.0.1:5181/");
+    }
+  </script>
+  <title>HelpDesk 四场景演示</title>
+  <style>
+:root {
+  font-family: Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #202126;
+  background: #f5f6f9;
+  font-synthesis: none;
+  --surface: #ffffff;
+  --surface-soft: #fafbfc;
+  --surface-hover: #f5f4ff;
+  --text: #202126;
+  --text-2: #656a73;
+  --text-3: #969ba5;
+  --border: #e3e5e8;
+  --border-soft: #ecedf0;
+  --primary: #635bff;
+  --primary-dark: #5148d1;
+  --primary-soft: #efedff;
+  --success: #1f8f63;
+  --success-soft: #e8f6ef;
+  --warning: #936315;
+  --warning-soft: #fff4d8;
+  --danger: #c74651;
+  --danger-soft: #ffeaec;
+  --info: #2d6daa;
+  --info-soft: #e9f3ff;
+  --shadow-dialog: 0 22px 70px rgba(24, 28, 38, .18);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { min-width: 320px; min-height: 100%; margin: 0; }
+body { min-height: 100vh; color: var(--text); background: #f5f6f9; font-size: 14px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid color-mix(in srgb, var(--primary) 32%, transparent); outline-offset: 2px; }
+h1, h2, h3, p { margin: 0; }
+button { cursor: pointer; }
+.sr-only { position: absolute; overflow: hidden; width: 1px; height: 1px; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+
+.app-shell { display: grid; min-height: 100vh; grid-template-columns: 232px minmax(0, 1fr); background: #f5f6f9; }
+.global-nav { display: flex; position: sticky; top: 0; height: 100vh; padding: 18px 14px 14px; flex-direction: column; border-right: 1px solid var(--border); background: #f8f9fb; }
+.brand { display: flex; align-items: center; gap: 9px; height: 36px; padding: 0 7px; font-size: 15px; }
+.brand-mark { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 8px; color: #fff; background: linear-gradient(145deg, #746dff, #5148d1); font-size: 13px; font-weight: 800; }
+.product-nav { display: grid; margin: 13px 0 18px; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.product-link { display: flex; align-items: center; justify-content: center; min-height: 42px; padding: 5px; flex-direction: column; gap: 2px; color: var(--text-3); border: 0; border-radius: 9px; background: transparent; font-size: 10px; }
+.product-link span { font-size: 15px; }
+.product-link:hover, .product-link.active { color: var(--primary-dark); background: var(--primary-soft); }
+.nav-section { margin-bottom: 18px; }
+.nav-section > p, .section-title p { margin: 0 7px 8px; color: var(--text-3); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.assistant-link { display: flex; align-items: center; width: 100%; min-height: 54px; padding: 7px; gap: 9px; color: var(--text-2); border: 1px solid transparent; border-radius: 10px; background: transparent; text-align: left; }
+.assistant-link:hover { background: var(--surface); }
+.assistant-link.active { color: var(--primary-dark); border-color: #ddd9ff; background: var(--primary-soft); }
+.assistant-link > span:last-child, .nav-footer > span:last-child { display: flex; min-width: 0; flex-direction: column; }
+.assistant-link b { color: inherit; font-size: 12px; }
+.assistant-link small, .nav-footer small { color: var(--text-3); font-size: 10px; }
+.assistant-icon { display: grid; place-items: center; flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px; font-size: 12px; font-weight: 800; }
+.employee-icon { color: #564cce; background: #e9e6ff; }
+.agent-icon { color: #176e9a; background: #e2f3fb; }
+.history-section { overflow: hidden; min-height: 0; flex: 1; }
+.section-title { display: flex; align-items: center; justify-content: space-between; }
+.section-title button { width: 28px; height: 28px; color: var(--text-3); border: 0; background: transparent; }
+.history-item { overflow: hidden; width: 100%; padding: 7px; color: var(--text-2); border: 0; border-radius: 7px; background: transparent; font-size: 11px; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.history-item:hover { color: var(--text); background: var(--surface); }
+.nav-footer { display: flex; align-items: center; gap: 9px; padding: 10px 7px 0; border-top: 1px solid var(--border-soft); }
+.user-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #fff; background: #4d5565; font-size: 11px; font-weight: 700; }
+.nav-footer strong { font-size: 11px; }
+
+.icon-button { display: grid; place-items: center; min-width: 36px; height: 36px; padding: 0; color: var(--text-2); border: 1px solid transparent; border-radius: 9px; background: transparent; }
+.icon-button:hover { color: var(--primary-dark); border-color: var(--border); background: var(--surface); }
+.eyebrow { color: var(--text-3); font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+
+.workspace { min-width: 0; padding: 24px; background: #f5f6f9; }
+.workspace-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 18px; }
+.workspace-header h2 { margin-top: 3px; font-size: 22px; font-weight: 650; }
+.workspace-header p { margin-top: 3px; color: var(--text-2); font-size: 12px; }
+.workspace-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 9px; }
+.integration-status { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 10px; color: var(--warning); border: 1px solid #f0dfb4; border-radius: 999px; background: var(--warning-soft); font-size: 10px; }
+.integration-status i { width: 6px; height: 6px; border-radius: 50%; background: var(--warning); }
+.primary-button, .secondary-button { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 14px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+.primary-button { color: #fff; border: 1px solid var(--primary); background: var(--primary); }
+.primary-button:hover { background: var(--primary-dark); }
+.secondary-button { color: var(--text-2); border: 1px solid var(--border); background: var(--surface); }
+.secondary-button:hover { color: var(--primary-dark); border-color: var(--primary); }
+.stats-grid { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.stat-card { min-height: 94px; padding: 13px 14px; border: 1px solid var(--border-soft); border-radius: 12px; background: var(--surface); }
+.stat-card span { color: var(--text-3); font-size: 11px; }
+.stat-card div { display: flex; align-items: baseline; justify-content: space-between; margin-top: 7px; }
+.stat-card strong { font-size: 24px; font-weight: 650; }
+.stat-card small { font-size: 10px; }
+.stat-card small.good { color: var(--success); }
+.stat-card small.warn { color: var(--warning); }
+.stat-card small.bad { color: var(--danger); }
+.workspace-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.view-tabs { display: flex; gap: 4px; }
+.view-tabs button { min-height: 36px; padding: 0 12px; color: var(--text-3); border: 0; border-radius: 8px; background: transparent; font-size: 11px; }
+.view-tabs button.active, .view-tabs button:hover { color: var(--primary-dark); background: var(--primary-soft); }
+.filters { display: flex; align-items: center; gap: 8px; }
+.search-box { display: flex; align-items: center; width: 220px; height: 38px; padding: 0 10px; gap: 6px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.search-box span { color: var(--text-3); font-size: 16px; }
+.search-box input { min-width: 0; width: 100%; border: 0; outline: 0; font-size: 11px; }
+.filters select { height: 38px; padding: 0 28px 0 10px; color: var(--text-2); border: 1px solid var(--border); border-radius: 8px; background: var(--surface); font-size: 11px; }
+.work-content { display: grid; grid-template-columns: minmax(420px, 1.25fr) minmax(300px, .75fr); gap: 12px; }
+.ticket-board, .detail-panel { overflow: hidden; min-height: 520px; border: 1px solid var(--border-soft); border-radius: 14px; background: var(--surface); }
+.board-heading { display: flex; min-height: 65px; padding: 12px 14px; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border-soft); }
+.board-heading h3 { font-size: 14px; }
+.board-heading p { margin-top: 2px; color: var(--text-3); font-size: 10px; }
+.ticket-list { display: flex; flex-direction: column; }
+.ticket-item { display: grid; position: relative; min-height: 92px; padding: 13px 14px; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; color: inherit; border: 0; border-top: 1px solid var(--border-soft); background: transparent; text-align: left; }
+.ticket-item:first-child { border-top: 0; }
+.ticket-item:hover, .ticket-item.active { background: #faf9ff; }
+.ticket-item.active::before { position: absolute; inset: 12px auto 12px 0; width: 3px; border-radius: 0 3px 3px 0; background: var(--primary); content: ""; }
+.ticket-main { display: flex; min-width: 0; flex-direction: column; }
+.ticket-meta { display: flex; align-items: center; gap: 7px; }
+.ticket-meta code { color: var(--primary-dark); font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; }
+.priority-tag, .status-tag { display: inline-flex; align-items: center; min-height: 20px; padding: 2px 7px; border-radius: 999px; font-size: 9px; font-weight: 700; }
+.priority-high, .status-overdue { color: var(--danger); background: var(--danger-soft); }
+.priority-medium, .status-pending { color: var(--warning); background: var(--warning-soft); }
+.priority-low, .status-closed, .status-rating { color: var(--success); background: var(--success-soft); }
+.status-progress, .status-new, .status-draft { color: var(--info); background: var(--info-soft); }
+.ticket-main strong { overflow: hidden; margin-top: 6px; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.ticket-main > small { overflow: hidden; margin-top: 3px; color: var(--text-3); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.ticket-side { display: flex; align-items: flex-end; justify-content: space-between; flex-direction: column; }
+.ticket-side small { color: var(--text-3); font-size: 10px; }
+.ticket-side b { color: var(--text-2); font-size: 10px; font-weight: 600; }
+.empty-list { padding: 52px 20px; color: var(--text-3); text-align: center; }
+.detail-panel { padding: 16px; }
+.empty-detail { display: flex; align-items: center; justify-content: center; min-height: 450px; flex-direction: column; color: var(--text-3); text-align: center; }
+.empty-detail > span { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 10px; border-radius: 14px; background: var(--surface-soft); font-size: 20px; }
+.empty-detail strong { color: var(--text-2); font-size: 13px; }
+.empty-detail p { max-width: 240px; margin-top: 4px; font-size: 11px; }
+.detail-head { padding-bottom: 13px; border-bottom: 1px solid var(--border-soft); }
+.detail-head .ticket-meta { margin-bottom: 8px; }
+.detail-head h3 { font-size: 16px; line-height: 1.4; }
+.detail-head p { margin-top: 6px; color: var(--text-2); font-size: 11px; }
+.detail-grid { display: grid; margin: 12px 0; grid-template-columns: 1fr 1fr; gap: 9px; }
+.detail-field { padding: 9px; border-radius: 9px; background: var(--surface-soft); }
+.detail-field span { display: block; color: var(--text-3); font-size: 9px; }
+.detail-field strong { display: block; margin-top: 2px; font-size: 11px; }
+.timeline { display: flex; margin-top: 14px; flex-direction: column; }
+.timeline h4 { margin: 0 0 7px; font-size: 11px; }
+.timeline-item { display: grid; min-height: 40px; grid-template-columns: 12px 1fr; gap: 8px; }
+.timeline-item i { width: 8px; height: 8px; margin-top: 5px; border: 2px solid var(--primary); border-radius: 50%; background: var(--surface); }
+.timeline-item div { display: flex; padding-bottom: 8px; flex-direction: column; border-left: 1px solid var(--border); }
+.timeline-item:last-child div { border-left-color: transparent; }
+.timeline-item strong { padding-left: 10px; font-size: 10px; }
+.timeline-item small { padding-left: 10px; color: var(--text-3); font-size: 9px; }
+.detail-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--border-soft); }
+.detail-actions a { text-decoration: none; }
+.session-launch-button { color: var(--primary-dark); border-color: #d6d2ff; background: var(--primary-soft); }
+.session-launch-note { display: flex; margin-top: 10px; padding: 9px; flex-direction: column; gap: 2px; color: var(--info); border-radius: 8px; background: var(--info-soft); font-size: 9px; }
+.session-launch-note strong { font-size: 9px; }
+.session-launch-note span { color: var(--text-2); line-height: 1.5; }
+.integration-note { margin-top: 10px; padding: 9px; color: var(--warning); border-radius: 8px; background: var(--warning-soft); font-size: 9px; }
+
+.ticket-dialog { width: min(560px, calc(100vw - 28px)); padding: 0; border: 0; border-radius: 16px; box-shadow: var(--shadow-dialog); }
+.ticket-dialog::backdrop { background: rgba(24, 28, 38, .42); backdrop-filter: blur(2px); }
+.ticket-dialog form { padding: 18px; }
+.dialog-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+.dialog-header h2 { margin-top: 3px; font-size: 19px; }
+.dialog-header p { margin-top: 3px; color: var(--text-2); font-size: 11px; }
+.ticket-dialog label { display: flex; margin-bottom: 11px; flex-direction: column; gap: 4px; }
+.ticket-dialog label > span { color: var(--text-2); font-size: 11px; }
+.ticket-dialog input, .ticket-dialog select, .ticket-dialog textarea { width: 100%; min-height: 40px; padding: 9px 11px; color: var(--text); border: 1px solid var(--border); border-radius: 8px; background: var(--surface); font-size: 12px; outline: 0; }
+.ticket-dialog input:focus, .ticket-dialog select:focus, .ticket-dialog textarea:focus { border-color: var(--primary); }
+.dialog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.toast { position: fixed; right: 22px; bottom: 22px; z-index: 20; max-width: min(380px, calc(100vw - 32px)); padding: 11px 14px; color: #fff; border-radius: 10px; background: #343742; box-shadow: 0 10px 30px rgba(24,28,38,.18); font-size: 11px; opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .2s, transform .2s; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 1220px) {
+  .app-shell { grid-template-columns: 82px minmax(0, 1fr); }
+  .global-nav { padding-inline: 9px; }
+  .brand { justify-content: center; }
+  .brand strong, .nav-section > p, .section-title, .assistant-link > span:last-child, .history-section, .nav-footer > span:last-child { display: none; }
+  .product-nav { grid-template-columns: 1fr; }
+  .product-link { min-height: 48px; }
+  .assistant-link { justify-content: center; }
+  .nav-footer { justify-content: center; }
+  .workspace { padding: 18px; }
+  .workspace-header { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .workspace-actions { justify-content: flex-start; }
+}
+@media (max-width: 960px) {
+  .app-shell { grid-template-columns: 78px minmax(0, 1fr); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .app-shell { display: block; }
+  .global-nav { position: relative; height: auto; padding: 9px 10px; flex-direction: row; align-items: center; gap: 8px; }
+  .brand { justify-content: flex-start; padding: 0; }
+  .product-nav { display: flex; margin: 0; }
+  .product-link { width: 48px; min-height: 42px; }
+  .nav-section { display: flex; margin: 0; margin-left: auto; }
+  .history-section { display: none; }
+  .assistant-link { width: 44px; min-height: 44px; padding: 5px; }
+  .nav-footer { display: none; }
+  .workspace { padding: 14px 10px 20px; }
+  .workspace-actions { width: 100%; }
+  .integration-status { order: 3; }
+  .workspace-toolbar { align-items: stretch; flex-direction: column; }
+  .filters { width: 100%; }
+  .search-box { flex: 1; width: auto; }
+  .work-content { grid-template-columns: 1fr; }
+  .ticket-board, .detail-panel { min-height: auto; }
+  .empty-detail { min-height: 220px; }
+  .dialog-grid { grid-template-columns: 1fr; gap: 0; }
+}
+@media (max-width: 460px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
+  .stat-card { min-height: 82px; padding: 10px; }
+  .stat-card strong { font-size: 20px; }
+  .view-tabs { overflow-x: auto; }
+  .view-tabs button { white-space: nowrap; }
+  .filters { align-items: stretch; flex-direction: column; }
+  .filters select { width: 100%; }
+  .ticket-item { min-height: 100px; }
+  .workspace-actions .primary-button { width: 100%; }
+  .detail-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+
+/* Presenter layer: deliberately outside the product prototype */
+body { background: #e9ebf2; }
+.demo-console { position: relative; margin: 16px 16px 12px; border-color: #303449; background: linear-gradient(145deg, #1d2030, #151723); box-shadow: 0 12px 32px rgba(22, 24, 35, .16); }
+.demo-console-label { display: flex; align-items: center; gap: 8px; margin: -3px 0 13px; padding-bottom: 10px; color: #c8cbe0; border-bottom: 1px solid rgba(255,255,255,.1); }
+.demo-console-label span, .prototype-stage-label span { padding: 3px 7px; border-radius: 999px; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.demo-console-label span { color: #dedcff; background: rgba(99,91,255,.28); }
+.demo-console-label strong { color: #fff; font-size: 11px; }
+.demo-console-label small { margin-left: auto; color: #9398ad; font-size: 9px; }
+.demo-console .eyebrow { color: #9089ff; }
+.demo-console .secondary-button { color: #d8dbea; border-color: #454a60; background: #272a3a; }
+.prototype-stage { overflow: hidden; margin: 0 16px 16px; border: 1px solid #d5d8e1; border-radius: 16px; background: #f5f6f9; box-shadow: 0 16px 44px rgba(34, 38, 52, .12); }
+.prototype-stage-label { display: flex; align-items: center; height: 32px; padding: 0 12px; gap: 8px; color: #737887; border-bottom: 1px solid #dfe1e7; background: #f2f3f7; }
+.prototype-stage-label span { color: #525866; background: #e2e4eb; }
+.prototype-stage-label strong { font-size: 9px; font-weight: 600; }
+.prototype-stage .app-shell { min-height: calc(100vh - 48px); align-items: stretch; }
+.prototype-stage .global-nav { position: relative; top: auto; height: auto; align-self: stretch; }
+@media (max-width: 720px) {
+  .demo-console { margin: 8px 8px 6px; }
+  .demo-console-label { align-items: flex-start; flex-wrap: wrap; }
+  .demo-console-label small { width: 100%; margin-left: 0; }
+  .prototype-stage { margin: 0 8px 8px; border-radius: 12px; }
+}
+
+/* Collapsible presenter console */
+.demo-console-summary { display: flex; align-items: center; gap: 8px; color: #c8cbe0; cursor: pointer; list-style: none; user-select: none; }
+.demo-console-summary::-webkit-details-marker { display: none; }
+.demo-console-summary > span { padding: 3px 7px; color: #dedcff; border-radius: 999px; background: rgba(99,91,255,.28); font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.demo-console-summary > strong { color: #fff; font-size: 11px; }
+.demo-console-summary > small { margin-left: 2px; color: #9398ad; font-size: 9px; }
+.demo-console-summary > b { display: inline-flex; min-height: 30px; margin-left: auto; padding: 0 9px; align-items: center; gap: 6px; color: #d8dbea; border: 1px solid #454a60; border-radius: 8px; background: #272a3a; font-size: 9px; font-weight: 600; }
+.demo-console-summary i { font-style: normal; }
+.demo-console-summary em { font-style: normal; transition: transform .18s ease; }
+.demo-console .when-open { display: none; }
+.demo-console[open] .when-open { display: inline; }
+.demo-console[open] .when-closed { display: none; }
+.demo-console:not([open]) .demo-console-summary em { transform: rotate(180deg); }
+.demo-console-content { margin-top: 13px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.1); }
+.demo-console:not([open]) { padding-block: 12px; }
+.demo-console-summary:focus-visible { outline: 2px solid #8f89ff; outline-offset: 4px; border-radius: 6px; }
+@media (max-width: 720px) {
+  .demo-console-summary { flex-wrap: wrap; }
+  .demo-console-summary > small { width: calc(100% - 120px); }
+  .demo-console-summary > b { margin-left: auto; }
+}
+@media (max-width: 460px) {
+  .demo-console-summary > small { display: none; }
+}
+
+/* Platform agent conversation demo: separate from the external HelpDesk application */
+.agent-demo-stage { overflow: hidden; margin: 0 16px 12px; border: 1px solid #d7d4f2; border-radius: 16px; background: #fff; box-shadow: 0 14px 38px rgba(52, 47, 104, .11); }
+.agent-demo-stage-label { display: flex; align-items: center; min-height: 34px; padding: 7px 12px; gap: 8px; color: #686a78; border-bottom: 1px solid #e6e4f3; background: #f7f6ff; }
+.agent-demo-stage-label > span { padding: 3px 7px; color: #554bc8; border-radius: 999px; background: #e8e5ff; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.agent-demo-stage-label strong { color: #38344f; font-size: 10px; }
+.agent-demo-stage-label small { margin-left: auto; color: #8b879a; font-size: 9px; }
+.agent-demo-shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 650px; }
+.agent-demo-selector { padding: 22px 16px; border-right: 1px solid #ebe9f2; background: linear-gradient(180deg, #fbfaff, #f7f7fb); }
+.agent-demo-heading { padding: 0 5px 14px; }
+.agent-demo-heading h2 { margin-top: 4px; color: #282638; font-size: 19px; }
+.agent-demo-heading p { margin-top: 5px; color: var(--text-3); font-size: 10px; line-height: 1.55; }
+.agent-choice { display: flex; width: 100%; min-height: 82px; margin-top: 9px; padding: 11px; align-items: flex-start; gap: 10px; color: var(--text-2); border: 1px solid #e5e3ed; border-radius: 12px; background: #fff; text-align: left; }
+.agent-choice:hover { border-color: #c9c4ee; transform: translateY(-1px); }
+.agent-choice.active { color: var(--primary-dark); border-color: #bdb7f4; background: #f1efff; box-shadow: 0 7px 20px rgba(88, 78, 180, .1); }
+.agent-choice-icon { display: grid; place-items: center; flex: 0 0 auto; width: 38px; height: 38px; border-radius: 11px; font-size: 12px; font-weight: 800; }
+.agent-choice-icon.employee { color: #574cc8; background: #e7e4ff; }
+.agent-choice-icon.agent { color: #147096; background: #dff2fa; }
+.agent-choice > span:last-child { display: flex; min-width: 0; flex-direction: column; }
+.agent-choice strong { color: inherit; font-size: 12px; }
+.agent-choice small { margin-top: 1px; color: var(--text-3); font-size: 9px; }
+.agent-choice em { margin-top: 8px; color: var(--text-2); font-size: 9px; font-style: normal; }
+.agent-demo-disclaimer { margin: 16px 5px 0; padding: 11px; color: #8a641c; border: 1px solid #eddfb8; border-radius: 10px; background: #fff9e9; }
+.agent-demo-disclaimer strong { font-size: 10px; }
+.agent-demo-disclaimer p { margin-top: 3px; font-size: 9px; line-height: 1.55; }
+.agent-conversation { display: grid; min-width: 0; grid-template-rows: auto minmax(0, 1fr) auto; background: #f7f8fb; }
+.agent-conversation-header { display: flex; min-height: 76px; padding: 14px 18px; align-items: center; gap: 11px; border-bottom: 1px solid #e9eaf0; background: #fff; }
+.conversation-avatar { display: grid; place-items: center; flex: 0 0 auto; width: 40px; height: 40px; color: #574cc8; border-radius: 12px; background: #e7e4ff; font-size: 13px; font-weight: 800; }
+.conversation-avatar.agent { color: #147096; background: #dff2fa; }
+.agent-conversation-header h3 { margin-top: 1px; font-size: 14px; }
+.agent-conversation-header p { margin-top: 1px; color: var(--text-3); font-size: 9px; }
+.conversation-runtime { display: flex; margin-left: auto; align-items: flex-end; flex-direction: column; gap: 4px; }
+.conversation-runtime > span { display: inline-flex; min-height: 24px; padding: 0 8px; align-items: center; gap: 5px; color: #8a641c; border-radius: 999px; background: #fff4d7; font-size: 9px; font-weight: 700; }
+.conversation-runtime i { width: 6px; height: 6px; border-radius: 50%; background: #ca8b18; }
+.conversation-runtime small { color: var(--text-3); font-size: 9px; }
+.agent-message-list { overflow-y: auto; min-height: 480px; max-height: 590px; padding: 20px clamp(18px, 4vw, 48px) 28px; scroll-behavior: smooth; }
+.conversation-system { max-width: 720px; margin: 0 auto 18px; padding: 9px 12px; color: #786224; border: 1px solid #eadfbf; border-radius: 9px; background: #fffbed; text-align: center; }
+.conversation-system span { margin-right: 6px; font-size: 8px; font-weight: 800; text-transform: uppercase; }
+.conversation-system p { display: inline; font-size: 9px; line-height: 1.5; }
+.conversation-message { display: flex; max-width: 720px; margin: 0 auto 18px; align-items: flex-start; gap: 9px; }
+.conversation-message.user { flex-direction: row-reverse; }
+.message-avatar { display: grid; place-items: center; flex: 0 0 auto; width: 30px; height: 30px; color: #574cc8; border-radius: 9px; background: #e7e4ff; font-size: 9px; font-weight: 800; }
+.conversation-message.user .message-avatar { color: #fff; background: #596070; }
+.conversation-message > div { max-width: min(620px, 78%); }
+.conversation-message small { display: block; margin: 0 0 4px 2px; color: var(--text-3); font-size: 8px; }
+.conversation-message.user small { margin-right: 2px; text-align: right; }
+.conversation-message p { padding: 10px 12px; color: var(--text-2); border: 1px solid #e4e5eb; border-radius: 4px 12px 12px 12px; background: #fff; box-shadow: 0 4px 14px rgba(40, 43, 56, .04); font-size: 11px; line-height: 1.65; }
+.conversation-message.user p { color: #fff; border-color: var(--primary); border-radius: 12px 4px 12px 12px; background: var(--primary); }
+.conversation-message em { display: inline-flex; margin-top: 5px; padding: 3px 6px; color: #847024; border-radius: 5px; background: #fff4d7; font-size: 8px; font-style: normal; }
+.conversation-card { max-width: 680px; margin: 0 auto 20px; overflow: hidden; border: 1px solid #dcd9ef; border-radius: 13px; background: #fff; box-shadow: 0 10px 28px rgba(45, 42, 80, .08); }
+.conversation-card > header { display: flex; padding: 13px 15px; align-items: flex-start; justify-content: space-between; gap: 12px; border-bottom: 1px solid #eeecf5; background: #faf9ff; }
+.conversation-card header span { color: var(--primary); font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+.conversation-card h4 { margin-top: 2px; font-size: 14px; }
+.conversation-card header b { flex: 0 0 auto; padding: 4px 7px; color: #8a641c; border-radius: 999px; background: #fff1cd; font-size: 8px; }
+.conversation-card-fields { display: grid; padding: 13px 15px 4px; grid-template-columns: 1fr 1fr; gap: 8px; }
+.conversation-card-fields > div { padding: 9px; border-radius: 8px; background: #f6f7fa; }
+.conversation-card-fields span { display: block; color: var(--text-3); font-size: 8px; }
+.conversation-card-fields strong { display: block; margin-top: 3px; color: var(--text-2); font-size: 10px; line-height: 1.45; }
+.conversation-card > p { margin: 7px 15px 12px; padding: 8px 9px; color: #85651f; border-radius: 7px; background: #fff8e6; font-size: 9px; line-height: 1.5; }
+.conversation-card > footer { display: flex; padding: 11px 15px; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid #eeecf5; }
+.conversation-card code { color: var(--text-3); font-size: 9px; }
+.knowledge-solution-card { border-color: #cfe7da; }
+.knowledge-solution-card > header { background: #f3fbf7; }
+.knowledge-solution-card header span { color: #287957; text-transform: none; letter-spacing: 0; }
+.knowledge-solution-card header b { color: #19724f; background: #dff3e9; }
+.knowledge-solution-body { padding: 14px 15px 6px; }
+.knowledge-solution-body > strong { display: block; color: var(--text); font-size: 13px; }
+.knowledge-solution-body ol { display: grid; margin: 11px 0 8px; padding: 0; gap: 7px; list-style: none; counter-reset: solution-step; }
+.knowledge-solution-body li { display: flex; align-items: center; gap: 8px; color: var(--text-2); font-size: 10px; counter-increment: solution-step; }
+.knowledge-solution-body li::before { display: grid; flex: 0 0 auto; width: 22px; height: 22px; place-items: center; color: #287957; border-radius: 50%; background: #e6f5ed; font-size: 8px; font-weight: 800; content: counter(solution-step); }
+.knowledge-solution-body em { display: inline-flex; margin-top: 3px; padding: 3px 6px; color: #87641d; border-radius: 5px; background: #fff4d7; font-size: 8px; font-style: normal; }
+.knowledge-solution-card > .knowledge-question { margin: 8px 15px 3px; padding: 0; color: var(--text-2); background: transparent; font-size: 10px; font-weight: 700; }
+.knowledge-actions { justify-content: flex-end !important; }
+.knowledge-actions code { display: none; }
+.agent-conversation-controls { display: flex; min-height: 66px; padding: 12px 18px; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #e5e6ec; background: #fff; }
+.agent-conversation-controls > div { display: flex; gap: 8px; }
+.agent-conversation-controls button:disabled { cursor: not-allowed; opacity: .42; }
+@media (max-width: 820px) {
+  .agent-demo-shell { grid-template-columns: 1fr; }
+  .agent-demo-selector { display: grid; padding: 14px; grid-template-columns: 1fr 1fr; gap: 8px; border-right: 0; border-bottom: 1px solid #ebe9f2; }
+  .agent-demo-heading, .agent-demo-disclaimer { grid-column: 1 / -1; }
+  .agent-choice { margin-top: 0; }
+  .agent-message-list { min-height: 440px; }
+}
+@media (max-width: 560px) {
+  .agent-demo-stage { margin: 0 8px 6px; border-radius: 12px; }
+  .agent-demo-stage-label { align-items: flex-start; flex-wrap: wrap; }
+  .agent-demo-stage-label small { width: 100%; margin-left: 0; }
+  .agent-demo-selector { grid-template-columns: 1fr; }
+  .agent-demo-heading, .agent-demo-disclaimer { grid-column: auto; }
+  .agent-choice { min-height: 70px; }
+  .conversation-runtime > span { display: none; }
+  .agent-message-list { min-height: 400px; padding: 16px 12px 22px; }
+  .conversation-message > div { max-width: 82%; }
+  .conversation-card-fields { grid-template-columns: 1fr; }
+  .conversation-card > footer, .agent-conversation-controls { align-items: stretch; flex-direction: column; }
+  .conversation-card > footer button, .agent-conversation-controls > button, .agent-conversation-controls > div { width: 100%; }
+  .agent-conversation-controls > div button { flex: 1; }
+}
+
+/* Four-scene demo shell */
+[hidden] { display: none !important; }
+.demo-console { padding: 16px; border: 1px solid #303449; border-radius: 14px; }
+.demo-scene-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.demo-scene-header h1 { margin-top: 2px; color: #fff; font-size: 17px; }
+.demo-scene-header p { margin-top: 3px; color: #aeb2c5; font-size: 10px; }
+.demo-scene-tabs { display: grid; margin-top: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+.demo-scene-tabs button { display: grid; min-height: 62px; padding: 9px 10px; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 8px; color: #afb3c5; border: 1px solid #373b50; border-radius: 10px; background: #232635; text-align: left; }
+.demo-scene-tabs button > span { display: grid; width: 26px; height: 26px; grid-row: 1 / 3; place-items: center; align-self: center; color: #8e93aa; border-radius: 8px; background: #181b28; font-size: 8px; font-weight: 800; }
+.demo-scene-tabs button strong { align-self: end; color: #e5e7f0; font-size: 10px; }
+.demo-scene-tabs button small { align-self: start; color: #888da2; font-size: 8px; }
+.demo-scene-tabs button:hover, .demo-scene-tabs button.active { color: #fff; border-color: #7169e8; background: #302d54; }
+.demo-scene-tabs button.active > span { color: #fff; background: var(--primary); }
+.demo-scene-guide { margin-top: 9px; padding: 11px 12px; border: 1px solid #34384c; border-radius: 10px; background: #242737; }
+.demo-scene-guide > div { display: flex; justify-content: space-between; }
+.demo-scene-guide > div span { color: #9891ff; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+.demo-scene-guide > div small { color: #969bae; font-size: 8px; }
+.demo-scene-guide h2 { margin-top: 4px; color: #fff; font-size: 13px; }
+.demo-scene-guide > p { margin-top: 2px; color: #c4c7d5; font-size: 9px; }
+.demo-scene-guide aside { margin-top: 7px; padding: 7px 9px; color: #d1b468; border-radius: 7px; background: #1c1f2d; font-size: 8px; font-style: normal; }
+
+/* Realistic standalone Lingee agent surface */
+.agent-demo-stage { min-height: calc(100vh - 48px); }
+.agent-demo-shell { grid-template-columns: 224px minmax(0, 1fr); min-height: 680px; }
+.agent-platform-nav { display: flex; padding: 18px 13px 14px; flex-direction: column; border-right: 1px solid #e5e6ec; background: #f8f9fb; }
+.agent-nav-back { display: flex; margin: 15px 0 10px; padding: 7px; align-items: center; gap: 6px; color: var(--text-3); border: 0; border-radius: 8px; background: transparent; font-size: 10px; text-align: left; }
+.agent-nav-back:hover { color: var(--primary-dark); background: var(--primary-soft); }
+.agent-nav-back span { font-size: 18px; line-height: 1; }
+.agent-profile-card { display: flex; padding: 11px; align-items: center; gap: 9px; border: 1px solid #dedbea; border-radius: 11px; background: #fff; }
+.agent-profile-card > span:last-child { display: flex; min-width: 0; flex-direction: column; }
+.agent-profile-card strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.agent-profile-card small { margin-top: 2px; color: var(--text-3); font-size: 8px; }
+.agent-platform-menu { display: flex; margin-top: 13px; flex-direction: column; gap: 4px; }
+.agent-platform-menu button { display: flex; min-height: 38px; padding: 0 10px; align-items: center; gap: 8px; color: var(--text-2); border: 0; border-radius: 8px; background: transparent; font-size: 10px; text-align: left; }
+.agent-platform-menu button.active { color: var(--primary-dark); background: var(--primary-soft); font-weight: 700; }
+.agent-platform-menu span { width: 18px; text-align: center; }
+.agent-platform-boundary { margin-top: auto; padding: 10px; color: #87641d; border: 1px solid #ebdeb8; border-radius: 9px; background: #fff9e8; }
+.agent-platform-boundary strong { font-size: 9px; }
+.agent-platform-boundary p { margin-top: 3px; font-size: 8px; line-height: 1.55; }
+.agent-conversation { min-height: 680px; grid-template-rows: auto minmax(0, 1fr) auto auto auto; }
+.agent-message-list { min-height: 430px; max-height: none; }
+.conversation-suggestions { display: flex; min-height: 48px; padding: 5px clamp(18px, 4vw, 48px) 8px; align-items: center; justify-content: center; }
+.conversation-suggestions button { display: flex; max-width: 680px; min-height: 38px; padding: 7px 11px; align-items: center; gap: 8px; color: var(--primary-dark); border: 1px solid #d3cff7; border-radius: 10px; background: #f5f3ff; font-size: 9px; text-align: left; }
+.conversation-suggestions button:hover { border-color: var(--primary); background: var(--primary-soft); }
+.conversation-suggestions button span { flex: 0 0 auto; padding: 3px 5px; color: #fff; border-radius: 5px; background: var(--primary); font-size: 7px; font-weight: 800; text-transform: uppercase; }
+.conversation-complete { color: var(--success); font-size: 9px; }
+.conversation-composer { display: flex; width: min(760px, calc(100% - 36px)); min-height: 50px; margin: 0 auto; padding: 6px; align-items: center; gap: 6px; border: 1px solid #d9dbe4; border-radius: 14px; background: #fff; box-shadow: 0 8px 28px rgba(35, 38, 52, .08); }
+.conversation-composer:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 91, 255, .1); }
+.conversation-composer input { min-width: 0; flex: 1; height: 38px; color: var(--text); border: 0; outline: 0; background: transparent; font-size: 10px; }
+.composer-icon, .composer-send { display: grid; flex: 0 0 auto; width: 36px; height: 36px; place-items: center; border-radius: 10px; font-size: 16px; }
+.composer-icon { color: var(--text-3); border: 0; background: transparent; }
+.composer-send { color: #fff; border: 0; background: var(--primary); }
+.composer-send:disabled { cursor: not-allowed; opacity: .38; }
+.conversation-footnote { padding: 7px 14px 12px; color: var(--text-3); font-size: 8px; text-align: center; }
+
+@media (max-width: 820px) {
+  .demo-scene-tabs { grid-template-columns: 1fr 1fr; }
+  .agent-demo-shell { grid-template-columns: 78px minmax(0, 1fr); }
+  .agent-platform-nav { padding: 12px 8px; }
+  .agent-platform-nav .brand strong, .agent-nav-back, .agent-profile-card > span:last-child, .agent-platform-menu button:not(.active), .agent-platform-menu button.active { font-size: 0; }
+  .agent-platform-nav .brand { justify-content: center; }
+  .agent-profile-card { justify-content: center; padding: 8px; }
+  .agent-platform-menu button { justify-content: center; }
+  .agent-platform-menu button span { font-size: 14px; }
+  .agent-platform-boundary { display: none; }
+}
+@media (max-width: 560px) {
+  .demo-scene-header { flex-direction: column; }
+  .demo-scene-header .secondary-button { width: 100%; }
+  .demo-scene-tabs { grid-template-columns: 1fr; }
+  .demo-scene-tabs button { min-height: 52px; }
+  .agent-demo-shell { display: block; }
+  .agent-platform-nav { display: none; }
+  .agent-conversation { min-height: 620px; }
+  .agent-message-list { min-height: 370px; }
+  .conversation-composer { width: calc(100% - 20px); }
+}
+
+
+/* ===== Dashboard ===== */
+.dashboard-shell { grid-template-columns: 232px minmax(0, 1fr); }
+.dashboard-workspace { overflow-y: auto; }
+.dashboard-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 16px 20px 8px; }
+.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 8px 20px 20px; }
+.dashboard-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.dashboard-card h4 { font-size: 12px; font-weight: 700; color: var(--text-2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .02em; }
+.sla-bars, .rating-dist { display: flex; flex-direction: column; gap: 10px; }
+.sla-bar, .rating-row { display: grid; grid-template-columns: 130px 1fr 36px; align-items: center; gap: 10px; font-size: 12px; }
+.sla-bar span, .rating-row span { color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { height: 7px; background: var(--border-soft); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+.bar-fill.good { background: var(--success); }
+.bar-fill.warn { background: var(--warning); }
+.bar-fill.danger { background: var(--danger); }
+.sla-bar b, .rating-row b { font-size: 11px; color: var(--text); text-align: right; }
+.load-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+.load-table th { text-align: left; padding: 6px 8px; color: var(--text-3); font-weight: 600; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.load-table td { padding: 8px; border-bottom: 1px solid var(--border-soft); }
+.load-table .danger { color: var(--danger); font-weight: 700; }
+.trend-chart { display: flex; align-items: flex-end; justify-content: space-around; height: 100px; padding-top: 8px; }
+.trend-bar { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.trend-bar::before { content: ""; width: 28px; height: calc(var(--h, 50%) * 1); background: linear-gradient(180deg, var(--primary) 0%, var(--primary-soft) 100%); border-radius: 4px 4px 0 0; }
+.trend-bar span { font-size: 10px; color: var(--text-3); }
+.trend-bar b { font-size: 11px; color: var(--text); }
+.period-select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 7px; font-size: 12px; color: var(--text-2); background: var(--surface); }
+
+  </style>
+</head>
+<body>
+  <details class="demo-console" open>
+    <summary class="demo-console-summary"><span>Demo Control</span><strong>演示控制台</strong><small>仅用于切换演示场景，不属于正式产品界面</small><b><i class="when-open">收起</i><i class="when-closed">展开</i><em aria-hidden="true">⌃</em></b></summary>
+    <div class="demo-console-content">
+      <header class="demo-scene-header"><div><span class="eyebrow">四个独立入口</span><h1>HelpDesk 服务闭环演示</h1><p>平台智能体负责对话和卡片，外部应用负责工单列表、详情与直接操作。</p></div><button class="secondary-button" id="resetCurrentScene" type="button">↺ 重置当前场景</button></header>
+      <div class="demo-scene-tabs" role="tablist" aria-label="选择演示场景">
+        <button class="active" type="button" role="tab" aria-selected="true" data-demo-scene="employee-agent"><span>01</span><strong>员工智能体</strong><small>问询与建单</small></button>
+        <button type="button" role="tab" aria-selected="false" data-demo-scene="employee-workspace"><span>02</span><strong>我的工单</strong><small>查询与跟踪</small></button>
+        <button type="button" role="tab" aria-selected="false" data-demo-scene="agent-agent"><span>03</span><strong>处理人智能体</strong><small>诊断与答复</small></button>
+        <button type="button" role="tab" aria-selected="false" data-demo-scene="agent-workspace"><span>04</span><strong>我的任务</strong><small>队列与处理</small></button>
+        <button type="button" role="tab" aria-selected="false" data-demo-scene="dashboard"><span>05</span><strong>仪表盘</strong><small>SLA·评分·趋势</small></button>
+      </div>
+      <article class="demo-scene-guide" aria-live="polite">
+        <div><span id="demoSceneType">平台智能体</span><small id="demoSceneIndex">场景 1 / 4</small></div>
+        <h2 id="demoSceneTitle">员工智能体对话</h2>
+        <p id="demoSceneDescription">员工在灵基会话中先问知识；未解决时由智能体补齐信息并生成待确认工单草稿。</p>
+        <aside id="demoSceneBoundary">脚本化演示，不代表实时 DC 检索；Create_Ticket 未连接并失败关闭。</aside>
+      </article>
+    </div>
+  </details>
+
+  <section class="agent-demo-stage" id="agentDemoStage" aria-labelledby="agentDemoTitle">
+    <div class="agent-demo-stage-label"><span>Lingee Agent</span><strong id="agentDemoTitle">员工智能体会话</strong><small>平台智能体场景 · 脚本化数据 · 未连接 Foundation / MCP Tool</small></div>
+    <div class="agent-demo-shell">
+      <aside class="agent-platform-nav" aria-label="灵基智能体导航">
+        <div class="brand"><span class="brand-mark">L</span><strong>Lingee</strong></div>
+        <button class="agent-nav-back" type="button"><span>‹</span>智能体</button>
+        <div class="agent-profile-card"><div class="conversation-avatar employee" id="conversationAvatar">员</div><span><strong id="agentProfileName">Helpdesk Assistant</strong><small id="agentProfileType">员工智能体</small></span></div>
+        <nav class="agent-platform-menu"><button class="active" type="button"><span>◇</span>新会话</button><button type="button"><span>▤</span>历史会话</button></nav>
+        <div class="agent-platform-boundary"><strong>演示边界</strong><p>当前消息、知识与卡片均为预设剧情，不执行真实后台操作。</p></div>
+      </aside>
+
+      <main class="agent-conversation">
+        <header class="agent-conversation-header">
+          <div class="conversation-avatar employee" id="conversationHeaderAvatar">员</div>
+          <div><span class="eyebrow" id="conversationAgentType">员工智能体</span><h3 id="conversationAgentName">Helpdesk Assistant</h3><p id="conversationAgentSubtitle">知识问询与对话式建单</p></div>
+          <div class="conversation-runtime"><span><i></i>脚本化演示</span><small id="conversationProgress">0 / 3 轮</small></div>
+        </header>
+        <div class="agent-message-list" id="agentConversationMessages" role="log" aria-live="polite" aria-label="智能体演示对话"></div>
+        <div class="conversation-suggestions" id="conversationSuggestions" aria-label="演示建议输入"></div>
+        <form class="conversation-composer" id="conversationForm">
+          <button class="composer-icon" type="button" aria-label="附件未接入" title="附件未接入">＋</button>
+          <input id="conversationInput" maxlength="240" autocomplete="off" aria-label="输入演示消息" placeholder="输入消息，或点击上方建议继续演示" />
+          <button class="composer-send" id="conversationSend" type="submit" aria-label="发送消息">↑</button>
+        </form>
+        <p class="conversation-footnote">演示输入只保存在当前页面，不会发送到模型、Foundation 或 MCP Tool。</p>
+      </main>
+    </div>
+  </section>
+
+  <div class="prototype-stage" id="workspaceDemoStage" aria-label="HelpDesk 外部工单应用原型" hidden>
+    <div class="prototype-stage-label"><span>External App</span><strong>外部工单应用场景，不包含平台智能体会话</strong></div>
+    <div class="app-shell">
+      <aside class="global-nav" aria-label="灵基功能导航">
+        <div class="brand"><span class="brand-mark">L</span><strong>Lingee</strong></div>
+        <nav class="product-nav" aria-label="产品区"><button class="product-link active" type="button"><span>⌁</span>Work</button><button class="product-link" type="button"><span>▣</span>Manage</button><button class="product-link" type="button"><span>◇</span>Build</button></nav>
+        <div class="nav-section">
+          <p>工单服务</p>
+          <button class="assistant-link active" type="button" data-role-select="employee" aria-pressed="true"><span class="assistant-icon employee-icon">员</span><span><b>我的工单</b><small>自助与进度跟踪</small></span></button>
+          <button class="assistant-link" type="button" data-role-select="agent" aria-pressed="false"><span class="assistant-icon agent-icon">处</span><span><b>我的任务</b><small>队列与处理协同</small></span></button>
+        </div>
+        <div class="nav-section history-section"><div class="section-title"><p>最近工单</p></div><button class="history-item" type="button">VPN 连接后无法访问系统</button><button class="history-item" type="button">财务共享盘访问权限异常</button><button class="history-item" type="button">Power BI 安装申请</button><button class="history-item" type="button">Outlook 同步问题</button></div>
+        <div class="nav-footer"><span class="user-avatar">Z</span><span><strong>演示用户</strong><small>HelpDesk Workspace</small></span></div>
+      </aside>
+
+      <main class="workspace" aria-label="工单业务工作台">
+        <header class="workspace-header"><div><span class="eyebrow">Work · 外部应用</span><h2 id="workspaceTitle">我的工单</h2><p id="workspaceSubtitle">查看进度、补充信息与确认解决</p></div><div class="workspace-actions"><span class="integration-status"><i></i>演示原型 · 未连接 Foundation</span><button class="primary-button" id="primaryAction" type="button">＋ 新建工单</button></div></header>
+        <section class="stats-grid" id="statsGrid" aria-label="工单统计"></section>
+        <div class="workspace-toolbar"><div class="view-tabs" id="viewTabs" role="tablist" aria-label="工作台视图"></div><div class="filters"><label class="search-box"><span>⌕</span><input id="ticketSearch" type="search" placeholder="搜索工单号或标题" /></label><select id="statusFilter" aria-label="按状态筛选"><option value="all">全部状态</option></select></div></div>
+        <div class="work-content">
+          <section class="ticket-board" id="ticketBoard" role="tabpanel" aria-labelledby="ticketListTitle"><div class="board-heading"><div><h3 id="ticketListTitle">工单列表</h3><p id="resultCount"></p></div><button class="secondary-button" id="refreshTickets" type="button">↻ 刷新</button></div><div class="ticket-list" id="ticketList"></div></section>
+          <aside class="detail-panel" id="detailPanel" aria-live="polite"><div class="empty-detail"><span>▤</span><strong>选择一张工单</strong><p>在左侧列表中选择工单后查看详情和可执行操作。</p></div></aside>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  
+  <div class="prototype-stage" id="dashboardDemoStage" aria-label="HelpDesk 运营仪表盘" hidden>
+    <div class="prototype-stage-label"><span>Dashboard</span><strong>运营仪表盘 · SLA · 评分 · 处理人负载</strong></div>
+    <div class="app-shell dashboard-shell">
+      <aside class="global-nav" aria-label="灵基功能导航">
+        <div class="brand"><span class="brand-mark">L</span><strong>Lingee</strong></div>
+        <nav class="product-nav" aria-label="产品区"><button class="product-link active" type="button"><span>⌁</span>Work</button><button class="product-link" type="button"><span>▣</span>Manage</button><button class="product-link" type="button"><span>◇</span>Build</button></nav>
+        <div class="nav-section"><p>工单服务</p>
+          <button class="assistant-link" type="button"><span class="assistant-icon employee-icon">员</span><span><b>我的工单</b><small>自助与进度跟踪</small></span></button>
+          <button class="assistant-link" type="button"><span class="assistant-icon agent-icon">处</span><span><b>我的任务</b><small>队列与处理协同</small></span></button>
+          <button class="assistant-link active" type="button"><span class="assistant-icon" style="color:#1f8f63;background:#e8f6ef">板</span><span><b>运营仪表盘</b><small>SLA · 评分 · 负载</small></span></button>
+        </div>
+        <div class="nav-footer"><span class="user-avatar">M</span><span><strong>Manager</strong><small>IT Service Desk Lead</small></span></div>
+      </aside>
+      <main class="workspace dashboard-workspace" aria-label="运营仪表盘">
+        <header class="workspace-header"><div><span class="eyebrow">Work · 运营管理</span><h2>运营仪表盘</h2><p>团队 SLA 达标率、满意度、工单趋势与处理人负载一览</p></div><div class="workspace-actions"><span class="integration-status"><i></i>原型数据 · 未连接真实后台</span><select class="period-select" aria-label="时间周期"><option>本周 (8/5 - 8/11)</option><option>上周</option><option>本月</option></select></div></header>
+        <section class="dashboard-stats" aria-label="关键指标">
+          <article class="stat-card"><span>本周工单</span><div><strong>47</strong><small class="good">+12% 较上周</small></div></article>
+          <article class="stat-card"><span>SLA 达标率</span><div><strong>94.8%</strong><small class="good">+2.4% 较上周</small></div></article>
+          <article class="stat-card"><span>平均解决时长</span><div><strong>3.2h</strong><small class="warn">+0.4h 较上周</small></div></article>
+          <article class="stat-card"><span>平均满意度</span><div><strong>4.6 / 5</strong><small class="good">62% 五星</small></div></article>
+        </section>
+        <section class="dashboard-grid">
+          <div class="dashboard-card"><h4>分类 SLA 达标率</h4><div class="sla-bars"><div class="sla-bar"><span>Network & VPN</span><div class="bar-track"><div class="bar-fill good" style="width:98%"></div></div><b>98%</b></div><div class="sla-bar"><span>Email</span><div class="bar-track"><div class="bar-fill good" style="width:96%"></div></div><b>96%</b></div><div class="sla-bar"><span>Software Request</span><div class="bar-track"><div class="bar-fill warn" style="width:91%"></div></div><b>91%</b></div><div class="sla-bar"><span>Access & Identity</span><div class="bar-track"><div class="bar-fill danger" style="width:88%"></div></div><b>88%</b></div><div class="sla-bar"><span>HR Portal</span><div class="bar-track"><div class="bar-fill good" style="width:97%"></div></div><b>97%</b></div></div></div>
+          <div class="dashboard-card"><h4>满意度分布</h4><div class="rating-dist"><div class="rating-row"><span>⭐ 5</span><div class="bar-track"><div class="bar-fill good" style="width:62%"></div></div><b>62%</b></div><div class="rating-row"><span>⭐ 4</span><div class="bar-track"><div class="bar-fill good" style="width:28%"></div></div><b>28%</b></div><div class="rating-row"><span>⭐ 3</span><div class="bar-track"><div class="bar-fill warn" style="width:7%"></div></div><b>7%</b></div><div class="rating-row"><span>⭐ 2</span><div class="bar-track"><div class="bar-fill danger" style="width:2%"></div></div><b>2%</b></div><div class="rating-row"><span>⭐ 1</span><div class="bar-track"><div class="bar-fill danger" style="width:1%"></div></div><b>1%</b></div></div></div>
+          <div class="dashboard-card"><h4>处理人负载</h4><table class="load-table"><thead><tr><th>处理人</th><th>待办</th><th>今日解决</th><th>超时</th><th>SLA</th></tr></thead><tbody><tr><td>Alex Tan</td><td>6</td><td>3</td><td class="danger">1</td><td>92%</td></tr><tr><td>Mei Ling</td><td>5</td><td>4</td><td>0</td><td>98%</td></tr><tr><td>Daniel Wong</td><td>4</td><td>2</td><td>0</td><td>100%</td></tr><tr><td>Sarah Lim</td><td>3</td><td>3</td><td>0</td><td>97%</td></tr></tbody></table></div>
+          <div class="dashboard-card"><h4>本周工单趋势</h4><div class="trend-chart"><div class="trend-bar" style="--h:40%"><span>Mon</span><b>8</b></div><div class="trend-bar" style="--h:60%"><span>Tue</span><b>12</b></div><div class="trend-bar" style="--h:45%"><span>Wed</span><b>9</b></div><div class="trend-bar" style="--h:55%"><span>Thu</span><b>11</b></div><div class="trend-bar" style="--h:35%"><span>Fri</span><b>7</b></div></div></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="ticketDialog" class="ticket-dialog" aria-labelledby="ticketDialogTitle">
+    <form method="dialog" id="ticketForm">
+      <div class="dialog-header"><div><span class="eyebrow">本地草稿</span><h2 id="ticketDialogTitle">创建新工单</h2><p>提交只保存到当前浏览器会话，不会调用后台。</p></div><button class="icon-button" value="cancel" aria-label="关闭">×</button></div>
+      <label><span>问题标题 *</span><input name="title" required maxlength="80" placeholder="简要描述遇到的问题" /></label>
+      <div class="dialog-grid"><label><span>分类 *</span><select name="category" required><option value="">请选择</option><option>IT / Network & VPN</option><option>IT / Software Request</option><option>IT / Email</option><option>People GBS / HR Portal</option></select></label><label><span>优先级 *</span><select name="priority" required><option>Medium</option><option>High</option><option>Low</option></select></label></div>
+      <label><span>问题描述 *</span><textarea name="description" required rows="4" placeholder="说明现象、影响范围和已尝试的操作"></textarea></label>
+      <div class="dialog-actions"><button class="secondary-button" value="cancel">取消</button><button class="primary-button" value="default" id="saveDraftButton">保存本地草稿</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+const employeeTickets = [
+  { id: "HD-2026-0811-0238", title: "VPN 连接后无法访问内部系统", category: "IT / Network & VPN", status: "处理中", statusKey: "progress", viewGroup: "processing", priority: "High", updated: "12 分钟前", owner: "Alex Tan", team: "IT Infrastructure", sla: "剩余 1小时42分", description: "VPN 已连接，但 ERP 与内部文件服务器仍无法访问。处理人已建议重新导入配置并完成 MFA。", timeline: [["09:18", "工单已创建"], ["09:21", "Alex Tan 已接单"], ["09:46", "处理人已回复，等待你的确认"]] },
+  { id: "HD-2026-0811-0215", title: "申请安装 Power BI Desktop", category: "IT / Software Request", status: "待审批", statusKey: "pending", viewGroup: "processing", priority: "Medium", updated: "1 小时前", owner: "审批队列", team: "IT Application", sla: "剩余 6小时20分", description: "软件安装申请已进入 L1 审批，审批结果以后台工单系统返回为准。", timeline: [["08:36", "申请已提交"], ["08:38", "规则检查完成"], ["08:40", "进入 L1 审批"]] },
+  { id: "HD-2026-0810-0198", title: "Outlook 邮件同步异常", category: "IT / Email", status: "待确认", statusKey: "pending", viewGroup: "processing", priority: "Medium", updated: "昨天 16:42", owner: "Mei Ling", team: "IT Service Desk", sla: "剩余 18小时", description: "处理人已完成邮箱配置刷新，等待确认邮件是否恢复同步。", timeline: [["昨天 14:10", "工单已创建"], ["昨天 15:26", "处理人更新了邮箱配置"], ["昨天 16:42", "等待你的确认"]] },
+  { id: "HD-2026-0809-0174", title: "重置 HR Portal 密码", category: "People GBS / HR Portal", status: "已解决待评价", statusKey: "rating", viewGroup: "rating", priority: "Low", updated: "8月9日", owner: "Sarah Lim", team: "People GBS", sla: "已完成", description: "密码重置已完成，等待员工评价后关闭。", timeline: [["8月9日 10:03", "工单已创建"], ["8月9日 10:18", "密码重置完成"], ["8月9日 10:22", "员工确认已解决，等待评价"]] },
+  { id: "HD-2026-0807-0152", title: "办公区打印机驱动安装", category: "IT / Workplace", status: "已评价关闭", statusKey: "closed", viewGroup: "closed", priority: "Low", updated: "8月7日", owner: "Daniel Wong", team: "IT Workplace", sla: "已完成", description: "打印机驱动已安装并验证，员工已提交五星评价，工单正式关闭。", timeline: [["8月7日 09:12", "工单已创建"], ["8月7日 09:45", "驱动安装并验证"], ["8月7日 10:02", "员工评价后关闭"]] }
+];
+
+const agentTickets = [
+  { id: "HD-2026-0811-0249", title: "财务共享盘访问权限异常", category: "IT / Access", status: "已超时", statusKey: "overdue", viewGroup: "pending", priority: "High", updated: "8 分钟前", owner: "你", team: "IT Service Desk", sla: "已超时 18分", description: "Finance 团队 4 名成员无法访问共享盘，需要核对权限组与最近一次组织调整。", timeline: [["08:20", "工单已自动分配"], ["08:32", "用户补充影响范围"], ["09:20", "响应 SLA 已超时"]] },
+  { id: "HD-2026-0811-0238", title: "VPN 连接后无法访问内部系统", category: "IT / Network & VPN", status: "处理中", statusKey: "progress", viewGroup: "processed", priority: "High", updated: "12 分钟前", owner: "你", team: "IT Infrastructure", sla: "剩余 1小时42分", description: "用户已完成重启但问题仍存在。建议核对 VPN 配置版本、MFA 与 DNS。", timeline: [["09:18", "工单进入队列"], ["09:21", "你已接单"], ["09:46", "已发送排查建议，等待用户反馈"]] },
+  { id: "HD-2026-0811-0227", title: "新员工无法登录协作平台", category: "IT / Identity", status: "新工单", statusKey: "new", viewGroup: "pending", priority: "Medium", updated: "21 分钟前", owner: "待接单", team: "IT Service Desk", sla: "剩余 3小时11分", description: "新员工首次登录提示账号不存在，需要检查身份同步状态。", timeline: [["09:06", "工单已创建"], ["09:07", "按分类分配至共享池"]] },
+  { id: "HD-2026-0811-0215", title: "申请安装 Power BI Desktop", category: "IT / Software Request", status: "已处理待审批", statusKey: "pending", viewGroup: "processed", priority: "Medium", updated: "1 小时前", owner: "审批队列", team: "IT Application", sla: "剩余 6小时20分", description: "处理人已完成前置检查并转入 L1 审批，当前无需继续操作。", timeline: [["08:36", "申请已提交"], ["08:38", "处理人完成前置检查"], ["08:40", "进入 L1 审批"]] },
+  { id: "HD-2026-0810-0191", title: "会议室显示屏无法投屏", category: "IT / Workplace", status: "已关闭", statusKey: "closed", viewGroup: "closed", priority: "Low", updated: "昨天 15:10", owner: "Daniel Wong", team: "IT Workplace", sla: "已完成", description: "已更换 HDMI 转接器并完成现场验证。", timeline: [["昨天 12:03", "工单已创建"], ["昨天 14:40", "现场更换转接器"], ["昨天 15:10", "用户确认关闭"]] }
+];
+
+function restoreSessionDrafts() {
+  try {
+    const restored = JSON.parse(sessionStorage.getItem("helpdesk-local-drafts") || "[]");
+    if (Array.isArray(restored)) {
+      restored.filter((item) => item && typeof item === "object" && item.statusKey === "draft").reverse().forEach((item) => employeeTickets.unshift({ ...item, viewGroup: "processing" }));
+    }
+  } catch {
+    sessionStorage.removeItem("helpdesk-local-drafts");
+  }
+}
+restoreSessionDrafts();
+
+const roleConfigs = {
+  employee: {
+    workspaceTitle: "我的工单",
+    workspaceSubtitle: "查看进度、补充信息与确认解决",
+    primaryAction: "＋ 新建工单",
+    searchPlaceholder: "搜索工单号或标题",
+    views: [
+      { id: "all", label: "全部" },
+      { id: "processing", label: "处理中" },
+      { id: "rating", label: "待评价" },
+      { id: "closed", label: "已关闭" }
+    ],
+    tickets: employeeTickets,
+    stats: [["进行中", "3", "含审批与待确认", "warn"], ["待评价", "1", "服务已解决", "warn"], ["本月已关闭", "12", "+3 较上月", "good"], ["平均满意度", "4.8", "最近 6 次评价", "good"]]
+  },
+  agent: {
+    workspaceTitle: "我的任务",
+    workspaceSubtitle: "查看并处理分配给我的工单",
+    primaryAction: null,
+    searchPlaceholder: "搜索工单、提单人或分类",
+    views: [
+      { id: "all", label: "全部" },
+      { id: "pending", label: "待处理" },
+      { id: "processed", label: "已处理" },
+      { id: "closed", label: "已关闭" }
+    ],
+    tickets: agentTickets,
+    stats: [["我的待办", "4", "1 张已超时", "bad"], ["高风险", "3", "未来 4 小时", "warn"], ["今日已解决", "6", "+2 较昨日", "good"], ["SLA 达标率", "94.8%", "+2.4% 本周", "good"]]
+  }
+};
+
+let currentRole = "employee";
+let currentView = "all";
+let selectedTicketId = null;
+let toastTimer;
+
+const byId = (id) => document.getElementById(id);
+const IT_AGENT_SESSION_URL = "https://www.test.lingeeglobal.ai/session/new?skillName=IT%20Knowledge%20Skill";
+const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
+const currentConfig = () => roleConfigs[currentRole];
+const currentTickets = () => currentConfig().tickets;
+
+function showToast(message) {
+  const toast = byId("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+}
+
+function priorityClass(priority) { return `priority-${priority.toLowerCase()}`; }
+function statusClass(statusKey) { return `status-${statusKey}`; }
+
+function renderStats() {
+  byId("statsGrid").innerHTML = currentConfig().stats.map(([label, value, note, tone]) => `
+    <article class="stat-card"><span>${escapeHtml(label)}</span><div><strong>${escapeHtml(value)}</strong><small class="${tone}">${escapeHtml(note)}</small></div></article>`).join("");
+}
+
+function renderViewTabs() {
+  const tabs = byId("viewTabs");
+  tabs.innerHTML = currentConfig().views.map((view) => {
+    const active = view.id === currentView;
+    return `<button class="${active ? "active" : ""}" id="view-tab-${escapeHtml(currentRole)}-${escapeHtml(view.id)}" type="button" role="tab" aria-selected="${String(active)}" aria-controls="ticketBoard" tabindex="${active ? "0" : "-1"}" data-view="${escapeHtml(view.id)}">${escapeHtml(view.label)}</button>`;
+  }).join("");
+  const buttons = [...tabs.querySelectorAll("[data-view]")];
+  buttons.forEach((button, index) => {
+    button.addEventListener("click", () => {
+      currentView = button.dataset.view;
+      selectedTicketId = null;
+      renderViewTabs();
+      renderTickets();
+    });
+    button.addEventListener("keydown", (event) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+      buttons[nextIndex].click();
+      byId("viewTabs").querySelectorAll("[data-view]")[nextIndex].focus();
+    });
+  });
+}
+
+function populateStatusFilter() {
+  const select = byId("statusFilter");
+  const previous = select.value;
+  const statuses = [...new Set(currentTickets().map((ticket) => ticket.status))];
+  select.innerHTML = `<option value="all">全部状态</option>${statuses.map((status) => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join("")}`;
+  select.value = statuses.includes(previous) ? previous : "all";
+}
+
+function filteredTickets() {
+  const query = byId("ticketSearch").value.trim().toLowerCase();
+  const status = byId("statusFilter").value;
+  return currentTickets().filter((ticket) => {
+    const matchesView = currentView === "all" || ticket.viewGroup === currentView;
+    const matchesStatus = status === "all" || ticket.status === status;
+    const haystack = `${ticket.id} ${ticket.title} ${ticket.category} ${ticket.owner}`.toLowerCase();
+    return matchesView && matchesStatus && (!query || haystack.includes(query));
+  });
+}
+
+function renderTickets() {
+  const tickets = filteredTickets();
+  if (selectedTicketId && !tickets.some((ticket) => ticket.id === selectedTicketId)) selectedTicketId = null;
+  byId("resultCount").textContent = `共 ${tickets.length} 张，数据仅用于原型展示`;
+  byId("ticketList").innerHTML = tickets.length ? tickets.map((ticket) => `
+    <button class="ticket-item ${selectedTicketId === ticket.id ? "active" : ""}" type="button" data-ticket-id="${escapeHtml(ticket.id)}">
+      <span class="ticket-main"><span class="ticket-meta"><code>${escapeHtml(ticket.id)}</code><span class="priority-tag ${priorityClass(ticket.priority)}">${escapeHtml(ticket.priority)}</span><span class="status-tag ${statusClass(ticket.statusKey)}">${escapeHtml(ticket.status)}</span></span><strong>${escapeHtml(ticket.title)}</strong><small>${escapeHtml(ticket.category)} · ${escapeHtml(ticket.team)}</small></span>
+      <span class="ticket-side"><small>${escapeHtml(ticket.updated)}</small><b>${escapeHtml(ticket.sla)}</b></span>
+    </button>`).join("") : `<div class="empty-list"><strong>没有符合条件的工单</strong><p>请调整搜索词、状态或视图。</p></div>`;
+  byId("ticketList").querySelectorAll("[data-ticket-id]").forEach((button) => button.addEventListener("click", () => {
+    selectedTicketId = button.dataset.ticketId;
+    renderTickets();
+  }));
+  renderDetail();
+}
+
+function renderDetail() {
+  const ticket = currentTickets().find((item) => item.id === selectedTicketId);
+  if (!ticket) {
+    byId("detailPanel").innerHTML = `<div class="empty-detail"><span>▤</span><strong>选择一张工单</strong><p>在左侧列表中选择工单后查看详情和可执行操作。</p></div>`;
+    return;
+  }
+  const openAgentAction = `<a class="secondary-button session-launch-button" href="${IT_AGENT_SESSION_URL}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" aria-label="打开 IT 智能体新会话；不会携带工单 ${escapeHtml(ticket.id)} 的上下文">打开 IT 智能体 ↗</a>`;
+  const employeeActions = `${openAgentAction}<button class="secondary-button" type="button" data-backend-action="补充信息">补充信息</button><button class="primary-button" type="button" data-backend-action="确认解决">确认解决</button>`;
+  const agentActions = `${openAgentAction}<button class="secondary-button" type="button" data-backend-action="转派工单">转派</button><button class="primary-button" type="button" data-backend-action="发送答复">编辑并发送答复</button>`;
+  byId("detailPanel").innerHTML = `
+    <div class="detail-head"><div class="ticket-meta"><code>${escapeHtml(ticket.id)}</code><span class="priority-tag ${priorityClass(ticket.priority)}">${escapeHtml(ticket.priority)}</span><span class="status-tag ${statusClass(ticket.statusKey)}">${escapeHtml(ticket.status)}</span></div><h3>${escapeHtml(ticket.title)}</h3><p>${escapeHtml(ticket.description)}</p></div>
+    <div class="detail-grid"><div class="detail-field"><span>分类</span><strong>${escapeHtml(ticket.category)}</strong></div><div class="detail-field"><span>${currentRole === "employee" ? "处理人" : "当前归属"}</span><strong>${escapeHtml(ticket.owner)}</strong></div><div class="detail-field"><span>处理团队</span><strong>${escapeHtml(ticket.team)}</strong></div><div class="detail-field"><span>SLA</span><strong>${escapeHtml(ticket.sla)}</strong></div></div>
+    <div class="timeline"><h4>最新进展</h4>${ticket.timeline.map(([time, title]) => `<div class="timeline-item"><i></i><div><strong>${escapeHtml(title)}</strong><small>${escapeHtml(time)}</small></div></div>`).join("")}</div>
+    <div class="detail-actions">${currentRole === "employee" ? employeeActions : agentActions}</div>
+    <div class="session-launch-note"><strong>新会话边界</strong><span>当前仅打开 IT Knowledge Skill 通用新会话，不会携带该工单的编号、描述或处理上下文。</span></div>
+    <div class="integration-note">工单查询与写操作需真实 MCP Tool、权限与审计。</div>`;
+  byId("detailPanel").querySelectorAll("[data-backend-action]").forEach((button) => button.addEventListener("click", () => showToast(`${button.dataset.backendAction}失败关闭：未连接获准的工单 MCP Tool，未执行任何真实写操作。`)));
+}
+
+function setRole(role) {
+  if (!roleConfigs[role]) return;
+  currentRole = role;
+  currentView = "all";
+  selectedTicketId = null;
+  const config = currentConfig();
+  byId("workspaceTitle").textContent = config.workspaceTitle;
+  byId("workspaceSubtitle").textContent = config.workspaceSubtitle;
+  const primaryAction = byId("primaryAction");
+  primaryAction.hidden = !config.primaryAction;
+  primaryAction.textContent = config.primaryAction || "";
+  byId("ticketSearch").placeholder = config.searchPlaceholder;
+  byId("ticketSearch").value = "";
+  byId("statusFilter").value = "all";
+  document.querySelectorAll("[data-role-select]").forEach((button) => {
+    const active = button.dataset.roleSelect === role;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  renderViewTabs();
+  renderStats();
+  populateStatusFilter();
+  renderTickets();
+}
+
+function saveLocalDraft(form) {
+  const data = new FormData(form);
+  const id = `LOCAL-${String(Date.now()).slice(-6)}`;
+  const draft = { id, title: data.get("title"), category: data.get("category"), status: "本地草稿", statusKey: "draft", viewGroup: "processing", priority: data.get("priority"), updated: "刚刚", owner: "未提交", team: "待确定", sla: "未开始", description: data.get("description"), timeline: [["刚刚", "草稿仅保存在当前浏览器会话"]] };
+  employeeTickets.unshift(draft);
+  sessionStorage.setItem("helpdesk-local-drafts", JSON.stringify(employeeTickets.filter((ticket) => ticket.statusKey === "draft")));
+  byId("ticketDialog").close();
+  form.reset();
+  currentView = "processing";
+  selectedTicketId = id;
+  byId("statusFilter").value = "all";
+  renderViewTabs();
+  populateStatusFilter();
+  renderStats();
+  renderTickets();
+  showToast("仅保存本地草稿；真实建单写操作未获授权并已失败关闭。");
+}
+
+const agentConversationScripts = {
+  employee: {
+    type: "员工智能体",
+    name: "Helpdesk Assistant",
+    subtitle: "知识问询与对话式建单",
+    icon: "员",
+    initial: [
+      { kind: "system", text: "演示说明：以下知识答案与工单信息均为预设剧情，不代表实时 DC 检索或后台结果。" },
+      { kind: "assistant", text: "你好，我是 Helpdesk Assistant。你可以先描述遇到的 IT 问题；如果知识建议无法解决，我会继续补齐信息并生成待确认的工单草稿。" }
+    ],
+    turns: [
+      { user: "VPN 已经连接成功，但 ERP 和内部文件服务器都打不开，怎么处理？", replies: [{ kind: "knowledge-solution", title: "找到一个可能的解决方案", source: "远程访问与 VPN 使用指南 · 4.2", badge: "KB", solutionTitle: "重新导入最新 VPN 配置", steps: ["删除当前 VPN 配置", "从 IT Portal 导入最新配置", "完成 MFA 后重新连接并刷新本机 DNS"], question: "这个方案解决了问题吗？", meta: "预设知识结果 · 非实时 DC 检索" }] },
+      { user: "已经重新导入配置、完成 MFA 并重启电脑，还是不行。", replies: [{ kind: "assistant", text: "了解。为了形成工单草稿，还需要确认影响范围：只有你受影响，还是同一网络下有多位同事受影响？" }] },
+      { user: "目前只有我，影响今天的财务月结工作。", replies: [{ kind: "card", title: "工单草稿确认", badge: "等待人工确认", fields: [["标题", "VPN 连接后无法访问内部系统"], ["分类", "IT / Network & VPN"], ["影响范围", "单个用户 · 财务月结受阻"], ["已尝试", "重导配置、完成 MFA、重启电脑"], ["附件", "vpn-error.png (245KB), network-log.txt (12KB)"]], draft: "确认后才允许调用 Create_Ticket；本演示未连接该 Tool。", action: "确认并提交工单", tool: "Create_Ticket" }] },
+      { user: "查一下我的工单进度", replies: [{ kind: "card", title: "员工工单列表", badge: "3 张进行中", fields: [["HD-0811-0238", "VPN 连接问题 · 处理中"], ["HD-0811-0215", "Power BI 安装 · 待审批"], ["HD-0810-0198", "Outlook 同步 · 待确认"]], draft: "工单列表来源于 List_My_Tickets；只展示本人可见工单。", action: "查看详情", tool: "Get_Ticket_Detail" }] },
+      { user: "HR Portal 密码重置那个工单已经解决了，我来评价一下", replies: [{ kind: "card", title: "服务评价", badge: "HD-0809-0174", fields: [["工单", "重置 HR Portal 密码"], ["处理人", "Sarah Lim"], ["解决时长", "15 分钟"]], draft: "评价提交调用 Rate_Ticket；本演示未连接该 Tool。", action: "提交 5 星评价", tool: "Rate_Ticket" }] }
+    ]
+  },
+  agent: {
+    type: "处理人智能体",
+    name: "Agent Workbench",
+    subtitle: "工单诊断与答复辅助",
+    icon: "处",
+    initial: [
+      { kind: "system", text: "演示说明：以下任务、工单详情和建议均为预设剧情，不代表实时查询、真实权限校验或跨角色同步。" },
+      { kind: "assistant", text: "你好，我是 Agent Workbench。我可以基于你有权查看的工单形成摘要、排查建议和答复草稿；任何发送或转派都必须由处理人确认。" }
+    ],
+    turns: [
+      { user: "分析工单 HD-2026-0811-0238，先不要发送任何回复。", replies: [{ kind: "assistant", text: "演示摘要：员工已重新导入配置、完成 MFA 并重启电脑；VPN 隧道已连接，但 ERP 与文件服务器不可达，当前影响财务月结。", meta: "预设工单详情 · 非实时 Get_Ticket_Detail" }, { kind: "assistant", text: "建议优先核对 VPN 客户端配置版本、分流路由和 DNS；如仅该员工受影响，再检查账号对应的访问策略。发送前仍需处理人核实后台事实。" }] },
+      { user: "生成一版给员工的排查回复，我确认后再发送。", replies: [{ kind: "card", title: "答复草稿", badge: "等待处理人确认", fields: [["工单", "HD-2026-0811-0238"], ["回复对象", "工单提问人"], ["建议", "请更新 VPN 配置后重新连接，并执行 DNS 刷新；若仍失败，请补充客户端版本和报错截图。"]], draft: "生成草稿不等于发送。确认后才允许调用 Reply_Ticket。", action: "确认并发送答复", tool: "Reply_Ticket" }] },
+      { user: "HD-0811-0227 新员工登录问题转派给 Mei Ling 处理。", replies: [{ kind: "card", title: "工单转派确认", badge: "等待处理人确认", fields: [["工单", "HD-0811-0227 · 新员工无法登录协作平台"], ["目标处理人", "Mei Ling · IT Service Desk"], ["转派原因", "身份同步问题属于 Identity 组"]], draft: "确认后才允许调用 Reassign_Ticket；本演示未连接该 Tool。", action: "确认转派", tool: "Reassign_Ticket" }] },
+      { user: "VPN 工单处理完毕后帮我生成一条知识产物。", replies: [{ kind: "card", title: "知识产物确认", badge: "待确认沉淀", fields: [["来源工单", "HD-0811-0238 · VPN 连接后无法访问内部系统"], ["知识标题", "VPN 连接后无法访问内部系统的排查步骤"], ["处理方法", "1.删除旧配置 2.导入最新配置 3.完成MFA 4.刷新DNS 5.检查分割路由"], ["标签", "VPN, 网络, DNS, 路由"]], draft: "知识沉淀调用 DC 标准一键上传（8/21 PLANNED）；本演示未连接。", action: "确认沉淀为企业知识", tool: "Create_Knowledge_Ingestion" }] }
+    ]
+  }
+};
+
+let currentConversationAgent = "employee";
+const completedConversationTurns = { employee: 0, agent: 0 };
+const conversationUserInputs = { employee: [], agent: [] };
+const conversationOutcomes = { employee: null, agent: null };
+
+function conversationMessageHtml(message, script) {
+  if (message.kind === "system") return `<div class="conversation-system"><span>边界提示</span><p>${escapeHtml(message.text)}</p></div>`;
+  if (message.kind === "knowledge-solution") return `<article class="conversation-card knowledge-solution-card"><header><div><span>${escapeHtml(message.source)}</span><h4>${escapeHtml(message.title)}</h4></div><b>${escapeHtml(message.badge)}</b></header><div class="knowledge-solution-body"><strong>${escapeHtml(message.solutionTitle)}</strong><ol>${message.steps.map((step) => `<li><span>${escapeHtml(step)}</span></li>`).join("")}</ol><em>${escapeHtml(message.meta)}</em></div><p class="knowledge-question">${escapeHtml(message.question)}</p><footer class="knowledge-actions"><button class="secondary-button" type="button" data-knowledge-action="resolved">已解决</button><button class="primary-button" type="button" data-knowledge-action="unresolved">仍未解决，继续提单</button></footer></article>`;
+  if (message.kind === "card") return `<article class="conversation-card"><header><div><span>交互式确认卡 · 演示</span><h4>${escapeHtml(message.title)}</h4></div><b>${escapeHtml(message.badge)}</b></header><div class="conversation-card-fields">${message.fields.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}</div><p>${escapeHtml(message.draft)}</p><footer><code>${escapeHtml(message.tool)}</code><button class="primary-button" type="button" data-scripted-tool="${escapeHtml(message.tool)}">${escapeHtml(message.action)}</button></footer></article>`;
+  const isUser = message.kind === "user";
+  return `<div class="conversation-message ${isUser ? "user" : "assistant"}"><span class="message-avatar">${isUser ? "你" : escapeHtml(script.icon)}</span><div><small>${isUser ? "演示用户" : escapeHtml(script.name)}</small><p>${escapeHtml(message.text)}</p>${message.meta ? `<em>${escapeHtml(message.meta)}</em>` : ""}</div></div>`;
+}
+
+function renderAgentConversation() {
+  const script = agentConversationScripts[currentConversationAgent];
+  const completed = completedConversationTurns[currentConversationAgent];
+  const messages = [...script.initial];
+  script.turns.slice(0, completed).forEach((turn, index) => {
+    messages.push({ kind: "user", text: conversationUserInputs[currentConversationAgent][index] || turn.user }, ...turn.replies);
+  });
+  if (currentConversationAgent === "employee" && conversationOutcomes.employee === "resolved") {
+    messages.push({ kind: "assistant", text: "很好，这次问题已通过知识方案解决，不需要创建工单。演示不会写入后台或生成解决记录。" });
+  }
+  ["conversationAvatar", "conversationHeaderAvatar"].forEach((id) => {
+    byId(id).textContent = script.icon;
+    byId(id).className = `conversation-avatar ${currentConversationAgent}`;
+  });
+  byId("agentProfileName").textContent = script.name;
+  byId("agentProfileType").textContent = script.type;
+  byId("agentDemoTitle").textContent = `${script.type}会话`;
+  byId("conversationAgentType").textContent = script.type;
+  byId("conversationAgentName").textContent = script.name;
+  byId("conversationAgentSubtitle").textContent = script.subtitle;
+  byId("conversationProgress").textContent = `${completed} / ${script.turns.length} 轮`;
+  byId("agentConversationMessages").innerHTML = messages.map((message) => conversationMessageHtml(message, script)).join("");
+  const nextTurn = currentConversationAgent === "employee" && conversationOutcomes.employee === "resolved" ? null : script.turns[completed];
+  byId("conversationSuggestions").innerHTML = nextTurn ? `<button type="button" data-conversation-suggestion="${escapeHtml(nextTurn.user)}"><span>建议输入</span>${escapeHtml(nextTurn.user)}</button>` : `<span class="conversation-complete">本段对话已到确认节点，可在演示控制台重置后重新体验。</span>`;
+  byId("conversationInput").disabled = !nextTurn;
+  byId("conversationSend").disabled = !nextTurn;
+  byId("conversationInput").placeholder = nextTurn ? "输入消息，或点击上方建议继续演示" : "本段演示已完成";
+  byId("agentConversationMessages").querySelectorAll("[data-scripted-tool]").forEach((button) => button.addEventListener("click", () => showToast(`${button.dataset.scriptedTool} 失败关闭：脚本化演示未连接获准的 MCP Tool，未执行后台写操作。`)));
+  byId("agentConversationMessages").querySelectorAll("[data-knowledge-action]").forEach((button) => button.addEventListener("click", () => handleKnowledgeAction(button.dataset.knowledgeAction)));
+  byId("conversationSuggestions").querySelectorAll("[data-conversation-suggestion]").forEach((button) => button.addEventListener("click", () => advanceAgentConversation(button.dataset.conversationSuggestion)));
+  const list = byId("agentConversationMessages");
+  list.scrollTop = list.scrollHeight;
+}
+
+function handleKnowledgeAction(action) {
+  if (currentConversationAgent !== "employee" || completedConversationTurns.employee !== 1) {
+    showToast("当前演示已进入后续提单流程，请重置场景后重新选择知识解决分支。");
+    return;
+  }
+  if (action === "resolved") {
+    conversationOutcomes.employee = "resolved";
+    renderAgentConversation();
+    showToast("已进入知识自助解决分支；未创建工单，也未写入后台解决记录。");
+    return;
+  }
+  conversationOutcomes.employee = "unresolved";
+  renderAgentConversation();
+  const nextTurn = agentConversationScripts.employee.turns[completedConversationTurns.employee];
+  byId("conversationInput").value = nextTurn?.user || "";
+  byId("conversationInput").focus();
+  showToast("已进入继续提单分支，请补充已尝试操作后发送。 ");
+}
+
+function advanceAgentConversation(input) {
+  const script = agentConversationScripts[currentConversationAgent];
+  const completed = completedConversationTurns[currentConversationAgent];
+  if (!script.turns[completed]) return;
+  if (currentConversationAgent === "employee" && completed === 1) conversationOutcomes.employee = "unresolved";
+  conversationUserInputs[currentConversationAgent][completed] = input.trim() || script.turns[completed].user;
+  completedConversationTurns[currentConversationAgent] += 1;
+  byId("conversationInput").value = "";
+  renderAgentConversation();
+}
+
+function setConversationAgent(agent) {
+  if (!agentConversationScripts[agent]) return;
+  currentConversationAgent = agent;
+  renderAgentConversation();
+}
+
+function resetAgentConversation(agent = currentConversationAgent) {
+  completedConversationTurns[agent] = 0;
+  conversationUserInputs[agent] = [];
+  conversationOutcomes[agent] = null;
+  renderAgentConversation();
+}
+
+function initAgentConversation() {
+  byId("conversationForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = byId("conversationInput").value.trim();
+    if (input) advanceAgentConversation(input);
+  });
+  renderAgentConversation();
+}
+
+const demoScenes = {
+  "employee-agent": { surface: "agent", role: "employee", type: "平台智能体", title: "员工智能体对话", description: "员工在灵基会话中先问知识；未解决时由智能体补齐信息并生成待确认工单草稿。", boundary: "脚本化演示，不代表实时 DC 检索；Create_Ticket 未连接并失败关闭。" },
+  "employee-workspace": { surface: "workspace", role: "employee", type: "外部工单应用", title: "我的工单", description: "员工在外部应用中查看本人可见的工单、处理进展和待评价事项。", boundary: "只展示获准 API/MCP 的应用边界；打开 IT 智能体不会自动携带当前工单上下文。" },
+  "agent-agent": { surface: "agent", role: "agent", type: "平台智能体", title: "处理人智能体对话", description: "处理人在独立灵基会话中查询授权工单、获得诊断建议并生成待确认答复草稿。", boundary: "脚本化演示，不代表实时 Get_Ticket_Detail；Reply_Ticket 未连接并失败关闭。" },
+  "agent-workspace": { surface: "workspace", role: "agent", type: "外部工单应用", title: "我的任务", description: "处理人在外部应用中查看分配给自己的待处理、已处理和已关闭任务。", boundary: "队列和统计为原型数据；刷新、答复和转派未连接真实后台，不能显示伪成功。" },
+  "dashboard": { surface: "dashboard", role: "manager", type: "运营管理", title: "仪表盘", description: "经理查看团队 SLA 达标率、满意度分布、处理人负载和工单趋势。", boundary: "原型数据；未连接真实统计 API。" }
+};
+
+const demoSceneOrder = ["employee-agent", "employee-workspace", "agent-agent", "agent-workspace", "dashboard"];
+let currentDemoScene = "employee-agent";
+
+function renderDemoScene() {
+  const scene = demoScenes[currentDemoScene];
+  const isAgentSurface = scene.surface === "agent";
+  const isDashboard = scene.surface === "dashboard";
+  byId("agentDemoStage").hidden = !isAgentSurface;
+  byId("workspaceDemoStage").hidden = isAgentSurface || isDashboard;
+  if (document.getElementById("dashboardDemoStage")) byId("dashboardDemoStage").hidden = !isDashboard;
+  byId("demoSceneType").textContent = scene.type;
+  byId("demoSceneIndex").textContent = `场景 ${demoSceneOrder.indexOf(currentDemoScene) + 1} / ${demoSceneOrder.length}`;
+  byId("demoSceneTitle").textContent = scene.title;
+  byId("demoSceneDescription").textContent = scene.description;
+  byId("demoSceneBoundary").textContent = scene.boundary;
+  document.querySelectorAll("[data-demo-scene]").forEach((button) => {
+    const active = button.dataset.demoScene === currentDemoScene;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+    button.tabIndex = active ? 0 : -1;
+  });
+  if (isAgentSurface) setConversationAgent(scene.role);
+  else if (!isDashboard) setRole(scene.role);
+}
+
+function setDemoScene(sceneId) {
+  if (!demoScenes[sceneId]) return;
+  currentDemoScene = sceneId;
+  renderDemoScene();
+}
+
+function resetCurrentDemoScene() {
+  const scene = demoScenes[currentDemoScene];
+  if (scene.surface === "agent") resetAgentConversation(scene.role);
+  else setRole(scene.role);
+  showToast(`${scene.title}已重置为演示初始状态。`);
+}
+
+function initDemoScenes() {
+  const buttons = [...document.querySelectorAll("[data-demo-scene]")];
+  buttons.forEach((button, index) => {
+    button.addEventListener("click", () => setDemoScene(button.dataset.demoScene));
+    button.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? buttons.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + buttons.length) % buttons.length;
+      buttons[nextIndex].click();
+      buttons[nextIndex].focus();
+    });
+  });
+  byId("resetCurrentScene").addEventListener("click", resetCurrentDemoScene);
+  renderDemoScene();
+}
+
+document.querySelectorAll("[data-role-select]").forEach((button) => button.addEventListener("click", () => setDemoScene(button.dataset.roleSelect === "employee" ? "employee-workspace" : "agent-workspace")));
+byId("ticketSearch").addEventListener("input", renderTickets);
+byId("statusFilter").addEventListener("change", renderTickets);
+byId("refreshTickets").addEventListener("click", () => showToast("刷新失败关闭：未连接获准的工单查询 API/MCP，当前数据未变更。"));
+byId("primaryAction").addEventListener("click", () => byId("ticketDialog").showModal());
+byId("ticketForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (event.submitter?.value === "cancel") {
+    byId("ticketDialog").close();
+    event.currentTarget.reset();
+    return;
+  }
+  if (!event.currentTarget.reportValidity()) return;
+  saveLocalDraft(event.currentTarget);
+});
+
+initAgentConversation();
+initDemoScenes();
+
+  </script>
+</body>
+</html>

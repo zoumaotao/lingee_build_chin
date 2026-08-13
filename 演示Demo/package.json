@@ -1,0 +1,9 @@
+{
+  "name": "helpdesk-workspace-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node build-standalone.mjs",
+    "preview": "npm run build && python3 -m http.server 5181"
+  }
+}

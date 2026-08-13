@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HelpDesk 双智能体与外部工单应用四场景交互原型" />
+  <base href="http://127.0.0.1:5181/" />
+  <script>
+    if (window.location.protocol === "file:") {
+      window.location.replace("http://127.0.0.1:5181/");
+    }
+  </script>
+  <title>HelpDesk 四场景演示</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <details class="demo-console" open>
+    <summary class="demo-console-summary"><span>Demo Control</span><strong>演示控制台</strong><small>仅用于切换演示场景，不属于正式产品界面</small><b><i class="when-open">收起</i><i class="when-closed">展开</i><em aria-hidden="true">⌃</em></b></summary>
+    <div class="demo-console-content">
+      <header class="demo-scene-header"><div><span class="eyebrow">四个独立入口</span><h1>HelpDesk 服务闭环演示</h1><p>平台智能体负责对话和卡片，外部应用负责工单列表、详情与直接操作。</p></div><button class="secondary-button" id="resetCurrentScene" type="button">↺ 重置当前场景</button></header>
+      <div class="demo-scene-tabs" role="tablist" aria-label="选择演示场景">
+        <button class="active" type="button" role="tab" aria-selected="true" data-demo-scene="employee-agent"><span>01</span><strong>员工智能体</strong><small>问询与建单</small></button>
+        <button type="button" role="tab" aria-selected="false" data-demo-scene="employee-workspace"><span>02</span><strong>我的工单</strong><small>查询与跟踪</small></button>
+        <button type="button" role="tab" aria-selected="false" data-demo-scene="agent-agent"><span>03</span><strong>处理人智能体</strong><small>诊断与答复</small></button>
+        <button type="button" role="tab" aria-selected="false" data-demo-scene="agent-workspace"><span>04</span><strong>我的任务</strong><small>队列与处理</small></button>
+        <button type="button" role="tab" aria-selected="false" data-demo-scene="dashboard"><span>05</span><strong>仪表盘</strong><small>SLA·评分·趋势</small></button>
+      </div>
+      <article class="demo-scene-guide" aria-live="polite">
+        <div><span id="demoSceneType">平台智能体</span><small id="demoSceneIndex">场景 1 / 4</small></div>
+        <h2 id="demoSceneTitle">员工智能体对话</h2>
+        <p id="demoSceneDescription">员工在灵基会话中先问知识；未解决时由智能体补齐信息并生成待确认工单草稿。</p>
+        <aside id="demoSceneBoundary">脚本化演示，不代表实时 DC 检索；Create_Ticket 未连接并失败关闭。</aside>
+      </article>
+    </div>
+  </details>
+
+  <section class="agent-demo-stage" id="agentDemoStage" aria-labelledby="agentDemoTitle">
+    <div class="agent-demo-stage-label"><span>Lingee Agent</span><strong id="agentDemoTitle">员工智能体会话</strong><small>平台智能体场景 · 脚本化数据 · 未连接 Foundation / MCP Tool</small></div>
+    <div class="agent-demo-shell">
+      <aside class="agent-platform-nav" aria-label="灵基智能体导航">
+        <div class="brand"><span class="brand-mark">L</span><strong>Lingee</strong></div>
+        <button class="agent-nav-back" type="button"><span>‹</span>智能体</button>
+        <div class="agent-profile-card"><div class="conversation-avatar employee" id="conversationAvatar">员</div><span><strong id="agentProfileName">Helpdesk Assistant</strong><small id="agentProfileType">员工智能体</small></span></div>
+        <nav class="agent-platform-menu"><button class="active" type="button"><span>◇</span>新会话</button><button type="button"><span>▤</span>历史会话</button></nav>
+        <div class="agent-platform-boundary"><strong>演示边界</strong><p>当前消息、知识与卡片均为预设剧情，不执行真实后台操作。</p></div>
+      </aside>
+
+      <main class="agent-conversation">
+        <header class="agent-conversation-header">
+          <div class="conversation-avatar employee" id="conversationHeaderAvatar">员</div>
+          <div><span class="eyebrow" id="conversationAgentType">员工智能体</span><h3 id="conversationAgentName">Helpdesk Assistant</h3><p id="conversationAgentSubtitle">知识问询与对话式建单</p></div>
+          <div class="conversation-runtime"><span><i></i>脚本化演示</span><small id="conversationProgress">0 / 3 轮</small></div>
+        </header>
+        <div class="agent-message-list" id="agentConversationMessages" role="log" aria-live="polite" aria-label="智能体演示对话"></div>
+        <div class="conversation-suggestions" id="conversationSuggestions" aria-label="演示建议输入"></div>
+        <form class="conversation-composer" id="conversationForm">
+          <button class="composer-icon" type="button" aria-label="附件未接入" title="附件未接入">＋</button>
+          <input id="conversationInput" maxlength="240" autocomplete="off" aria-label="输入演示消息" placeholder="输入消息，或点击上方建议继续演示" />
+          <button class="composer-send" id="conversationSend" type="submit" aria-label="发送消息">↑</button>
+        </form>
+        <p class="conversation-footnote">演示输入只保存在当前页面，不会发送到模型、Foundation 或 MCP Tool。</p>
+      </main>
+    </div>
+  </section>
+
+  <div class="prototype-stage" id="workspaceDemoStage" aria-label="HelpDesk 外部工单应用原型" hidden>
+    <div class="prototype-stage-label"><span>External App</span><strong>外部工单应用场景，不包含平台智能体会话</strong></div>
+    <div class="app-shell">
+      <aside class="global-nav" aria-label="灵基功能导航">
+        <div class="brand"><span class="brand-mark">L</span><strong>Lingee</strong></div>
+        <nav class="product-nav" aria-label="产品区"><button class="product-link active" type="button"><span>⌁</span>Work</button><button class="product-link" type="button"><span>▣</span>Manage</button><button class="product-link" type="button"><span>◇</span>Build</button></nav>
+        <div class="nav-section">
+          <p>工单服务</p>
+          <button class="assistant-link active" type="button" data-role-select="employee" aria-pressed="true"><span class="assistant-icon employee-icon">员</span><span><b>我的工单</b><small>自助与进度跟踪</small></span></button>
+          <button class="assistant-link" type="button" data-role-select="agent" aria-pressed="false"><span class="assistant-icon agent-icon">处</span><span><b>我的任务</b><small>队列与处理协同</small></span></button>
+        </div>
+        <div class="nav-section history-section"><div class="section-title"><p>最近工单</p></div><button class="history-item" type="button">VPN 连接后无法访问系统</button><button class="history-item" type="button">财务共享盘访问权限异常</button><button class="history-item" type="button">Power BI 安装申请</button><button class="history-item" type="button">Outlook 同步问题</button></div>
+        <div class="nav-footer"><span class="user-avatar">Z</span><span><strong>演示用户</strong><small>HelpDesk Workspace</small></span></div>
+      </aside>
+
+      <main class="workspace" aria-label="工单业务工作台">
+        <header class="workspace-header"><div><span class="eyebrow">Work · 外部应用</span><h2 id="workspaceTitle">我的工单</h2><p id="workspaceSubtitle">查看进度、补充信息与确认解决</p></div><div class="workspace-actions"><span class="integration-status"><i></i>演示原型 · 未连接 Foundation</span><button class="primary-button" id="primaryAction" type="button">＋ 新建工单</button></div></header>
+        <section class="stats-grid" id="statsGrid" aria-label="工单统计"></section>
+        <div class="workspace-toolbar"><div class="view-tabs" id="viewTabs" role="tablist" aria-label="工作台视图"></div><div class="filters"><label class="search-box"><span>⌕</span><input id="ticketSearch" type="search" placeholder="搜索工单号或标题" /></label><select id="statusFilter" aria-label="按状态筛选"><option value="all">全部状态</option></select></div></div>
+        <div class="work-content">
+          <section class="ticket-board" id="ticketBoard" role="tabpanel" aria-labelledby="ticketListTitle"><div class="board-heading"><div><h3 id="ticketListTitle">工单列表</h3><p id="resultCount"></p></div><button class="secondary-button" id="refreshTickets" type="button">↻ 刷新</button></div><div class="ticket-list" id="ticketList"></div></section>
+          <aside class="detail-panel" id="detailPanel" aria-live="polite"><div class="empty-detail"><span>▤</span><strong>选择一张工单</strong><p>在左侧列表中选择工单后查看详情和可执行操作。</p></div></aside>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  
+  <div class="prototype-stage" id="dashboardDemoStage" aria-label="HelpDesk 运营仪表盘" hidden>
+    <div class="prototype-stage-label"><span>Dashboard</span><strong>运营仪表盘 · SLA · 评分 · 处理人负载</strong></div>
+    <div class="app-shell dashboard-shell">
+      <aside class="global-nav" aria-label="灵基功能导航">
+        <div class="brand"><span class="brand-mark">L</span><strong>Lingee</strong></div>
+        <nav class="product-nav" aria-label="产品区"><button class="product-link active" type="button"><span>⌁</span>Work</button><button class="product-link" type="button"><span>▣</span>Manage</button><button class="product-link" type="button"><span>◇</span>Build</button></nav>
+        <div class="nav-section"><p>工单服务</p>
+          <button class="assistant-link" type="button"><span class="assistant-icon employee-icon">员</span><span><b>我的工单</b><small>自助与进度跟踪</small></span></button>
+          <button class="assistant-link" type="button"><span class="assistant-icon agent-icon">处</span><span><b>我的任务</b><small>队列与处理协同</small></span></button>
+          <button class="assistant-link active" type="button"><span class="assistant-icon" style="color:#1f8f63;background:#e8f6ef">板</span><span><b>运营仪表盘</b><small>SLA · 评分 · 负载</small></span></button>
+        </div>
+        <div class="nav-footer"><span class="user-avatar">M</span><span><strong>Manager</strong><small>IT Service Desk Lead</small></span></div>
+      </aside>
+      <main class="workspace dashboard-workspace" aria-label="运营仪表盘">
+        <header class="workspace-header"><div><span class="eyebrow">Work · 运营管理</span><h2>运营仪表盘</h2><p>团队 SLA 达标率、满意度、工单趋势与处理人负载一览</p></div><div class="workspace-actions"><span class="integration-status"><i></i>原型数据 · 未连接真实后台</span><select class="period-select" aria-label="时间周期"><option>本周 (8/5 - 8/11)</option><option>上周</option><option>本月</option></select></div></header>
+        <section class="dashboard-stats" aria-label="关键指标">
+          <article class="stat-card"><span>本周工单</span><div><strong>47</strong><small class="good">+12% 较上周</small></div></article>
+          <article class="stat-card"><span>SLA 达标率</span><div><strong>94.8%</strong><small class="good">+2.4% 较上周</small></div></article>
+          <article class="stat-card"><span>平均解决时长</span><div><strong>3.2h</strong><small class="warn">+0.4h 较上周</small></div></article>
+          <article class="stat-card"><span>平均满意度</span><div><strong>4.6 / 5</strong><small class="good">62% 五星</small></div></article>
+        </section>
+        <section class="dashboard-grid">
+          <div class="dashboard-card"><h4>分类 SLA 达标率</h4><div class="sla-bars"><div class="sla-bar"><span>Network & VPN</span><div class="bar-track"><div class="bar-fill good" style="width:98%"></div></div><b>98%</b></div><div class="sla-bar"><span>Email</span><div class="bar-track"><div class="bar-fill good" style="width:96%"></div></div><b>96%</b></div><div class="sla-bar"><span>Software Request</span><div class="bar-track"><div class="bar-fill warn" style="width:91%"></div></div><b>91%</b></div><div class="sla-bar"><span>Access & Identity</span><div class="bar-track"><div class="bar-fill danger" style="width:88%"></div></div><b>88%</b></div><div class="sla-bar"><span>HR Portal</span><div class="bar-track"><div class="bar-fill good" style="width:97%"></div></div><b>97%</b></div></div></div>
+          <div class="dashboard-card"><h4>满意度分布</h4><div class="rating-dist"><div class="rating-row"><span>⭐ 5</span><div class="bar-track"><div class="bar-fill good" style="width:62%"></div></div><b>62%</b></div><div class="rating-row"><span>⭐ 4</span><div class="bar-track"><div class="bar-fill good" style="width:28%"></div></div><b>28%</b></div><div class="rating-row"><span>⭐ 3</span><div class="bar-track"><div class="bar-fill warn" style="width:7%"></div></div><b>7%</b></div><div class="rating-row"><span>⭐ 2</span><div class="bar-track"><div class="bar-fill danger" style="width:2%"></div></div><b>2%</b></div><div class="rating-row"><span>⭐ 1</span><div class="bar-track"><div class="bar-fill danger" style="width:1%"></div></div><b>1%</b></div></div></div>
+          <div class="dashboard-card"><h4>处理人负载</h4><table class="load-table"><thead><tr><th>处理人</th><th>待办</th><th>今日解决</th><th>超时</th><th>SLA</th></tr></thead><tbody><tr><td>Alex Tan</td><td>6</td><td>3</td><td class="danger">1</td><td>92%</td></tr><tr><td>Mei Ling</td><td>5</td><td>4</td><td>0</td><td>98%</td></tr><tr><td>Daniel Wong</td><td>4</td><td>2</td><td>0</td><td>100%</td></tr><tr><td>Sarah Lim</td><td>3</td><td>3</td><td>0</td><td>97%</td></tr></tbody></table></div>
+          <div class="dashboard-card"><h4>本周工单趋势</h4><div class="trend-chart"><div class="trend-bar" style="--h:40%"><span>Mon</span><b>8</b></div><div class="trend-bar" style="--h:60%"><span>Tue</span><b>12</b></div><div class="trend-bar" style="--h:45%"><span>Wed</span><b>9</b></div><div class="trend-bar" style="--h:55%"><span>Thu</span><b>11</b></div><div class="trend-bar" style="--h:35%"><span>Fri</span><b>7</b></div></div></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="ticketDialog" class="ticket-dialog" aria-labelledby="ticketDialogTitle">
+    <form method="dialog" id="ticketForm">
+      <div class="dialog-header"><div><span class="eyebrow">本地草稿</span><h2 id="ticketDialogTitle">创建新工单</h2><p>提交只保存到当前浏览器会话，不会调用后台。</p></div><button class="icon-button" value="cancel" aria-label="关闭">×</button></div>
+      <label><span>问题标题 *</span><input name="title" required maxlength="80" placeholder="简要描述遇到的问题" /></label>
+      <div class="dialog-grid"><label><span>分类 *</span><select name="category" required><option value="">请选择</option><option>IT / Network & VPN</option><option>IT / Software Request</option><option>IT / Email</option><option>People GBS / HR Portal</option></select></label><label><span>优先级 *</span><select name="priority" required><option>Medium</option><option>High</option><option>Low</option></select></label></div>
+      <label><span>问题描述 *</span><textarea name="description" required rows="4" placeholder="说明现象、影响范围和已尝试的操作"></textarea></label>
+      <div class="dialog-actions"><button class="secondary-button" value="cancel">取消</button><button class="primary-button" value="default" id="saveDraftButton">保存本地草稿</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>
