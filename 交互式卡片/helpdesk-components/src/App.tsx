@@ -465,7 +465,7 @@ function HelpdeskPreview({ componentId, view, searchParams }: { componentId: Com
   const [locale, setLocale] = useState<Locale>(searchParams.get("locale") === "en-US" ? "en-US" : "zh-CN");
   const scene = searchParams.get("scene") || "";
   const emit: Emit = async () => false;
-  const data: DataMap = scene === "receipt" ? { status: "created", ticketId: "HD-2026-0811-0256", assignedTeam: "IT Infrastructure" } : scene === "progress" ? { ticket: tickets[0] } : scene === "confirm" ? { ticket: tickets[0], latestReply: "核实为 DNS 缓存问题，已远程清除并验证恢复正常。", latestReplyAuthor: "Alex Tan", latestReplyTime: "11:30", step: searchParams.get("step") || "" } : {};
+  const data: DataMap = scene === "receipt" ? { status: "created", ticketId: "HD-2026-0811-0256", assignedTeam: "IT Infrastructure" } : scene === "progress" || scene === "confirm" || scene === "" ? { ticket: tickets[0], description: tickets[0].descZh || "", latestReply: "核实为 DNS 缓存问题，已远程清除并验证恢复正常。", latestReplyAuthor: "Alex Tan", latestReplyTime: "11:30", step: searchParams.get("step") || "" } : {};
   const props = { view, locale, data, emit, previewMode: true };
   const content = componentId === "agent" ? <AgentCard {...props} /> : componentId === "manager" ? <ManagerCard {...props} /> : componentId === "approval" ? <ApprovalCard {...props} /> : componentId === "knowledge" ? <KnowledgeCard {...props} /> : <EmployeeCard {...props} />;
   return <main className="card-host">{content}</main>;
