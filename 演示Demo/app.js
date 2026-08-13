@@ -221,7 +221,7 @@ const agentConversationScripts = {
       { user: "确认提交", replies: [{ kind: "assistant", text: "工单已创建成功。" }, { kind: "iframe", component: "employee/ticket-detail", title: "工单回执", params: "scene=receipt" }] },
       { user: "查一下我的工单", replies: [{ kind: "iframe", component: "employee/ticket-list", title: "我的工单列表" }] },
       { user: "看一下 VPN 那个工单的进度", replies: [{ kind: "iframe", component: "employee/ticket-detail", title: "工单进度", params: "scene=progress" }] },
-      { user: "HR Portal 密码重置那个工单已经解决了，我来评价一下", replies: [{ kind: "iframe", component: "employee/rating", title: "服务评价" }] }
+      { user: "HR Portal 密码重置那个工单已经解决了，我来评价一下", replies: [{ kind: "iframe", component: "employee/ticket-detail", title: "确认解决并评价", params: "scene=confirm" }] }
     ]
   },
   agent: {
