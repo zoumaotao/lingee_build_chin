@@ -1083,20 +1083,39 @@
     </table>
 
     <h3>4.6 后台工单应用功能清单</h3>
+    <div class="highlight highlight-blue">
+        <strong>角色模型：</strong>Requester（提交者）、Agent（处理专员）、Manager（部门经理）、Admin（系统管理员）。Manager 只分配/转派，不处理工单。工单最终关闭必须由提交人确认。
+    </div>
+    <h4>工单状态（5 状态）</h4>
+    <table>
+        <tr><th>状态</th><th>说明</th><th>进入条件</th></tr>
+        <tr><td>新建</td><td>刚创建，尚未完成路由</td><td>用户或 AI 创建工单</td></tr>
+        <tr><td>待分配</td><td>已识别处理组，未指定处理人</td><td>路由到组但未匹配到人、Agent 修改分类后</td></tr>
+        <tr><td>处理中</td><td>已指定具体处理人</td><td>自动分配、Manager 分配、转派、提交人驳回</td></tr>
+        <tr><td>待提交人确认</td><td>处理人认为已解决</td><td>Agent 执行"提交已解决"</td></tr>
+        <tr><td>已关闭</td><td>提交人确认问题已解决</td><td>提交人执行"确认解决"</td></tr>
+    </table>
+    <p><strong>关键规则：</strong>回复不改变状态；转派不改变状态；提交人可驳回（回到处理中）；Agent 不能直接关闭工单。</p>
+    <h4>功能清单</h4>
     <table>
         <tr><th>#</th><th>功能模块</th><th>说明</th><th>阶段</th></tr>
-        <tr><td>1</td><td>工单列表与详情</td><td>全量工单管理视图，支持筛选/搜索</td><td>1.0</td></tr>
-        <tr><td>2</td><td>工单自动分配</td><td>基于分类 Round-robin 自动派单到对应工作组</td><td>1.0</td></tr>
-        <tr><td>3</td><td>状态流转引擎</td><td>待分配→待处理→处理中→待确认→已关闭</td><td>1.0</td></tr>
-        <tr><td>4</td><td>答复与通知</td><td>处理人答复 + 状态更新。提问人通过“我的工单”主动查看答复</td><td>1.0</td></tr>
-                <tr><td>6</td><td>经理转派</td><td>Helpdesk Manager 可将工单重新分配</td><td>2.0</td></tr>
-        <tr><td>7</td><td>SLA 考核引擎</td><td>按分类设定响应/解决时间，超时自动告警升级</td><td>1.0</td></tr>
-        <tr><td>8</td><td>评分系统</td><td>1-5 星满意度评价 + KPI 统计</td><td>1.0</td></tr>
-        <tr><td>9</td><td>仪表盘</td><td>已解决/未解决/SLA 超时/满意度等统计大屏</td><td>1.0</td></tr>
-        <tr><td>10</td><td>自动关单</td><td>超时无回复自动关闭 + 通知提问人</td><td>1.0</td></tr>
-        <tr><td>11</td><td>企业知识一键上传</td><td>处理产物/附件上传 DC；有智能体自动归属，无智能体游离。标准能力计划 2026-08-21 发布，是否进入 1.0 以联调/UAT 为准</td><td>PLANNED</td></tr>
-        <tr><td>12</td><td>业务线隔离</td><td>Tech GBS / People GBS / BP 三线独立管理</td><td>2.0</td></tr>
-        <tr><td>13</td><td>审批流程</td><td>IT Service Request 部分需 L1/L2 审批</td><td>2.0</td></tr>
+        <tr><td>1</td><td>工单列表与详情</td><td>按角色权限展示工单，支持筛选/搜索</td><td>1.0</td></tr>
+        <tr><td>2</td><td>AI 路由与自动分配</td><td>AI 识别部门/分类/优先级 → 按一级分类匹配规则 → 负载均衡分配处理人</td><td>1.0</td></tr>
+        <tr><td>3</td><td>状态流转引擎</td><td>新建→待分配→处理中→待提交人确认→已关闭；支持驳回</td><td>1.0</td></tr>
+        <tr><td>4</td><td>多次回复</td><td>提交人和处理人均可多次回复；回复不改变状态，按时间线展示</td><td>1.0</td></tr>
+        <tr><td>5</td><td>提交已解决</td><td>Agent 独立操作，工单进入“待提交人确认”</td><td>1.0</td></tr>
+        <tr><td>6</td><td>确认解决/驳回</td><td>提交人确认关闭或驳回（回到处理中，需填原因）</td><td>1.0</td></tr>
+        <tr><td>7</td><td>部门内转派</td><td>Agent 选本组目标人 + 填原因；状态不变</td><td>1.0</td></tr>
+        <tr><td>8</td><td>跨组转派</td><td>Agent 改分类 → 清除处理人 → 流转本组 Manager → Manager 决定</td><td>1.0</td></tr>
+        <tr><td>9</td><td>Manager 分配</td><td>从待分配队列指定人员、转交其他组或触发自动分配</td><td>1.0</td></tr>
+        <tr><td>10</td><td>SLA 考核</td><td>绑定一级分类，只计工作时间（排除周末/节假日），首次响应 + 解决时限</td><td>1.0</td></tr>
+        <tr><td>11</td><td>评分系统</td><td>1-5 星满意度评价 + KPI 统计</td><td>1.0</td></tr>
+        <tr><td>12</td><td>仪表盘</td><td>按业务处理组/处理人/公司/分类筛选；工单量、SLA 达标率、满意度</td><td>1.0</td></tr>
+        <tr><td>13</td><td>邮件通知</td><td>覆盖创建/分配/转派/回复/待确认/驳回/关闭/SLA 预警/休假自动回复</td><td>1.0</td></tr>
+        <tr><td>14</td><td>休假自动回复</td><td>休假人员不参与分配；用户回复时自动告知并通知 Manager</td><td>1.0</td></tr>
+        <tr><td>15</td><td>审计日志</td><td>全链路不可篡改，记录所有状态变化和操作前后值</td><td>1.0</td></tr>
+        <tr><td>16</td><td>企业知识一键上传</td><td>产物/附件上传 DC；计划 2026-08-21 发布，以联调/UAT 为准</td><td>PLANNED</td></tr>
+        <tr><td>17</td><td>业务线隔离</td><td>Tech GBS / People GBS / BP 三线独立管理</td><td>2.0</td></tr>
     </table>
 
     <h3>4.7 知识中心（灵基 DC）</h3>
@@ -1147,7 +1166,7 @@
         <tr><td>Incident Request</td><td>IT</td><td>8</td><td>29</td><td>1 天</td><td>5 天</td><td>否</td></tr>
         <tr><td>Service Request</td><td>IT</td><td>8</td><td>27</td><td>1 天</td><td>5 天</td><td>部分需要</td></tr>
     </table>
-    <p><strong>共计 75 条二级分类</strong>，全部启用自动分配（Round-robin），纳入 8/31 试运行范围。</p>
+    <p><strong>共计 75 条二级分类</strong>。SLA 规则绑定一级分类（不绑二级），优先级由 AI 自动判断。自动分配按一级分类匹配规则、负载均衡选择处理人。</p>
 
     <h3>5.2 SLA 规则</h3>
     <h4>Agent 侧 SLA</h4>
