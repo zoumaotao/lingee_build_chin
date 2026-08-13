@@ -1086,25 +1086,23 @@
     <div class="highlight highlight-blue">
         <strong>角色模型：</strong>Requester（提交者）、Agent（处理专员）、Manager（部门经理）、Admin（系统管理员）。Manager 只分配/转派，不处理工单。工单最终关闭必须由提交人确认。
     </div>
-    <h4>工单状态（5 状态）</h4>
+    <h4>工单状态（4 状态）</h4>
     <table>
         <tr><th>状态</th><th>说明</th><th>进入条件</th></tr>
         <tr><td>新建</td><td>刚创建，尚未完成路由</td><td>用户或 AI 创建工单</td></tr>
         <tr><td>待分配</td><td>已识别处理组，未指定处理人</td><td>路由到组但未匹配到人、Agent 修改分类后</td></tr>
         <tr><td>处理中</td><td>已指定具体处理人</td><td>自动分配、Manager 分配、转派、提交人驳回</td></tr>
-        <tr><td>待提交人确认</td><td>处理人认为已解决</td><td>Agent 执行"提交已解决"</td></tr>
-        <tr><td>已关闭</td><td>提交人确认问题已解决</td><td>提交人执行"确认解决"</td></tr>
+        <tr><td>已关闭</td><td>员工确认问题已解决</td><td>员工执行"已解决"</td></tr>
     </table>
-    <p><strong>关键规则：</strong>回复不改变状态；转派不改变状态；提交人可驳回（回到处理中）；Agent 不能直接关闭工单。</p>
+    <p><strong>关键规则：</strong>回复不改变状态；处理人只管答复不操作状态；员工决定是否关闭（已解决+评价 或 驳回）。</p>
     <h4>功能清单</h4>
     <table>
         <tr><th>#</th><th>功能模块</th><th>说明</th><th>阶段</th></tr>
         <tr><td>1</td><td>工单列表与详情</td><td>按角色权限展示工单，支持筛选/搜索</td><td>1.0</td></tr>
         <tr><td>2</td><td>AI 路由与自动分配</td><td>AI 识别部门/分类/优先级 → 按一级分类匹配规则 → 负载均衡分配处理人</td><td>1.0</td></tr>
-        <tr><td>3</td><td>状态流转引擎</td><td>新建→待分配→处理中→待提交人确认→已关闭；支持驳回</td><td>1.0</td></tr>
+        <tr><td>3</td><td>状态流转引擎</td><td>新建→待分配→处理中→已关闭；员工确认解决或驳回回到处理中</td><td>1.0</td></tr>
         <tr><td>4</td><td>多次回复</td><td>提交人和处理人均可多次回复；回复不改变状态，按时间线展示</td><td>1.0</td></tr>
-        <tr><td>5</td><td>提交已解决</td><td>Agent 独立操作，工单进入“待提交人确认”</td><td>1.0</td></tr>
-        <tr><td>6</td><td>确认解决/驳回</td><td>提交人确认关闭或驳回（回到处理中，需填原因）</td><td>1.0</td></tr>
+                <tr><td>6</td><td>确认解决/驳回</td><td>提交人确认关闭或驳回（回到处理中，需填原因）</td><td>1.0</td></tr>
         <tr><td>7</td><td>部门内转派</td><td>Agent 选本组目标人 + 填原因；状态不变</td><td>1.0</td></tr>
         <tr><td>8</td><td>跨组转派</td><td>Agent 改分类 → 清除处理人 → 流转本组 Manager → Manager 决定</td><td>1.0</td></tr>
         <tr><td>9</td><td>Manager 分配</td><td>从待分配队列指定人员、转交其他组或触发自动分配</td><td>1.0</td></tr>
@@ -1133,10 +1131,10 @@
 
     <h3>4.8 交互式组件（MCP Apps）：业务验收与实现颗粒度</h3>
     <div class="highlight highlight-blue">
-        <strong>最新实现证据：</strong><code>helpdesk-components</code> 参考工程当前在源码/构建脚本中定义 <strong>28 个原子组件</strong>（员工 7、处理人 6、经理 5、审批 4、知识 6），具备独立 appCode、输入/输出 Schema 和 Tool 关联；这只证明本地参考实现，不证明已上传 Console、完成 Host 集成或通过真实 MCP/UAT。
+        <strong>最新实现证据：</strong><code>helpdesk-components</code> 参考工程当前在源码/构建脚本中定义 <strong>6 个业务组件</strong>（员工 4、处理人 2），具备独立 appCode、输入/输出 Schema 和 Tool 关联；这只证明本地参考实现，不证明已上传 Console、完成 Host 集成或通过真实 MCP/UAT。
     </div>
     <table>
-        <tr><th>#</th><th>11 类业务验收组件</th><th>关键依赖/边界</th></tr>
+        <tr><th>#</th><th>6 个业务组件</th><th>关键依赖/边界</th></tr>
         <tr><td>1</td><td>知识检索卡</td><td>DC 授权检索与引用来源</td></tr>
         <tr><td>2</td><td>工单草稿卡（含附件）</td><td>会话附件 8/13 对齐、原计划 8/14 发布；确认前不得建单</td></tr>
         <tr><td>3</td><td>附件确认卡</td><td>展示、删除、追加和结构化附件引用；失败保留草稿</td></tr>
@@ -1149,7 +1147,7 @@
         <tr><td>10</td><td>处理人工单详情卡（含转派）</td><td>转派权限、目标处理人和真实回执</td></tr>
         <tr><td>11</td><td>知识产物卡</td><td>只承载展示/确认；触发方式和 eligible ticket 待定，DC 写入为 8/21 PLANNED</td></tr>
     </table>
-    <p><strong>映射要求：</strong>11 类业务组件必须逐项映射到 <code>appCode/view → 复用原子组件 → 依赖 Tool → 责任人 → 验收结果</code>。不能用“本地已有 28 个组件”替代 11 类 HelpDesk 业务验收；组件数量统一以当前构建清单为准。</p>
+    <p><strong>映射要求：</strong>6 个业务组件必须逐项映射到 <code>appCode/view → 复用原子组件 → 依赖 Tool → 责任人 → 验收结果</code>。不能用“本地已有 6 个组件”替代 6 个 HelpDesk 业务组件验收；组件数量统一以当前构建清单为准。</p>
     <div class="highlight highlight-yellow">
         <strong>Demo 与生产隔离：</strong>本地四场景 Demo 已覆盖员工智能体、我的工单、处理人智能体、我的任务，并按失败关闭原则演示交互；生产模式无真实数据/回执时不得回退 Demo 成功数据。当前 <code>components/index.html</code> 生成物仍可能滞后于源码清单，应以 <code>scripts/components.mjs</code> 和实际构建结果为准并重新生成校验。另需在 8/14 前校正实现优先级：源码当前将 <code>agent/reassign</code> 标为 P1，但最新整体计划要求处理人转派能力随 8/17 Skill 交付，二者必须统一。
     </div>
@@ -1319,11 +1317,11 @@
         <tr><td>部署方案</td><td>@荆龙刚 @吴宏超</td><td>8/13 第二次客户沟通</td></tr>
         <tr><td>UAT/试运行</td><td>@高翔 @部伟及项目组</td><td>8/14 工单范围、8/18 灵基交互范围、8/20 演示/UAT/试运行范围、8/31 上线试运行</td></tr>
     </table>
-    <h4>11 类业务组件</h4>
+    <h4>6 个业务组件</h4>
     <ol>
         <li>知识检索卡</li><li>工单草稿卡（含附件）</li><li>附件确认卡</li><li>工单回执卡</li><li>员工工单列表卡</li><li>员工工单详情卡（含进度）</li><li>工单评价卡</li><li>工单答复卡</li><li>处理人工单列表卡</li><li>处理人工单详情卡（含转派）</li><li>知识产物卡</li>
     </ol>
-    <p>11 类是业务验收类型，不等同参考工程当前 28 个原子组件；每类需映射 appCode/view、复用原子组件、依赖 Tool、责任人和验收结果。</p>
+    <p>11 类是业务验收类型，不等同参考工程当前 6 个业务组件；每类需映射 appCode/view、复用原子组件、依赖 Tool、责任人和验收结果。</p>
     <div class="highlight highlight-yellow">
         <strong>一键会话边界：</strong>入口纳入 8/14 目标；是否携带 ticketId、描述和附件等受控上下文待 8/13 对齐。若未确认，只交付明确提示“不携带当前工单上下文”的通用新会话，不得把敏感内容直接拼入 URL。
     </div>
@@ -1335,7 +1333,7 @@
         <tr><th>工作项</th><th>当前证据</th><th>不能据此宣称</th><th>下一验收</th></tr>
         <tr><td>需求/计划文档</td><td>PRD、会议纪要、冲刺计划及专项规格已形成</td><td>客户已最终签字或范围已冻结</td><td>8/13 checklist，8/14/8/18 验收范围</td></tr>
         <tr><td>四场景 Demo</td><td>员工智能体、我的工单、处理人智能体、我的任务已有脚本化交互原型</td><td>真实智能体、真实 Tool、权限或生产链路已完成</td><td>8/20 前使用目标环境数据演示</td></tr>
-        <tr><td>MCP Apps 参考工程</td><td>React 共用运行时、28 个原子组件定义、Tool 映射、Schema、双语与失败关闭逻辑已有源码</td><td>已上传 Console、Host 集成完成、11 类业务组件已验收</td><td>8/14 形成 11 类映射并逐项取真实回执</td></tr>
+        <tr><td>MCP Apps 参考工程</td><td>React 共用运行时、6 个业务组件定义、Tool 映射、Schema、双语与失败关闭逻辑已有源码</td><td>已上传 Console、Host 集成完成、6 个业务组件已验收</td><td>8/14 形成 6 个组件映射并逐项取真实回执</td></tr>
         <tr><td>员工/处理人 Skill</td><td>目标和能力清单已明确</td><td>已在目标租户发布并通过 UAT</td><td>员工 8/14；处理人 8/17</td></tr>
         <tr><td>工单系统/MCP Server</td><td>接口与基础流程已设计</td><td>部署、用户初始化、权限和端到端链路已完成</td><td>8/13 部署沟通；8/14 工单范围验收</td></tr>
         <tr><td>海外 DC</td><td>新加坡节点基础部署已有记录</td><td>HelpDesk 已连通或知识检索可用</td><td>8/13 目标环境连通回执</td></tr>
@@ -1389,7 +1387,7 @@
     <table>
         <tr><th>标品能力项</th><th>目标时间</th><th>验收口径</th><th>状态</th></tr>
         <tr><td>Foundation：Console 级 MCP 服务实例和业务组件</td><td>8/14</td><td>目标环境、目标租户真实链路验收；既有 release 记录不替代 HelpDesk 可用性</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
-        <tr><td>Build：构建业务组件</td><td>8/14</td><td>11 类业务组件使用 Build 构建并在 Console 管理，逐项映射和验收</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
+        <tr><td>Build：构建业务组件</td><td>8/14</td><td>6 个业务组件使用 Build 构建并在 Console 管理，逐项映射和验收</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
         <tr><td>MCP Apps 使用会话附件</td><td>8/13 对齐；原计划 8/14 发布</td><td>平台发布记录 + HelpDesk 附件 UAT；未取得证据前不得标记已解决</td><td><span class="tag tag-p1">待对齐/验收</span></td></tr>
         <tr><td>Foundation + DC：智能体产物/附件写入 DC</td><td>08/21 计划发布</td><td>有/无智能体归属、权限、真实回执、解析/索引和授权检索</td><td><span class="tag tag-p1">PLANNED</span></td></tr>
     </table>
@@ -1422,7 +1420,7 @@
 
     <h3>8.4 关键风险与阻塞</h3>
     <div class="highlight highlight-red">
-        <strong>阻塞项 1：</strong>Foundation/Build 8/14 节点须在目标环境逐项验收；release 或“已支持开发”不代表 11 类业务组件可用。
+        <strong>阻塞项 1：</strong>Foundation/Build 8/14 节点须在目标环境逐项验收；release 或“已支持开发”不代表 6 个业务组件可用。
     </div>
     <div class="highlight highlight-red">
         <strong>阻塞项 2：</strong>MCP Apps 会话附件 8/13 待对齐、8/14 为原计划发布日期；未有实际发布和 UAT 时，含附件工单及知识产物链路仍受阻。
@@ -1518,7 +1516,7 @@
             <td>组件生成物与源码清单不一致</td>
             <td><span class="tag tag-p1">中</span> 组件数量、appCode 或验收范围错误</td>
             <td>中</td>
-            <td>当前以 scripts/components.mjs 的 28 个原子组件为准，重新生成 components/index.html，并建立 11 类业务映射</td>
+            <td>当前以 scripts/components.mjs 的 6 个业务组件为准，重新生成 components/index.html，并建立 6 个组件映射</td>
         </tr>
         <tr>
             <td>知识产物触发与选单规则未定</td>
@@ -1535,13 +1533,13 @@
 
     <h3>10.0 8/31 试运行门禁</h3>
     <div class="highlight highlight-red">
-        <strong>上线判定：</strong>8/31 是“验收、部署并上线试运行”的目标，不是无条件正式上线。必须同时具备目标环境版本、部署/回滚方案、真实用户与权限、真实 Tool 回执、11 类业务组件映射、UAT 记录、已知问题与降级清单、试运行人员及支持责任人。
+        <strong>上线判定：</strong>8/31 是“验收、部署并上线试运行”的目标，不是无条件正式上线。必须同时具备目标环境版本、部署/回滚方案、真实用户与权限、真实 Tool 回执、6 个业务组件映射、UAT 记录、已知问题与降级清单、试运行人员及支持责任人。
     </div>
     <table>
         <tr><th>门禁</th><th>必须提供的证据</th><th>未满足时处理</th></tr>
         <tr><td>身份与权限</td><td>SSO、数据权限、工单用户初始化、跨用户越权测试</td><td>用户初始化仍 TBD 时不得扩大试运行范围</td></tr>
         <tr><td>真实业务链路</td><td>员工提问/建单/查单、处理人查单/回复/转派的真实 Tool 请求与回执</td><td>接口失败必须失败关闭，不显示模拟成功</td></tr>
-        <tr><td>业务组件</td><td>11 类业务组件到 appCode/view、原子组件、Tool、责任人、结果的映射</td><td>本地 28 个原子组件不能替代业务验收</td></tr>
+        <tr><td>业务组件</td><td>6 个业务组件到 appCode/view、原子组件、Tool、责任人、结果的映射</td><td>本地 6 个业务组件不能替代业务验收</td></tr>
         <tr><td>附件</td><td>会话附件发布记录、Host 传递、追加/删除、上传失败与草稿保留 UAT</td><td>能力未发布时禁用或明确降级含附件场景</td></tr>
         <tr><td>部署与连通</td><td>海外 DC 连通回执、工单部署环境、监控与回滚</td><td>部署完成但未连通不得标记可用</td></tr>
         <tr><td>条件能力</td><td>8/21 DC 写入若纳入试运行，需归属、权限、回执、索引和授权检索证据</td><td>未通过则保持 PLANNED，从 8/31 范围移除</td></tr>
@@ -1586,7 +1584,7 @@
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
         <tr><td>19</td><td>DC 海外连通</td><td>新加坡节点使用目标租户和身份取得真实检索回执；仅有部署记录不算通过</td></tr>
-        <tr><td>20</td><td>MCP Apps 业务验收</td><td>11 类业务组件逐项映射 appCode/view、依赖 Tool 和责任人；渲染、回显、失败关闭和生产不回退 Demo 数据通过</td></tr>
+        <tr><td>20</td><td>MCP Apps 业务验收</td><td>6 个业务组件逐项映射 appCode/view、依赖 Tool 和责任人；渲染、回显、失败关闭和生产不回退 Demo 数据通过</td></tr>
         <tr><td>21</td><td>Work/SSO/权限</td><td>“我的工单/我的任务”可访问，SSO 与数据权限真实生效；工单用户初始化方案和结果可追溯</td></tr>
         <tr><td>22</td><td>一键会话</td><td>入口与上下文能力分别验收；未确认安全 contextRef/附件契约时，只提供明确提示“不携当前工单上下文”的通用新会话</td></tr>
         <tr><td>23</td><td>多语言</td><td>英文配置下界面和 AI 回复均为英文，无中英夹杂</td></tr>
