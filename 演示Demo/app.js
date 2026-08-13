@@ -356,7 +356,7 @@ const demoScenes = {
   "dashboard": { surface: "dashboard", role: "manager", type: "运营管理", title: "仪表盘", description: "经理查看团队 SLA 达标率、满意度分布、处理人负载和工单趋势。", boundary: "原型数据；未连接真实统计 API。" }
 };
 
-const demoSceneOrder = ["employee-agent", "employee-workspace", "agent-agent", "agent-workspace", "dashboard"];
+const demoSceneOrder = ["employee-agent", "agent-agent", "employee-workspace", "agent-workspace", "dashboard"];
 let currentDemoScene = "employee-agent";
 
 function renderDemoScene() {
