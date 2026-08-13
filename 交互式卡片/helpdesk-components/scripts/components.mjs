@@ -9,7 +9,6 @@ const componentPriorities = {
   "employee/ticket-draft": "P0",
   "employee/ticket-list": "P0",
   "employee/ticket-detail": "P0",
-  "employee/rating": "P1",
   "agent/notification": "P1",
   "agent/queue": "P0",
   "agent/ticket-detail": "P0",
@@ -56,7 +55,6 @@ const componentDefinitions = [
   card("employee", "ticket-draft", "HelpDesk工单确认卡", "在 Agent 对话中展示 AI 生成的工单草稿并收集提交确认", "工单信息核对与确认提交", ["Create_Ticket"]),
   card("employee", "ticket-list", "HelpDesk我的工单列表卡", "在 Agent 对话中展示员工的工单列表", "员工工单列表查询", ["List_My_Tickets", "Get_Ticket_Detail"]),
   card("employee", "ticket-detail", "HelpDesk员工工单进度卡", "在 Agent 对话中展示单个工单的处理进度并收集解决确认", "工单进度展示与关闭确认", ["Close_Ticket"]),
-  card("employee", "rating", "HelpDesk服务评价卡", "在 Agent 对话中收集用户对已完成工单的服务评价", "服务评分与评价提交", ["Rate_Ticket"]),
 
   card("agent", "notification", "HelpDesk新单通知卡", "在 Agent 对话中向处理人展示新分配工单并收集接单或转派意图", "新单摘要、接单与转派入口", ["Get_Ticket_Detail", "Reassign_Ticket"]),
   card("agent", "queue", "HelpDesk处理人待办卡", "在 Agent 对话中展示处理人按 SLA 排序的待办摘要", "处理人待办摘要", ["Get_Ticket_Detail"]),
@@ -108,7 +106,6 @@ function createDataSchema(definition) {
     "employee/ticket-draft": { properties: { requesterName: stringField("提单人姓名"), requesterEmail: stringField("提单人邮箱"), title: stringField("工单标题"), category: stringField("分类"), priority: stringField("优先级"), description: stringField("问题描述"), attachments: { type: "array", items: attachmentSchema } }, required: ["title", "category", "priority", "description"] },
     "employee/ticket-list": { properties: { tickets: { type: "array", items: ticketSchema } }, required: ["tickets"] },
     "employee/ticket-detail": { properties: { ticket: ticketSchema, latestReply: stringField("最新回复"), latestReplyAuthor: stringField("回复人"), latestReplyTime: stringField("回复时间"), timeline: { type: "array", items: { type: "object" } } }, required: ["ticket"] },
-    "employee/rating": { properties: { ticketId: stringField("已完成工单编号"), assignee: stringField("服务处理人") }, required: ["ticketId"] },
     "agent/notification": { properties: { ticket: ticketSchema, requester: stringField("提单人"), description: stringField("问题摘要") }, required: ["ticket"] },
     "agent/queue": { properties: { tickets: { type: "array", items: ticketSchema }, resolvedToday: numberField("今日已解决数量") }, required: ["tickets"] },
     "agent/ticket-detail": { properties: { ticket: ticketSchema, requester: stringField("提单人"), description: stringField("问题描述"), attachments: { type: "array", items: attachmentSchema }, timeline: { type: "array", items: { type: "object" } } }, required: ["ticket"] },
