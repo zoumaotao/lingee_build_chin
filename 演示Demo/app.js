@@ -235,7 +235,7 @@ const agentConversationScripts = {
     ],
     turns: [
       { user: "看下 VPN 那张工单", replies: [{ kind: "iframe", component: "agent/ticket-detail", title: "工单详情" }] },
-      { user: "帮我草拟一个答复给员工", replies: [{ kind: "assistant", text: "好的，我根据工单信息和处理建议帮你草拟了答复，已填入答复框：\n\n「你好 Michelle，经排查确认是 VPN 分割路由配置未包含内部网段。请按以下步骤操作：1. 删除当前 VPN 配置 2. 从 IT Portal 导入最新配置 3. 完成 MFA 后重新连接 4. 运行 ipconfig /flushdns 刷新 DNS。如仍有问题请附上 route print 截图。」\n\n你可以在详情卡的答复框中编辑后发送。" }] },
+      { user: "帮我草拟一个答复给员工", replies: [{ kind: "iframe", component: "agent/ticket-detail", title: "工单详情（含AI草拟答复）" }] },
       { user: "VPN 工单处理完毕后帮我总结一下解决方法，生成知识产物。", replies: [{ kind: "assistant", text: "好的，已根据工单处理记录生成知识产物文件《VPN 连接后无法访问内部系统的排查步骤》。\n\n产物已出现在右侧面板，你可以悬停文件图标点击「上传智能体知识」将其写入 Console 知识管理并同步至智能体知识库。" }] }
     ]
   }
