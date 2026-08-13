@@ -561,7 +561,7 @@ body { background: #e9ebf2; }
       </aside>
 
       <main class="workspace" aria-label="工单业务工作台">
-        <header class="workspace-header"><div><span class="eyebrow">Work · 外部应用</span><h2 id="workspaceTitle">我的工单</h2><p id="workspaceSubtitle">查看进度、补充信息与确认解决</p></div><div class="workspace-actions"><button class="primary-button" id="primaryAction" type="button">＋ 新建工单</button></div></header>
+        <header class="workspace-header"><div><span class="eyebrow">Work · 外部应用</span><h2 id="workspaceTitle">我的工单</h2><p id="workspaceSubtitle">查看进度、补充信息与确认解决</p></div><div class="workspace-actions"><span class="integration-status"><i></i>演示原型 · 未连接 Foundation</span><button class="primary-button" id="primaryAction" type="button">＋ 新建工单</button></div></header>
         <section class="stats-grid" id="statsGrid" aria-label="工单统计"></section>
         <div class="workspace-toolbar"><div class="view-tabs" id="viewTabs" role="tablist" aria-label="工作台视图"></div><div class="filters"><label class="search-box"><span>⌕</span><input id="ticketSearch" type="search" placeholder="搜索工单号或标题" /></label><select id="statusFilter" aria-label="按状态筛选"><option value="all">全部状态</option></select></div></div>
         <div class="work-content">
@@ -617,17 +617,17 @@ body { background: #e9ebf2; }
   <script>
 const employeeTickets = [
   { id: "HD-2026-0811-0238", title: "VPN 连接后无法访问内部系统", category: "IT / Network & VPN", status: "处理中", statusKey: "progress", viewGroup: "processing", priority: "High", updated: "12 分钟前", owner: "Alex Tan", team: "IT Infrastructure", sla: "剩余 1小时42分", description: "VPN 已连接，但 ERP 与内部文件服务器仍无法访问。处理人已建议重新导入配置并完成 MFA。", timeline: [["09:18", "工单已创建"], ["09:21", "Alex Tan 已接单"], ["09:46", "处理人已回复，等待你的确认"]] },
-  { id: "HD-2026-0811-0215", title: "申请安装 Power BI Desktop", category: "IT / Software Request", status: "待审批", statusKey: "pending", viewGroup: "processing", priority: "Medium", updated: "1 小时前", owner: "审批队列", team: "IT Application", sla: "剩余 6小时20分", description: "软件安装申请已进入 L1 审批，审批结果以后台工单系统返回为准。", timeline: [["08:36", "申请已提交"], ["08:38", "规则检查完成"], ["08:40", "进入 L1 审批"]] },
-  { id: "HD-2026-0810-0198", title: "Outlook 邮件同步异常", category: "IT / Email", status: "待确认", statusKey: "pending", viewGroup: "processing", priority: "Medium", updated: "昨天 16:42", owner: "Mei Ling", team: "IT Service Desk", sla: "剩余 18小时", description: "处理人已完成邮箱配置刷新，等待确认邮件是否恢复同步。", timeline: [["昨天 14:10", "工单已创建"], ["昨天 15:26", "处理人更新了邮箱配置"], ["昨天 16:42", "等待你的确认"]] },
-  { id: "HD-2026-0809-0174", title: "重置 HR Portal 密码", category: "People GBS / HR Portal", status: "已解决待评价", statusKey: "rating", viewGroup: "rating", priority: "Low", updated: "8月9日", owner: "Sarah Lim", team: "People GBS", sla: "已完成", description: "密码重置已完成，等待员工评价后关闭。", timeline: [["8月9日 10:03", "工单已创建"], ["8月9日 10:18", "密码重置完成"], ["8月9日 10:22", "员工确认已解决，等待评价"]] },
-  { id: "HD-2026-0807-0152", title: "办公区打印机驱动安装", category: "IT / Workplace", status: "已评价关闭", statusKey: "closed", viewGroup: "closed", priority: "Low", updated: "8月7日", owner: "Daniel Wong", team: "IT Workplace", sla: "已完成", description: "打印机驱动已安装并验证，员工已提交五星评价，工单正式关闭。", timeline: [["8月7日 09:12", "工单已创建"], ["8月7日 09:45", "驱动安装并验证"], ["8月7日 10:02", "员工评价后关闭"]] }
+  { id: "HD-2026-0811-0215", title: "申请安装 Power BI Desktop", category: "IT / Software Request", status: "处理中", statusKey: "pending", viewGroup: "processing", priority: "Medium", updated: "1 小时前", owner: "审批队列", team: "IT Application", sla: "剩余 6小时20分", description: "软件安装申请已进入 L1 审批，审批结果以后台工单系统返回为准。", timeline: [["08:36", "申请已提交"], ["08:38", "规则检查完成"], ["08:40", "进入 L1 审批"]] },
+  { id: "HD-2026-0810-0198", title: "Outlook 邮件同步异常", category: "IT / Email", status: "待提交人确认", statusKey: "pending", viewGroup: "processing", priority: "Medium", updated: "昨天 16:42", owner: "Mei Ling", team: "IT Service Desk", sla: "剩余 18小时", description: "处理人已完成邮箱配置刷新，等待确认邮件是否恢复同步。", timeline: [["昨天 14:10", "工单已创建"], ["昨天 15:26", "处理人更新了邮箱配置"], ["昨天 16:42", "等待你的确认"]] },
+  { id: "HD-2026-0809-0174", title: "重置 HR Portal 密码", category: "People GBS / HR Portal", status: "已解决待评价", statusKey: "closed", viewGroup: "rating", priority: "Low", updated: "8月9日", owner: "Sarah Lim", team: "People GBS", sla: "已完成", description: "密码重置已完成，等待员工评价后关闭。", timeline: [["8月9日 10:03", "工单已创建"], ["8月9日 10:18", "密码重置完成"], ["8月9日 10:22", "员工确认已解决，等待评价"]] },
+  { id: "HD-2026-0807-0152", title: "办公区打印机驱动安装", category: "IT / Workplace", status: "已关闭", statusKey: "closed", viewGroup: "closed", priority: "Low", updated: "8月7日", owner: "Daniel Wong", team: "IT Workplace", sla: "已完成", description: "打印机驱动已安装并验证，员工已提交五星评价，工单正式关闭。", timeline: [["8月7日 09:12", "工单已创建"], ["8月7日 09:45", "驱动安装并验证"], ["8月7日 10:02", "员工评价后关闭"]] }
 ];
 
 const agentTickets = [
-  { id: "HD-2026-0811-0249", title: "财务共享盘访问权限异常", category: "IT / Access", status: "已超时", statusKey: "overdue", viewGroup: "pending", priority: "High", updated: "8 分钟前", owner: "你", team: "IT Service Desk", sla: "已超时 18分", description: "Finance 团队 4 名成员无法访问共享盘，需要核对权限组与最近一次组织调整。", timeline: [["08:20", "工单已自动分配"], ["08:32", "用户补充影响范围"], ["09:20", "响应 SLA 已超时"]] },
+  { id: "HD-2026-0811-0249", title: "财务共享盘访问权限异常", category: "IT / Access", status: "处理中", statusKey: "processing", viewGroup: "pending", priority: "High", updated: "8 分钟前", owner: "你", team: "IT Service Desk", sla: "已超时 18分", description: "Finance 团队 4 名成员无法访问共享盘，需要核对权限组与最近一次组织调整。", timeline: [["08:20", "工单已自动分配"], ["08:32", "用户补充影响范围"], ["09:20", "响应 SLA 已超时"]] },
   { id: "HD-2026-0811-0238", title: "VPN 连接后无法访问内部系统", category: "IT / Network & VPN", status: "处理中", statusKey: "progress", viewGroup: "processed", priority: "High", updated: "12 分钟前", owner: "你", team: "IT Infrastructure", sla: "剩余 1小时42分", description: "用户已完成重启但问题仍存在。建议核对 VPN 配置版本、MFA 与 DNS。", timeline: [["09:18", "工单进入队列"], ["09:21", "你已接单"], ["09:46", "已发送排查建议，等待用户反馈"]] },
-  { id: "HD-2026-0811-0227", title: "新员工无法登录协作平台", category: "IT / Identity", status: "新工单", statusKey: "new", viewGroup: "pending", priority: "Medium", updated: "21 分钟前", owner: "待接单", team: "IT Service Desk", sla: "剩余 3小时11分", description: "新员工首次登录提示账号不存在，需要检查身份同步状态。", timeline: [["09:06", "工单已创建"], ["09:07", "按分类分配至共享池"]] },
-  { id: "HD-2026-0811-0215", title: "申请安装 Power BI Desktop", category: "IT / Software Request", status: "已处理待审批", statusKey: "pending", viewGroup: "processed", priority: "Medium", updated: "1 小时前", owner: "审批队列", team: "IT Application", sla: "剩余 6小时20分", description: "处理人已完成前置检查并转入 L1 审批，当前无需继续操作。", timeline: [["08:36", "申请已提交"], ["08:38", "处理人完成前置检查"], ["08:40", "进入 L1 审批"]] },
+  { id: "HD-2026-0811-0227", title: "新员工无法登录协作平台", category: "IT / Identity", status: "待分配", statusKey: "pending-assign", viewGroup: "pending", priority: "Medium", updated: "21 分钟前", owner: "待接单", team: "IT Service Desk", sla: "剩余 3小时11分", description: "新员工首次登录提示账号不存在，需要检查身份同步状态。", timeline: [["09:06", "工单已创建"], ["09:07", "按分类分配至共享池"]] },
+  { id: "HD-2026-0811-0215", title: "申请安装 Power BI Desktop", category: "IT / Software Request", status: "处理中", statusKey: "pending", viewGroup: "processed", priority: "Medium", updated: "1 小时前", owner: "审批队列", team: "IT Application", sla: "剩余 6小时20分", description: "处理人已完成前置检查并转入 L1 审批，当前无需继续操作。", timeline: [["08:36", "申请已提交"], ["08:38", "处理人完成前置检查"], ["08:40", "进入 L1 审批"]] },
   { id: "HD-2026-0810-0191", title: "会议室显示屏无法投屏", category: "IT / Workplace", status: "已关闭", statusKey: "closed", viewGroup: "closed", priority: "Low", updated: "昨天 15:10", owner: "Daniel Wong", team: "IT Workplace", sla: "已完成", description: "已更换 HDMI 转接器并完成现场验证。", timeline: [["昨天 12:03", "工单已创建"], ["昨天 14:40", "现场更换转接器"], ["昨天 15:10", "用户确认关闭"]] }
 ];
 
@@ -652,11 +652,11 @@ const roleConfigs = {
     views: [
       { id: "all", label: "全部" },
       { id: "processing", label: "处理中" },
-      { id: "rating", label: "待评价" },
+      { id: "rating", label: "已关闭" },
       { id: "closed", label: "已关闭" }
     ],
     tickets: employeeTickets,
-    stats: [["进行中", "3", "含审批与待确认", "warn"], ["待评价", "1", "服务已解决", "warn"], ["本月已关闭", "12", "+3 较上月", "good"], ["平均满意度", "4.8", "最近 6 次评价", "good"]]
+    stats: [["进行中", "3", "含审批与待确认", "warn"], ["已关闭", "1", "服务已解决", "warn"], ["本月已关闭", "12", "+3 较上月", "good"], ["平均满意度", "4.8", "最近 6 次评价", "good"]]
   },
   agent: {
     workspaceTitle: "我的任务",
@@ -665,8 +665,8 @@ const roleConfigs = {
     searchPlaceholder: "搜索工单、提单人或分类",
     views: [
       { id: "all", label: "全部" },
-      { id: "pending", label: "待处理" },
-      { id: "processed", label: "已处理" },
+      { id: "processing", label: "处理中" },
+      { id: "pending-confirm", label: "待评价" },
       { id: "closed", label: "已关闭" }
     ],
     tickets: agentTickets,
@@ -774,6 +774,7 @@ function renderDetail() {
     <div class="detail-grid"><div class="detail-field"><span>分类</span><strong>${escapeHtml(ticket.category)}</strong></div><div class="detail-field"><span>${currentRole === "employee" ? "处理人" : "当前归属"}</span><strong>${escapeHtml(ticket.owner)}</strong></div><div class="detail-field"><span>处理团队</span><strong>${escapeHtml(ticket.team)}</strong></div><div class="detail-field"><span>SLA</span><strong>${escapeHtml(ticket.sla)}</strong></div></div>
     <div class="timeline"><h4>最新进展</h4>${ticket.timeline.map(([time, title]) => `<div class="timeline-item"><i></i><div><strong>${escapeHtml(title)}</strong><small>${escapeHtml(time)}</small></div></div>`).join("")}</div>
     <div class="detail-actions">${currentRole === "employee" ? employeeActions : agentActions}</div>
+    <div class="session-launch-note"><strong>新会话边界</strong><span>当前仅打开 IT Knowledge Skill 通用新会话，不会携带该工单的编号、描述或处理上下文。</span></div>
     <div class="integration-note">工单查询与写操作需真实 MCP Tool、权限与审计。</div>`;
   byId("detailPanel").querySelectorAll("[data-backend-action]").forEach((button) => button.addEventListener("click", () => showToast(`${button.dataset.backendAction}失败关闭：未连接获准的工单 MCP Tool，未执行任何真实写操作。`)));
 }
