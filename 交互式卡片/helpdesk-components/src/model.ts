@@ -114,8 +114,8 @@ export const approvals = [
 ];
 
 export const attachments = [
-  { id: "att-01", name: "vpn-error-screen.png", size: "842 KB", type: "PNG", selected: true },
-  { id: "att-02", name: "vpn-diagnostic-log.txt", size: "126 KB", type: "TXT", selected: true }
+  { id: "att-01", name: "vpn-error-screen.png", size: "842 KB", type: "PNG", selected: false },
+  { id: "att-02", name: "vpn-diagnostic-log.txt", size: "126 KB", type: "TXT", selected: false }
 ];
 
 export const replyTemplates = [

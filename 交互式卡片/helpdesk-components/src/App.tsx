@@ -80,7 +80,7 @@ function attachmentsFromData(value: unknown, previewMode: boolean): AttachmentIt
       name,
       size: asString(record.size, "—"),
       type: asString(record.type, name.split(".").pop()?.toUpperCase() || "FILE"),
-      selected: record.selected !== false
+      selected: record.selected === true
     };
   });
 }
