@@ -514,8 +514,8 @@
       <text x="430" y="165" font-size="7" fill="#6b7280" text-anchor="middle">交互卡片/表单</text>
 
       <rect x="495" y="130" width="110" height="40" rx="6" fill="white" stroke="#93c5fd" stroke-width="1" stroke-dasharray="4"/>
-      <text x="550" y="154" font-size="9" fill="#9ca3af" text-anchor="middle" font-weight="500">邮件/待办降级</text>
-      <text x="550" y="165" font-size="7" fill="#9ca3af" text-anchor="middle">消息中心为二期目标</text>
+      <text x="550" y="154" font-size="9" fill="#9ca3af" text-anchor="middle" font-weight="500">待办/主动查询</text>
+      <text x="550" y="165" font-size="7" fill="#9ca3af" text-anchor="middle">事件推送为二期目标</text>
 
       <!-- DC -->
       <rect x="50" y="200" width="570" height="70" rx="8" fill="#fae8ff" stroke="#d8b4fe" stroke-width="1.5"/>
@@ -575,7 +575,7 @@
       <rect x="685" y="145" width="195" height="28" rx="5" fill="white" stroke="#fb923c"/>
       <text x="782" y="163" font-size="9" fill="#c2410c" text-anchor="middle">自动分配 + SLA + 评分</text>
       <rect x="685" y="180" width="195" height="28" rx="5" fill="white" stroke="#fb923c"/>
-      <text x="782" y="198" font-size="9" fill="#c2410c" text-anchor="middle">邮件通知（SMTP）</text>
+      <text x="782" y="198" font-size="9" fill="#c2410c" text-anchor="middle">状态查询接口</text>
 
       <text x="785" y="230" font-size="8" fill="#6b7280" text-anchor="middle">部署：苍穹 / 客户云 / 灵基托管</text>
 
@@ -611,7 +611,7 @@
       <line x1="40" y1="510" x2="75" y2="510" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrowhead)"/>
       <text x="82" y="514" font-size="9" fill="#6b7280">MCP 实时调用</text>
       <line x1="200" y1="510" x2="235" y2="510" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
-      <text x="242" y="514" font-size="9" fill="#6b7280">邮件/待办降级（二期升级为推送）</text>
+      <text x="242" y="514" font-size="9" fill="#6b7280">待办/主动查询（二期升级为事件推送）</text>
       <line x1="380" y1="510" x2="415" y2="510" stroke="#6b21a8" stroke-width="1.2" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
       <text x="422" y="514" font-size="9" fill="#6b7280">Skill→DC 标准上传(8/21)</text>
       <rect x="560" y="502" width="14" height="14" rx="3" fill="#f8fafc" stroke="#3b82f6" stroke-dasharray="4"/>
@@ -624,7 +624,7 @@
 
     <h3>3.2 目标端到端时序图（含二期消息与评价能力）</h3>
     <div class="highlight highlight-red">
-        <strong>非当前完成声明：</strong>图中的消息中心主动推送、自动分配、实时跨角色通知和评分回流是目标流程。8/31 试运行只按实际通过 UAT 的链路纳入；消息中心未就绪时以 Work 待办/主动查询和邮件降级，不得把脚本化 Demo 当作生产闭环证据。
+        <strong>非当前完成声明：</strong>图中的消息中心主动推送、自动分配、实时跨角色通知和评分回流是目标流程。8/31 试运行只按实际通过 UAT 的链路纳入；事件推送未就绪时以 Work 待办/主动查询作为当前路径，不得把脚本化 Demo 当作生产闭环证据。
     </div>
     <svg viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1100px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
       <defs><marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#374151"/></marker>
@@ -1047,7 +1047,7 @@
     <p>面向 IT/HR 处理人员（约 20-30 人），当前目标是提问、查单、回复、转派和生成知识产物入口；实时事件推送、完整经理看板及完整知识飞轮不作为当前已具备能力。</p>
     <table>
         <tr><th>组件</th><th>职责</th><th>当前边界</th></tr>
-        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过“我的任务”或主动查询进入；新工单实时推送依赖 #31，未就绪时使用待办/邮件降级</td></tr>
+        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过“我的任务”或主动查询进入；事件推送依赖 #31（Harness 预计 8/21），未就绪时通过待办页面主动查询</td></tr>
         <tr><td>Ticket Process Skill</td><td>查看与回复工单</td><td>真实 Tool 成功回执后才展示处理成功，不以本地模拟数据冒充</td></tr>
         <tr><td>Ticket Reassign Skill</td><td>工单转派</td><td>需权限校验、目标处理人合法性和真实回执</td></tr>
         <tr><td>Knowledge Contribute Skill</td><td>生成知识产物入口</td><td>8/17 Skill 目标不等于已写入 DC；定时/对话触发、选单规则待定，8/21 DC 仍为 PLANNED</td></tr>
@@ -1066,7 +1066,7 @@
         <strong>核心定位：</strong>灵基平台级的消息中枢，承接后台应用事件、智能体间通信、系统通知的统一路由与投递。不仅服务于 HelpDesk，也是灵基作为"唯一工作台"的基础设施。
     </div>
     <div class="highlight highlight-red">
-        <strong>⚠️ 当前状态：灵基标品尚不具备完整消息中心能力（问题 #31）。</strong>以下仅为目标架构，8/31 试运行不以后台主动事件推送为已具备能力；当前采用 Work 待办/主动查询和邮件（SMTP）降级。Work 一键会话入口已纳入 8/14 目标，但是否携带安全工单/附件上下文须单独验收，不能与消息主动推送混为一项。
+        <strong>⚠️ 当前状态：灵基标品尚不具备完整消息中心能力（问题 #31）。</strong>以下仅为目标架构，8/31 试运行不以后台主动事件推送为已具备能力；当前采用 Work 待办/主动查询。Work 一键会话入口已纳入 8/14 目标，但是否携带安全工单/附件上下文须单独验收，不能与消息主动推送混为一项。
     </div>
     <h4>职责</h4>
     <table>
@@ -1097,7 +1097,7 @@
         <tr><td>工单转派</td><td>新处理人</td><td>转派通知 + 工单卡片</td></tr>
     </table>
     <div class="highlight highlight-blue">
-        <strong>1.0 阶段过渡方案：</strong>消息中心就绪前，上述推送场景退化为邮件通知（SMTP）。消息中心上线后（2.0）升级为灵基内实时推送+卡片交互。
+        <strong>1.0 阶段过渡方案：</strong>事件推送就绪前，上述推送场景通过 Work 待办/主动查询实现；Harness 事件触发基础能力预计 8/21 上线后逐步升级为灵基内实时推送+卡片交互。
     </div>
 
     <h3>4.5 后台工单服务（MCP Server）</h3>
@@ -1125,9 +1125,8 @@
         <tr><td>1</td><td>工单列表与详情</td><td>全量工单管理视图，支持筛选/搜索</td><td>1.0</td></tr>
         <tr><td>2</td><td>工单自动分配</td><td>基于分类 Round-robin 自动派单到对应工作组；当前可由人工/固定规则降级</td><td>2.0</td></tr>
         <tr><td>3</td><td>状态流转引擎</td><td>待分配→待处理→处理中→待确认→已关闭</td><td>1.0</td></tr>
-        <tr><td>4</td><td>答复与通知</td><td>处理人答复 + 通知提问人。<strong>1.0 阶段通知走邮件（SMTP）</strong>；消息中心就绪后（2.0）升级为灵基内实时推送</td><td>1.0</td></tr>
-        <tr><td>5</td><td>邮件通知</td><td>工单创建/答复/关闭时发送邮件（SMTP）</td><td>1.0</td></tr>
-        <tr><td>6</td><td>经理转派</td><td>Helpdesk Manager 可将工单重新分配</td><td>2.0</td></tr>
+        <tr><td>4</td><td>答复与通知</td><td>处理人答复 + 状态更新。当前提问人通过“我的工单”主动查看答复；事件推送就绪后（Harness 8/21+）升级为灵基内实时通知</td><td>1.0</td></tr>
+                <tr><td>6</td><td>经理转派</td><td>Helpdesk Manager 可将工单重新分配</td><td>2.0</td></tr>
         <tr><td>7</td><td>SLA 考核引擎</td><td>按分类设定响应/解决时间，超时自动告警升级</td><td>2.0</td></tr>
         <tr><td>8</td><td>评分系统</td><td>1-5 星满意度评价 + KPI 统计</td><td>2.0</td></tr>
         <tr><td>9</td><td>仪表盘</td><td>已解决/未解决/SLA 超时/满意度等统计大屏</td><td>2.0</td></tr>
@@ -1249,7 +1248,7 @@
             <li><strong>#1 / #1b</strong> MCP Apps 规范、SDK 与租户级 Console 上传/管理入口</li>
             <li><strong>#2 / #2b</strong> APPS 卡片内容作为上下文 + 精简传递机制</li>
             <li><strong>#10</strong> Build 应用支持非苍穹部署，解除对苍穹身份与许可的强依赖</li>
-            <li><strong>#31</strong> 消息与事件能力不作为 8/31 已具备项；以 Work 待办/主动查询/邮件明确降级</li>
+            <li><strong>#31</strong> 消息与事件能力不作为 8/31 已具备项；以 Work 待办/主动查询降级</li>
         </ol>
     </div>
     <div class="highlight highlight-yellow">
@@ -1588,7 +1587,7 @@
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
         <tr><td>11</td><td>处理人任务入口</td><td>处理人可在“我的任务”或主动查询中看到授权范围工单；实时分配通知依赖消息中心，不作为当前必过项</td></tr>
         <tr><td>12</td><td>工单详情查看</td><td>处理人可查看授权工单的提问人、描述、允许传递的上下文摘要和附件引用</td></tr>
-        <tr><td>13</td><td>答复与通知降级</td><td>Reply_Ticket 真实成功后更新工单；通知至少通过已确认的邮件/待办路径送达，不要求未就绪的灵基实时主动推送</td></tr>
+        <tr><td>13</td><td>答复与通知降级</td><td>Reply_Ticket 真实成功后更新工单；通知当前通过待办/主动查询路径送达；事件推送未就绪时不要求灵基实时主动通知</td></tr>
         <tr><td>14</td><td>权限隔离</td><td>处理人只能看到分配给自己或授权共享池的工单，不可跨组查看</td></tr>
     </table>
 
@@ -1597,7 +1596,7 @@
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
         <tr><td>15</td><td>工单分派降级</td><td>1.0 可通过人工或固定规则把工单分配给授权处理人；分类 Round-robin 自动分配移至 2.0</td></tr>
         <tr><td>16</td><td>状态流转</td><td>工单状态：待分配→待处理→处理中→待确认→已关闭，流转正确</td></tr>
-        <tr><td>17</td><td>邮件通知</td><td>工单创建/答复时发送邮件通知（SMTP）</td></tr>
+        <tr><td>17</td><td>答复可查</td><td>处理人答复后提问人可通过“我的工单”查看最新回复</td></tr>
         <tr><td>18</td><td>接口错误处理</td><td>所有接口返回统一结构化错误（参数错误/未认证/无权限/限流/故障/重复），便于判断可否重试</td></tr>
     </table>
 
