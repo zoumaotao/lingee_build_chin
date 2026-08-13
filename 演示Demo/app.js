@@ -235,7 +235,7 @@ const agentConversationScripts = {
     ],
     turns: [
       { user: "分析工单 HD-2026-0811-0238，先不要发送任何回复。", replies: [{ kind: "assistant", text: "好的，我来看一下这张工单：\n\n员工已重新导入 VPN 配置、完成 MFA 并重启电脑，但 ERP 和内部文件服务器仍无法访问，当前影响财务月结。\n\n建议优先核对 VPN 客户端配置版本、分割路由和 DNS 设置。如果只有该员工受影响，再检查账号对应的访问策略。\n\n需要我帮你草拟答复吗？" }] },
-      { user: "生成一版给员工的排查回复，我确认后再发送。", replies: [{ kind: "iframe", component: "agent/reply", title: "答复草稿" }] },
+      { user: "生成一版给员工的排查回复，我确认后再发送。", replies: [{ kind: "iframe", component: "agent/ticket-detail", title: "工单详情与答复" }] },
       { user: "HD-0811-0227 新员工登录问题转派给 Mei Ling 处理。", replies: [{ kind: "iframe", component: "agent/reassign", title: "工单转派确认" }] },
       { user: "VPN 工单处理完毕后帮我总结一下解决方法，生成知识产物。", replies: [{ kind: "assistant", text: "好的，已根据工单处理记录生成知识产物文件《VPN 连接后无法访问内部系统的排查步骤》。\n\n产物已出现在右侧面板，你可以悬停文件图标点击「上传智能体知识」将其写入 Console 知识管理并同步至智能体知识库。" }] }
     ]
