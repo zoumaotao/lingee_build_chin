@@ -6,10 +6,10 @@
   <title>HelpDesk MCP Apps 本地预览</title>
   <style>
     * { box-sizing: border-box; }
-    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #202126; background: #f3f4f7; }
-    body { margin: 0; min-height: 100vh; }
+    :root { font-family: Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif; color: #202126; background: #f5f6f8; }
+    body { margin: 0; min-height: 100vh; background: #f5f6f8; }
     .shell { display: grid; grid-template-columns: 300px minmax(0, 1fr); min-height: 100vh; }
-    aside { height: 100vh; overflow: auto; padding: 18px 14px; border-right: 1px solid #e1e3e8; background: #fff; }
+    aside { height: 100vh; overflow: auto; padding: 18px 14px; border-right: 1px solid #e3e5e8; background: #fff; }
     header { margin: 0 4px 18px; }
     h1 { margin: 0; font-size: 17px; }
     header p { margin: 5px 0 0; color: #70737d; font-size: 12px; }
@@ -19,14 +19,22 @@
     button { display: flex; align-items: center; justify-content: space-between; width: 100%; margin: 3px 0; padding: 8px 9px; border: 1px solid transparent; border-radius: 8px; color: #34363d; background: transparent; cursor: pointer; text-align: left; }
     button:hover { background: #f5f4ff; }
     button.active { border-color: #d8d4ff; color: #5146c7; background: #efedff; }
-    button span { overflow: hidden; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+    .card-title { display: flex; min-width: 0; align-items: center; gap: 7px; }
+    .card-title > span { overflow: hidden; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
     button code { margin-left: 8px; color: #8a8d97; font-size: 10px; }
-    main { min-width: 0; padding: 18px; }
-    .toolbar { display: flex; align-items: center; gap: 10px; max-width: 900px; margin: 0 auto 12px; }
+    .priority { display: inline-flex; flex: 0 0 auto; min-width: 30px; height: 20px; align-items: center; justify-content: center; padding: 0 6px; border-radius: 6px; font-size: 10px; font-weight: 800; line-height: 1; }
+    .priority-p0 { color: #9f1239; background: #ffe4e6; }
+    .priority-p1 { color: #9a3412; background: #ffedd5; }
+    .priority-p2 { color: #475569; background: #e2e8f0; }
+    .legend { display: flex; flex-wrap: wrap; gap: 7px 10px; margin-top: 10px; }
+    .legend > span { display: inline-flex; align-items: center; gap: 5px; color: #60636d; font-size: 11px; }
+    .legend .priority { height: 18px; }
+    main { min-width: 0; padding: 18px; background: #f5f6f8; }
+    .toolbar { display: flex; align-items: center; gap: 10px; max-width: 720px; margin: 0 auto 12px; }
     .toolbar strong { overflow: hidden; flex: 1; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
-    select, a { height: 32px; padding: 0 10px; border: 1px solid #d9dbe2; border-radius: 7px; color: #34363d; background: #fff; font: inherit; font-size: 12px; }
+    select, a { height: 36px; padding: 0 11px; border: 1px solid #e3e5e8; border-radius: 8px; color: #34363d; background: #fff; font: inherit; font-size: 12px; }
     a { display: inline-flex; align-items: center; text-decoration: none; }
-    .stage { max-width: 900px; min-height: calc(100vh - 80px); margin: 0 auto; padding: 24px; border: 1px solid #e0e2e8; border-radius: 12px; background: #fff; box-shadow: 0 3px 14px rgba(23, 29, 43, .05); }
+    .stage { max-width: 720px; min-height: calc(100vh - 80px); margin: 0 auto; padding: 0; background: transparent; }
     iframe { display: block; width: 100%; min-height: 720px; border: 0; }
     @media (max-width: 760px) {
       .shell { grid-template-columns: 1fr; }
@@ -40,33 +48,34 @@
 <body>
   <div class="shell">
     <aside>
-      <header><h1>HelpDesk MCP Apps</h1><p>26 张独立原子卡 · 本地快速预览</p></header>
-      <section><h2>员工服务<small>7</small></h2><button type="button" data-card="employee/resolution"><span>HelpDesk解决方案确认卡</span><code>resolution</code></button>
-<button type="button" data-card="employee/ticket-draft"><span>HelpDesk工单确认卡</span><code>ticket-draft</code></button>
-<button type="button" data-card="employee/ticket-receipt"><span>HelpDesk工单回执卡</span><code>ticket-receipt</code></button>
-<button type="button" data-card="employee/ticket-list"><span>HelpDesk我的工单摘要卡</span><code>ticket-list</code></button>
-<button type="button" data-card="employee/ticket-detail"><span>HelpDesk员工工单进度卡</span><code>ticket-detail</code></button>
-<button type="button" data-card="employee/rating"><span>HelpDesk服务评价卡</span><code>rating</code></button>
-<button type="button" data-card="employee/attachments"><span>HelpDesk附件确认卡</span><code>attachments</code></button></section>
-<section><h2>处理人<small>6</small></h2><button type="button" data-card="agent/notification"><span>HelpDesk新单通知卡</span><code>notification</code></button>
-<button type="button" data-card="agent/queue"><span>HelpDesk处理人待办卡</span><code>queue</code></button>
-<button type="button" data-card="agent/ticket-detail"><span>HelpDesk处理人工单详情卡</span><code>ticket-detail</code></button>
-<button type="button" data-card="agent/reply"><span>HelpDesk答复确认卡</span><code>reply</code></button>
-<button type="button" data-card="agent/reassign"><span>HelpDesk处理人转派卡</span><code>reassign</code></button>
-<button type="button" data-card="agent/sla-alert"><span>HelpDesk处理人SLA告警卡</span><code>sla-alert</code></button></section>
-<section><h2>经理运营<small>5</small></h2><button type="button" data-card="manager/dashboard"><span>HelpDesk经理运营摘要卡</span><code>dashboard</code></button>
-<button type="button" data-card="manager/team-tickets"><span>HelpDesk团队风险工单卡</span><code>team-tickets</code></button>
-<button type="button" data-card="manager/workload"><span>HelpDesk团队负载建议卡</span><code>workload</code></button>
-<button type="button" data-card="manager/sla"><span>HelpDesk团队SLA摘要卡</span><code>sla</code></button>
-<button type="button" data-card="manager/reassign"><span>HelpDesk经理快速转派卡</span><code>reassign</code></button></section>
-<section><h2>审批<small>4</small></h2><button type="button" data-card="approval/approval-list"><span>HelpDesk审批待办卡</span><code>approval-list</code></button>
-<button type="button" data-card="approval/approval-detail"><span>HelpDesk审批申请详情卡</span><code>approval-detail</code></button>
-<button type="button" data-card="approval/decision"><span>HelpDesk审批决策卡</span><code>decision</code></button>
-<button type="button" data-card="approval/timeline"><span>HelpDesk审批轨迹卡</span><code>timeline</code></button></section>
-<section><h2>知识沉淀<small>4</small></h2><button type="button" data-card="knowledge/knowledge-draft"><span>HelpDesk知识草稿确认卡</span><code>knowledge-draft</code></button>
-<button type="button" data-card="knowledge/source-ticket"><span>HelpDesk知识来源工单卡</span><code>source-ticket</code></button>
-<button type="button" data-card="knowledge/review"><span>HelpDesk知识发布审核卡</span><code>review</code></button>
-<button type="button" data-card="knowledge/publish-result"><span>HelpDesk知识发布结果卡</span><code>publish-result</code></button></section>
+      <header><h1>HelpDesk MCP Apps</h1><p>27 张独立原子卡 · 本地快速预览</p><div class="legend" aria-label="优先级说明"><span title="当前上线闭环所需"><b class="priority priority-p0">P0</b>核心闭环</span><span title="已有需求，依赖后续平台或业务能力"><b class="priority priority-p1">P1</b>二期增强</span><span title="方案扩展，需客户或平台进一步确认"><b class="priority priority-p2">P2</b>待确认</span></div></header>
+      <section><h2>员工服务<small>6</small></h2><button type="button" data-card="employee/resolution" data-name="HelpDesk解决方案确认卡" data-priority="P0" data-priority-label="核心闭环"><span class="card-title"><b class="priority priority-p0">P0</b><span>HelpDesk解决方案确认卡</span></span><code>resolution</code></button>
+<button type="button" data-card="employee/ticket-draft" data-name="HelpDesk工单确认卡" data-priority="P0" data-priority-label="核心闭环"><span class="card-title"><b class="priority priority-p0">P0</b><span>HelpDesk工单确认卡</span></span><code>ticket-draft</code></button>
+<button type="button" data-card="employee/ticket-list" data-name="HelpDesk我的工单列表卡" data-priority="P0" data-priority-label="核心闭环"><span class="card-title"><b class="priority priority-p0">P0</b><span>HelpDesk我的工单列表卡</span></span><code>ticket-list</code></button>
+<button type="button" data-card="employee/ticket-detail" data-name="HelpDesk员工工单进度卡" data-priority="P0" data-priority-label="核心闭环"><span class="card-title"><b class="priority priority-p0">P0</b><span>HelpDesk员工工单进度卡</span></span><code>ticket-detail</code></button>
+<button type="button" data-card="employee/rating" data-name="HelpDesk服务评价卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk服务评价卡</span></span><code>rating</code></button>
+<button type="button" data-card="employee/attachments" data-name="HelpDesk附件确认卡" data-priority="P0" data-priority-label="核心闭环"><span class="card-title"><b class="priority priority-p0">P0</b><span>HelpDesk附件确认卡</span></span><code>attachments</code></button></section>
+<section><h2>处理人<small>6</small></h2><button type="button" data-card="agent/notification" data-name="HelpDesk新单通知卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk新单通知卡</span></span><code>notification</code></button>
+<button type="button" data-card="agent/queue" data-name="HelpDesk处理人待办卡" data-priority="P0" data-priority-label="核心闭环"><span class="card-title"><b class="priority priority-p0">P0</b><span>HelpDesk处理人待办卡</span></span><code>queue</code></button>
+<button type="button" data-card="agent/ticket-detail" data-name="HelpDesk处理人工单详情卡" data-priority="P0" data-priority-label="核心闭环"><span class="card-title"><b class="priority priority-p0">P0</b><span>HelpDesk处理人工单详情卡</span></span><code>ticket-detail</code></button>
+<button type="button" data-card="agent/reply" data-name="HelpDesk答复确认卡" data-priority="P0" data-priority-label="核心闭环"><span class="card-title"><b class="priority priority-p0">P0</b><span>HelpDesk答复确认卡</span></span><code>reply</code></button>
+<button type="button" data-card="agent/reassign" data-name="HelpDesk处理人转派卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk处理人转派卡</span></span><code>reassign</code></button>
+<button type="button" data-card="agent/sla-alert" data-name="HelpDesk处理人SLA告警卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk处理人SLA告警卡</span></span><code>sla-alert</code></button></section>
+<section><h2>经理运营<small>5</small></h2><button type="button" data-card="manager/dashboard" data-name="HelpDesk经理运营摘要卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk经理运营摘要卡</span></span><code>dashboard</code></button>
+<button type="button" data-card="manager/team-tickets" data-name="HelpDesk团队风险工单卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk团队风险工单卡</span></span><code>team-tickets</code></button>
+<button type="button" data-card="manager/workload" data-name="HelpDesk团队负载建议卡" data-priority="P2" data-priority-label="待确认"><span class="card-title"><b class="priority priority-p2">P2</b><span>HelpDesk团队负载建议卡</span></span><code>workload</code></button>
+<button type="button" data-card="manager/sla" data-name="HelpDesk团队SLA摘要卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk团队SLA摘要卡</span></span><code>sla</code></button>
+<button type="button" data-card="manager/reassign" data-name="HelpDesk经理快速转派卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk经理快速转派卡</span></span><code>reassign</code></button></section>
+<section><h2>审批<small>4</small></h2><button type="button" data-card="approval/approval-list" data-name="HelpDesk审批待办卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk审批待办卡</span></span><code>approval-list</code></button>
+<button type="button" data-card="approval/approval-detail" data-name="HelpDesk审批申请详情卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk审批申请详情卡</span></span><code>approval-detail</code></button>
+<button type="button" data-card="approval/decision" data-name="HelpDesk审批决策卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk审批决策卡</span></span><code>decision</code></button>
+<button type="button" data-card="approval/timeline" data-name="HelpDesk审批轨迹卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk审批轨迹卡</span></span><code>timeline</code></button></section>
+<section><h2>知识沉淀<small>6</small></h2><button type="button" data-card="knowledge/knowledge-ingestion" data-name="HelpDesk对话式知识摄取确认卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk对话式知识摄取确认卡</span></span><code>knowledge-ingestion</code></button>
+<button type="button" data-card="knowledge/knowledge-candidate" data-name="HelpDesk智能体内驱知识候选卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk智能体内驱知识候选卡</span></span><code>knowledge-candidate</code></button>
+<button type="button" data-card="knowledge/knowledge-draft" data-name="HelpDesk知识草稿确认卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk知识草稿确认卡</span></span><code>knowledge-draft</code></button>
+<button type="button" data-card="knowledge/source-ticket" data-name="HelpDesk知识来源工单卡" data-priority="P1" data-priority-label="二期增强"><span class="card-title"><b class="priority priority-p1">P1</b><span>HelpDesk知识来源工单卡</span></span><code>source-ticket</code></button>
+<button type="button" data-card="knowledge/review" data-name="HelpDesk知识发布审核卡" data-priority="P2" data-priority-label="待确认"><span class="card-title"><b class="priority priority-p2">P2</b><span>HelpDesk知识发布审核卡</span></span><code>review</code></button>
+<button type="button" data-card="knowledge/publish-result" data-name="HelpDesk知识发布结果卡" data-priority="P2" data-priority-label="待确认"><span class="card-title"><b class="priority priority-p2">P2</b><span>HelpDesk知识发布结果卡</span></span><code>publish-result</code></button></section>
     </aside>
     <main>
       <div class="toolbar">
@@ -92,7 +101,7 @@
       const active = buttons.find((button) => button.dataset.card === selected);
       const source = "./" + selected + "/dist/index.html?preview=1&locale=" + encodeURIComponent(locale.value);
       buttons.forEach((button) => button.classList.toggle("active", button === active));
-      title.textContent = active ? active.querySelector("span").textContent + " · " + selected : selected;
+      title.textContent = active ? "[" + active.dataset.priority + " · " + active.dataset.priorityLabel + "] " + active.dataset.name + " · " + selected : selected;
       frame.src = source;
       open.href = source;
       if (updateUrl) {

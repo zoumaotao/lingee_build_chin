@@ -36,6 +36,7 @@ const actionTools: Record<string, string> = {
   approval_detail: "Get_Approval_Detail",
   approve_request: "Approve_Ticket_Request",
   reject_request: "Reject_Ticket_Request",
+  create_knowledge_ingestion: "Create_Knowledge_Ingestion",
   create_knowledge_draft: "Create_Knowledge_Draft",
   check_conflict: "Check_Knowledge_Conflict",
   publish_knowledge: "Publish_Knowledge"
@@ -43,7 +44,7 @@ const actionTools: Record<string, string> = {
 
 const mutatingActions = new Set([
   "submit_ticket", "upload_attachments", "close_ticket", "submit_rating", "submit_reply", "reassign_ticket",
-  "approve_request", "reject_request", "create_knowledge_draft", "publish_knowledge"
+  "approve_request", "reject_request", "create_knowledge_ingestion", "create_knowledge_draft", "publish_knowledge"
 ]);
 
 function l(locale: Locale, zh: string, en: string) { return locale === "en-US" ? en : zh; }
@@ -172,8 +173,8 @@ function TimelineCompact({ locale, approval = false, items, previewMode = false 
   return <div className="timeline-compact">{source.map(([time, title], index) => <div key={`${time}-${title}`} className={index === source.length - 1 ? "active" : ""}><time>{time}</time><i /><span>{title}</span></div>)}</div>;
 }
 
-function AttachmentList({ locale, files, onRemove }: { locale: Locale; files: typeof seedAttachments; onRemove?: (id: string) => void }) {
-  return <div className="attachment-list">{files.slice(0, 3).map((file) => <div className="attachment" key={file.id}><span>{file.type}</span><div><strong>{file.name}</strong><small>{file.size}</small></div>{onRemove && <button type="button" onClick={() => onRemove(file.id)} aria-label={l(locale, "删除附件", "Remove attachment")}>×</button>}</div>)}</div>;
+function AttachmentList({ locale, files, onToggle }: { locale: Locale; files: typeof seedAttachments; onToggle?: (id: string) => void }) {
+  return <div className="attachment-list">{files.slice(0, 5).map((file) => <div className="attachment" key={file.id}><input type="checkbox" checked={file.selected !== false} onChange={() => onToggle?.(file.id)} aria-label={l(locale, "选择附件", "Select attachment")} /><span>{file.type}</span><div><strong>{file.name}</strong><small>{file.size}</small></div></div>)}</div>;
 }
 
 function EmployeeCard({ view, locale, data, emit, previewMode }: ViewProps) {
@@ -224,32 +225,35 @@ function EmployeeCard({ view, locale, data, emit, previewMode }: ViewProps) {
 
   if (view === "ticket-draft") return <Card>
     <CardHeader icon="✦" title={l(locale, "请确认工单信息", "Confirm ticket details")} subtitle={l(locale, "AI 已根据对话生成草稿", "AI generated this draft from the conversation")} badge={<Badge tone="info">AI</Badge>} />
-    <div className="requester"><Avatar name={draft.requesterName} /><div><strong>{draft.requesterName}</strong><small>{draft.requesterEmail} · Finance</small></div><Badge tone="neutral">{l(locale, "身份只读", "Read only")}</Badge></div>
+    <div className="requester"><Avatar name={draft.requesterName} /><div><strong>{draft.requesterName}</strong><small>{draft.requesterEmail} · Finance</small></div></div>
     <Field label={l(locale, "工单标题", "Ticket title")} required><input value={draft.title} onChange={(e) => change("title", e.target.value)} /></Field>
     <div className="field-grid"><Field label={l(locale, "分类", "Category")} required><select value={draft.category} onChange={(e) => change("category", e.target.value)}><option>IT / Network & VPN</option><option>IT / Email</option><option>IT / Software Request</option></select></Field><Field label={l(locale, "优先级", "Priority")} required><select value={draft.priority} onChange={(e) => change("priority", e.target.value)}><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select></Field></div>
     <Field label={l(locale, "问题描述", "Description")} required><textarea rows={3} value={draft.description} onChange={(e) => change("description", e.target.value)} /></Field>
-    <details className="details"><summary>{l(locale, `附件 (${files.length})`, `Attachments (${files.length})`)}</summary><AttachmentList locale={locale} files={files} onRemove={(id) => { setFiles((current) => current.filter((file) => file.id !== id)); setConfirmed(false); }} /><label className="upload-link">＋ {l(locale, "添加附件", "Add files")}<input type="file" multiple accept=".png,.jpg,.jpeg,.pdf,.txt,.log" onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} /></label>{fileError && <p className="field-error" role="alert">{fileError}</p>}</details>
-    <label className="confirm-line"><input type="checkbox" checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} /><span>{l(locale, "我已核对以上信息", "I have reviewed these details")}</span></label>
-    <Actions><button className="btn secondary" onClick={() => void emit("save_ticket_draft", { draft, attachments: files })}>{l(locale, "保存草稿", "Save draft")}</button><button className="btn primary" disabled={!confirmed || !draft.title.trim() || !draft.description.trim()} onClick={() => void emit("submit_ticket", { ...draft, attachments: files, confirmed: true })}>{l(locale, "确认提交", "Submit")}</button></Actions>
+    <details className="details"><summary>{l(locale, `附件 (${files.length})`, `Attachments (${files.length})`)}</summary><AttachmentList locale={locale} files={files} onToggle={(id) => { setFiles((current) => current.map((f) => f.id === id ? { ...f, selected: !f.selected } : f)); }} /><label className="upload-link">＋ {l(locale, "添加附件", "Add files")}<input type="file" multiple accept=".png,.jpg,.jpeg,.pdf,.txt,.log" onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} /></label>{fileError && <p className="field-error" role="alert">{fileError}</p>}</details>
+    <Actions><button className="btn secondary" onClick={() => void emit("save_ticket_draft", { draft, attachments: files.filter(f => f.selected !== false) })}>{l(locale, "保存草稿", "Save draft")}</button><button className="btn primary" disabled={!draft.title.trim() || !draft.description.trim()} onClick={() => void emit("submit_ticket", { ...draft, attachments: files.filter(f => f.selected !== false), confirmed: true })}>{l(locale, "确认提交", "Submit")}</button></Actions>
   </Card>;
 
-  if (view === "ticket-receipt") {
-    const status = asString(data.status, previewMode ? "success" : "unknown").toLowerCase();
+  if (view === "ticket-receipt" || view === "ticket-detail") {
+    // Unified: both receipt and detail use the same card
+    const status = asString(data.status, "").toLowerCase();
+    const isReceipt = view === "ticket-receipt" || status === "success" || status === "created";
     const failed = status === "failed" || status === "error";
     const pendingReceipt = status === "pending" || status === "processing";
-    const successfulStatus = status === "success" || status === "created";
-    const displayTicketId = asString(data.ticketId, previewMode ? tickets[0].id : "");
-    if (successfulStatus && !displayTicketId) return <Card tone="danger"><CardHeader icon="!" title={l(locale, "工单回执不完整", "Incomplete ticket receipt")} subtitle={l(locale, "后台返回成功状态，但缺少工单编号", "The backend returned success without a ticket ID")} /><EmptyState locale={locale} description={l(locale, "该结果不视为创建成功，请检查 Tool 输出协议。", "This is not treated as success; check the tool output contract.")} /></Card>;
-    const successful = successfulStatus && Boolean(displayTicketId);
-    if (!successful && !failed && !pendingReceipt) return <Card><CardHeader icon="?" title={l(locale, "尚未收到提交结果", "Submission result unavailable")} subtitle={l(locale, "不能将缺失状态解释为创建成功", "A missing status is not treated as success")} /><EmptyState locale={locale} description={l(locale, "请等待创建 Tool 返回明确的状态与工单编号。", "Wait for the create tool to return an explicit status and ticket ID.")} /></Card>;
-    return <Card tone={failed ? "danger" : successful ? "success" : "info"}><CardHeader icon={failed ? "!" : successful ? "✓" : "…"} title={failed ? l(locale, "工单提交失败", "Ticket submission failed") : successful ? l(locale, "工单已创建", "Ticket created") : l(locale, "工单正在提交", "Ticket submission pending")} subtitle={failed ? asString(data.errorMessage, l(locale, "请检查信息后重试", "Review the information and retry")) : successful ? l(locale, "问题已交给处理团队", "The issue was routed to support") : l(locale, "后台尚未返回最终结果", "The backend has not returned a final result")} /><KeyValues items={[[l(locale, "工单编号", "Ticket ID"), displayTicketId || "—"], [l(locale, "处理团队", "Team"), asString(data.assignedTeam, "—")], [l(locale, "当前状态", "Status"), <Badge tone={failed ? "danger" : successful ? "success" : "warning"}>{failed ? l(locale, "失败", "Failed") : successful ? l(locale, "已创建", "Created") : l(locale, "处理中", "Pending")}</Badge>]]} /><Actions align="start">{failed ? <button className="btn primary" onClick={() => void emit("retry_ticket", { view: "ticket-draft" })}>{l(locale, "返回修改", "Edit and retry")}</button> : successful && displayTicketId ? <button className="btn primary" onClick={() => void emit("open_ticket", { ticketId: displayTicketId })}>{l(locale, "查看进度", "View progress")}</button> : null}</Actions></Card>;
-  }
 
-  if (view === "ticket-list") return <Card><CardHeader icon="▤" title={l(locale, "我的工单", "My tickets")} subtitle={l(locale, "最近更新的工单", "Recently updated tickets")} badge={<Badge tone="neutral">{ticketItems.length}</Badge>} />{ticketItems.length ? <div className="row-list">{ticketItems.slice(0, 3).map((ticket) => <TicketRow key={ticket.id} ticket={ticket} locale={locale} onOpen={() => void emit("open_ticket", { ticketId: ticket.id })} />)}</div> : <EmptyState locale={locale} />}{ticketItems.length > 3 && <Actions align="start"><button className="link-btn" onClick={() => void emit("list_tickets", { offset: 3 })}>{l(locale, "继续查看其他工单", "Show more tickets")} →</button></Actions>}</Card>;
-
-  if (view === "ticket-detail") {
+    if (isReceipt && !failed && !pendingReceipt) {
+      // Show as created confirmation or detail
+      const displayTicketId = asString(data.ticketId, primaryTicket?.id ?? (previewMode ? tickets[0].id : ""));
+      const team = asString(data.assignedTeam, primaryTicket?.team ?? (previewMode ? "IT Infrastructure" : "—"));
+      if (!displayTicketId && !previewMode) return <Card><CardHeader icon="?" title={l(locale, "工单详情", "Ticket detail")} /><EmptyState locale={locale} /></Card>;
+      const showCreatedBanner = status === "success" || status === "created";
+      return <Card tone={showCreatedBanner ? "success" : undefined}><CardHeader icon={showCreatedBanner ? "✓" : "◈"} title={showCreatedBanner ? l(locale, "工单已创建", "Ticket created") : l(locale, primaryTicket?.titleZh ?? "", primaryTicket?.titleEn ?? "")} subtitle={displayTicketId} badge={<Badge tone={showCreatedBanner ? "success" : "purple"}>{showCreatedBanner ? l(locale, "已创建", "Created") : l(locale, primaryTicket?.statusZh ?? "", primaryTicket?.statusEn ?? "")}</Badge>} /><KeyValues items={[[l(locale, "处理团队", "Team"), team], [l(locale, "处理人", "Assignee"), showCreatedBanner ? l(locale, "待分配", "Pending assignment") : (primaryTicket?.assignee ?? "—")], ["SLA", showCreatedBanner ? l(locale, "1 小时内响应", "Response within 1 hour") : (primaryTicket?.due ?? "—")]]} /><Actions align="start"><button className="btn primary" onClick={() => void emit("open_ticket", { ticketId: displayTicketId })}>{l(locale, "查看详情", "View details")}</button></Actions></Card>;
+    }
+    if (failed) return <Card tone="danger"><CardHeader icon="!" title={l(locale, "工单提交失败", "Ticket submission failed")} subtitle={asString(data.errorMessage, l(locale, "请检查信息后重试", "Review and retry"))} /><Actions><button className="btn primary" onClick={() => void emit("retry_ticket", { view: "ticket-draft" })}>{l(locale, "返回修改", "Edit and retry")}</button></Actions></Card>;
+    if (pendingReceipt) return <Card tone="info"><CardHeader icon="…" title={l(locale, "工单正在提交", "Submitting ticket")} subtitle={l(locale, "后台尚未返回最终结果", "Awaiting final result")} /></Card>;
+    // Default detail view
     if (!primaryTicket) return <Card><CardHeader icon="◈" title={l(locale, "工单详情", "Ticket detail")} /><EmptyState locale={locale} /></Card>;
-    return <Card><CardHeader icon="◈" title={l(locale, primaryTicket.titleZh, primaryTicket.titleEn)} subtitle={primaryTicket.id} badge={<Badge tone="purple">{l(locale, primaryTicket.statusZh, primaryTicket.statusEn)}</Badge>} /><KeyValues items={[[l(locale, "处理人", "Assignee"), `${primaryTicket.assignee} · ${primaryTicket.team}`], ["SLA", <span className="danger-text">{primaryTicket.due}</span>]]} /><div className="latest-reply"><Avatar name={asString(data.latestReplyAuthor, primaryTicket.assignee)} /><p><strong>{asString(data.latestReplyAuthor, primaryTicket.assignee)} · {asString(data.latestReplyTime, "—")}</strong><span>{asString(data.latestReply, l(locale, "暂无最新回复", "No recent reply"))}</span></p></div><details className="details"><summary>{l(locale, "查看处理轨迹", "View activity")}</summary><TimelineCompact locale={locale} items={data.timeline} previewMode={previewMode} /></details><p className="question">{l(locale, "问题是否已经解决？", "Has the issue been resolved?")}</p><Actions><button className="btn secondary" onClick={() => void emit("continue_followup", { ticketId: primaryTicket.id })}>{l(locale, "仍有问题", "Still an issue")}</button><button className="btn primary" onClick={() => void emit("close_ticket", { ticketId: primaryTicket.id, resolved: true })}>{l(locale, "确认解决", "Confirm resolved")}</button></Actions></Card>;
+    const hasReply = Boolean(asString(data.latestReply));
+    return <Card><CardHeader icon="◈" title={l(locale, primaryTicket.titleZh, primaryTicket.titleEn)} subtitle={primaryTicket.id} badge={<Badge tone="purple">{l(locale, primaryTicket.statusZh, primaryTicket.statusEn)}</Badge>} /><KeyValues items={[[l(locale, "处理人", "Assignee"), `${primaryTicket.assignee} · ${primaryTicket.team}`], ["SLA", <span className="danger-text">{primaryTicket.due}</span>]]} />{hasReply && <div className="latest-reply"><Avatar name={asString(data.latestReplyAuthor, primaryTicket.assignee)} /><p><strong>{asString(data.latestReplyAuthor, primaryTicket.assignee)} · {asString(data.latestReplyTime, "—")}</strong><span>{asString(data.latestReply)}</span></p></div>}<details className="details"><summary>{l(locale, "查看处理轨迹", "View activity")}</summary><TimelineCompact locale={locale} items={data.timeline} previewMode={previewMode} /></details>{hasReply ? <><p className="question">{l(locale, "问题是否已经解决？", "Has the issue been resolved?")}</p><Actions><button className="btn secondary" onClick={() => void emit("continue_followup", { ticketId: primaryTicket.id })}>{l(locale, "仍有问题", "Still an issue")}</button><button className="btn primary" onClick={() => void emit("close_ticket", { ticketId: primaryTicket.id, resolved: true })}>{l(locale, "确认解决", "Confirm resolved")}</button></Actions></> : <Actions align="start"><button className="btn primary" onClick={() => void emit("open_ticket", { ticketId: primaryTicket.id })}>{l(locale, "查看详情", "View details")}</button></Actions>}</Card>;
   }
 
   if (view === "rating") {
@@ -257,7 +261,14 @@ function EmployeeCard({ view, locale, data, emit, previewMode }: ViewProps) {
     return <Card><CardHeader icon="★" title={l(locale, "评价本次服务", "Rate this support experience")} subtitle={`${ticketId || "—"} · ${asString(data.assignee, previewMode ? "Alex Tan" : "—")}`} /><div className="stars" role="group" aria-label={l(locale, "服务评分", "Service rating")}>{[1, 2, 3, 4, 5].map((star) => <button type="button" key={star} className={star <= rating ? "active" : ""} aria-label={l(locale, `${star} 星`, `${star} star${star > 1 ? "s" : ""}`)} aria-pressed={star === rating} onClick={() => setRating(star)}>★</button>)}</div><div className="chips" role="group" aria-label={l(locale, "评价标签", "Rating tags")}>{tags.map((tag) => <button type="button" key={tag} className={selectedTags.includes(tag) ? "selected" : ""} aria-pressed={selectedTags.includes(tag)} onClick={() => setSelectedTags((current) => current.includes(tag) ? current.filter((item) => item !== tag) : [...current, tag])}>{tag}</button>)}</div><Field label={l(locale, "补充意见（选填）", "Comment (optional)")}><textarea rows={2} value={comment} onChange={(e) => setComment(e.target.value)} /></Field><Actions><button className="btn primary" disabled={!ticketId || rating === 0} onClick={() => void emit("submit_rating", { ticketId, rating, tags: selectedTags, comment })}>{l(locale, "提交评价", "Submit rating")}</button></Actions></Card>;
   }
 
-  return <Card><CardHeader icon="↥" title={l(locale, "选择随工单提交的附件", "Select ticket attachments")} subtitle={l(locale, "最多 5 个文件，每个不超过 10 MB", "Up to 5 files, 10 MB each")} /><AttachmentList locale={locale} files={files} onRemove={(id) => setFiles((current) => current.filter((file) => file.id !== id))} /><label className="upload-box">＋ {l(locale, "选择文件", "Choose files")}<input type="file" multiple accept=".png,.jpg,.jpeg,.pdf,.txt,.log" onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} /></label>{fileError && <p className="field-error" role="alert">{fileError}</p>}<Actions><button className="btn primary" disabled={!ticketId || files.length === 0} onClick={() => void emit("upload_attachments", { ticketId, attachments: files })}>{l(locale, "确认附件", "Confirm files")}</button></Actions></Card>;
+  if (view === "ticket-list") return <Card><CardHeader icon="▤" title={l(locale, "我的工单", "My tickets")} subtitle={l(locale, "最近更新的工单", "Recently updated tickets")} badge={<Badge tone="neutral">{ticketItems.length}</Badge>} />{ticketItems.length ? <div className="row-list">{ticketItems.slice(0, 3).map((ticket) => <TicketRow key={ticket.id} ticket={ticket} locale={locale} onOpen={() => void emit("open_ticket", { ticketId: ticket.id })} />)}</div> : <EmptyState locale={locale} />}{ticketItems.length > 3 && <Actions align="start"><button className="link-btn" onClick={() => void emit("list_tickets", { offset: 3 })}>{l(locale, "继续查看其他工单", "Show more tickets")} →</button></Actions>}</Card>;
+
+  if (view === "rating") {
+    const tags = [l(locale, "响应及时", "Quick"), l(locale, "解释清楚", "Clear"), l(locale, "专业友好", "Professional")];
+    return <Card><CardHeader icon="★" title={l(locale, "评价本次服务", "Rate this support experience")} subtitle={`${ticketId || "—"} · ${asString(data.assignee, previewMode ? "Alex Tan" : "—")}`} /><div className="stars" role="group" aria-label={l(locale, "服务评分", "Service rating")}>{[1, 2, 3, 4, 5].map((star) => <button type="button" key={star} className={star <= rating ? "active" : ""} aria-label={l(locale, `${star} 星`, `${star} star${star > 1 ? "s" : ""}`)} aria-pressed={star === rating} onClick={() => setRating(star)}>★</button>)}</div><div className="chips" role="group" aria-label={l(locale, "评价标签", "Rating tags")}>{tags.map((tag) => <button type="button" key={tag} className={selectedTags.includes(tag) ? "selected" : ""} aria-pressed={selectedTags.includes(tag)} onClick={() => setSelectedTags((current) => current.includes(tag) ? current.filter((item) => item !== tag) : [...current, tag])}>{tag}</button>)}</div><Field label={l(locale, "补充意见（选填）", "Comment (optional)")}><textarea rows={2} value={comment} onChange={(e) => setComment(e.target.value)} /></Field><Actions><button className="btn primary" disabled={!ticketId || rating === 0} onClick={() => void emit("submit_rating", { ticketId, rating, tags: selectedTags, comment })}>{l(locale, "提交评价", "Submit rating")}</button></Actions></Card>;
+  }
+
+  return <Card><CardHeader icon="↥" title={l(locale, "选择随工单提交的附件", "Select ticket attachments")} subtitle={l(locale, "最多 5 个文件，每个不超过 10 MB", "Up to 5 files, 10 MB each")} /><AttachmentList locale={locale} files={files} onToggle={(id: string) => setFiles((current) => current.map((f) => f.id === id ? { ...f, selected: !f.selected } : f))} /><label className="upload-box">＋ {l(locale, "选择文件", "Choose files")}<input type="file" multiple accept=".png,.jpg,.jpeg,.pdf,.txt,.log" onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} /></label>{fileError && <p className="field-error" role="alert">{fileError}</p>}<Actions><button className="btn primary" disabled={!ticketId || files.length === 0} onClick={() => void emit("upload_attachments", { ticketId, attachments: files })}>{l(locale, "确认附件", "Confirm files")}</button></Actions></Card>;
 }
 
 function AgentCard({ view, locale, data, emit, previewMode }: ViewProps) {
@@ -381,6 +392,34 @@ function KnowledgeCard({ view, locale, data, emit, previewMode }: ViewProps) {
   const [checks, setChecks] = useState({ pii: asBoolean(initialChecks.pii), reusable: asBoolean(initialChecks.reusable), accurate: asBoolean(initialChecks.accurate) });
   const qualityScore = typeof data.qualityScore === "number" ? Math.round(data.qualityScore) : null;
   const similarity = typeof data.similarity === "number" ? Math.round(data.similarity) : null;
+  const [targetAgentId, setTargetAgentId] = useState(asString(data.targetAgentId, previewMode ? "agent-helpdesk-assistant" : ""));
+  const [knowledgeSpaceId, setKnowledgeSpaceId] = useState(asString(data.knowledgeSpaceId, previewMode ? "dc://enterprise/helpdesk" : ""));
+  const [audience, setAudience] = useState(asString(data.audience, previewMode ? "IT Service Desk" : ""));
+  const [ingestionFiles, setIngestionFiles] = useState<AttachmentItem[]>(() => {
+    const supplied = attachmentsFromData(data.attachments, false);
+    return supplied.length ? supplied : previewMode ? [{ id: "knowledge-file-demo", name: "documents.zip", size: "79.1 MB", type: "ZIP", selected: true }] : [];
+  });
+  const [ingestionConfirmed, setIngestionConfirmed] = useState(false);
+
+  if (view === "knowledge-ingestion") {
+    const targetAgentName = asString(data.targetAgentName, previewMode ? "HelpDesk Assistant" : targetAgentId);
+    const sourceType = asString(data.sourceType, previewMode ? "conversation" : "file");
+    const conversationId = asString(data.conversationId, previewMode ? "CONV-DEMO-20260812" : "");
+    const ready = Boolean(targetAgentId && knowledgeSpaceId && audience && ingestionFiles.length && ingestionConfirmed);
+    const addKnowledgeFiles = (selected: FileList | null) => {
+      const added = Array.from(selected ?? []).map((file, index) => ({ id: `knowledge-${Date.now()}-${index}`, name: file.name, size: `${Math.max(1, Math.round(file.size / 1024))} KB`, type: file.name.split(".").pop()?.toUpperCase() || "FILE", selected: true }));
+      setIngestionFiles((current) => [...current, ...added].slice(0, 10));
+      setIngestionConfirmed(false);
+    };
+    return <Card><CardHeader icon="↥" title={l(locale, "确认写入智能体知识", "Confirm agent knowledge ingestion")} subtitle={l(locale, "自然语言请求已识别；确认后仅创建待审核任务", "Natural-language intent detected; confirmation creates a review task only")} badge={<Badge tone="warning">DC</Badge>} /><div className="callout warning"><b>!</b><p><strong>{l(locale, "不会直接发布", "No direct publishing")}</strong><span>{l(locale, "附件将先经过安全解析、脱敏、权限和冲突检查。必须以 DC 返回的知识编号与版本作为发布成功依据。", "Files require security, PII, ACL, and conflict checks. Publishing succeeds only with a DC knowledge ID and version.")}</span></p></div><div className="field-grid"><Field label={l(locale, "目标智能体", "Target agent")} required><input value={targetAgentId} onChange={(event) => { setTargetAgentId(event.target.value); setIngestionConfirmed(false); }} /></Field><Field label={l(locale, "企业级 DC 知识域", "Enterprise DC space")} required><input value={knowledgeSpaceId} onChange={(event) => { setKnowledgeSpaceId(event.target.value); setIngestionConfirmed(false); }} /></Field></div><Field label={l(locale, "可见范围", "Audience")} required hint={l(locale, "最终范围取目标策略与来源 ACL 的更严格交集", "Final scope is the stricter intersection of target policy and source ACL")}><input value={audience} onChange={(event) => { setAudience(event.target.value); setIngestionConfirmed(false); }} /></Field><KeyValues items={[[l(locale, "智能体", "Agent"), targetAgentName || "—"], [l(locale, "来源", "Source"), `${sourceType}${conversationId ? ` · ${conversationId}` : ""}`], [l(locale, "审核策略", "Review"), l(locale, "人工审核", "Manual review")], [l(locale, "治理状态", "Governance"), l(locale, "待解析/脱敏/去重", "Pending parse/PII/dedup")]]} /><details className="details" open><summary>{l(locale, `来源附件 (${ingestionFiles.length})`, `Source files (${ingestionFiles.length})`)}</summary><AttachmentList locale={locale} files={ingestionFiles} onToggle={(id: string) => { setIngestionFiles((current) => current.map((f) => f.id === id ? { ...f, selected: !f.selected } : f)); setIngestionConfirmed(false); }} /><label className="upload-link">＋ {l(locale, "添加知识文件", "Add knowledge files")}<input type="file" multiple accept=".txt,.md,.yaml,.yml,.doc,.docx,.html,.pdf,.zip" onChange={(event) => { addKnowledgeFiles(event.target.files); event.target.value = ""; }} /></label></details><label className="confirm-line"><input type="checkbox" checked={ingestionConfirmed} onChange={(event) => setIngestionConfirmed(event.target.checked)} /><span>{l(locale, "我已确认目标智能体、来源和可见范围，并同意进入人工审核", "I confirm the target, sources, and audience and agree to manual review")}</span></label><Actions><button className="btn secondary" onClick={() => void emit("save_knowledge_draft", { targetAgentId, knowledgeSpaceId, audience, attachments: ingestionFiles, sourceType, conversationId })}>{l(locale, "保存摄取草稿", "Save ingestion draft")}</button><button className="btn primary" disabled={!ready} onClick={() => void emit("create_knowledge_ingestion", { requestId: `knowledge-ingestion-${Date.now()}`, targetAgentId, targetAgentName, knowledgeSpaceId, audience, attachments: ingestionFiles, source: { type: sourceType, conversationId }, governance: { reviewMode: "manual", conflictMode: "update-existing", piiReviewed: false }, trigger: "natural_language" })}>{l(locale, "确认并提交审核", "Confirm and submit for review")}</button></Actions></Card>;
+  }
+
+  if (view === "knowledge-candidate") {
+    const candidateId = asString(data.candidateId, previewMode ? "KC-DEMO-0812-01" : "");
+    const triggerReason = asString(data.triggerReason, previewMode ? l(locale, "近 30 天出现 12 张相似 VPN 工单，其中 9 张使用同一方案并由用户确认解决。", "12 similar VPN tickets appeared in 30 days; 9 used the same resolution and were user-confirmed.") : "");
+    const evidenceRefs = Array.isArray(data.evidenceRefs) ? data.evidenceRefs.map((item) => asString(item)).filter(Boolean) : previewMode ? ["HD-2026-0811-0238", "HD-2026-0808-0152", "CONV-DEMO-20260812"] : [];
+    return <Card tone="purple"><CardHeader icon="✦" title={l(locale, "智能体发现知识候选", "Agent-discovered knowledge candidate")} subtitle={candidateId || l(locale, "等待候选编号", "Waiting for candidate ID")} badge={<Badge tone="purple">{l(locale, "内驱", "Proactive")}</Badge>} /><p className="summary-text">{triggerReason || l(locale, "尚未提供可解释的触发原因。", "No explainable trigger reason was provided.")}</p><KeyValues items={[[l(locale, "触发规则", "Trigger"), asString(data.trigger, l(locale, "高频且已验证解决", "Frequent and verified"))], [l(locale, "近 30 天相似工单", "Similar tickets, 30d"), String(data.similarTickets30d ?? (previewMode ? 12 : "—"))], [l(locale, "候选质量分", "Candidate quality"), data.qualityScore == null ? (previewMode ? "86/100" : "—") : `${String(data.qualityScore)}/100`], [l(locale, "目标智能体", "Target agent"), asString(data.targetAgentId, previewMode ? "HelpDesk Assistant" : "—")]]} /><details className="details"><summary>{l(locale, `查看证据 (${evidenceRefs.length})`, `View evidence (${evidenceRefs.length})`)}</summary>{evidenceRefs.length ? <div className="chips">{evidenceRefs.map((ref) => <span key={ref}>{ref}</span>)}</div> : <EmptyState locale={locale} description={l(locale, "没有来源证据时不得生成知识。", "Knowledge cannot be generated without evidence.")} />}</details><div className="callout warning"><b>i</b><p><strong>{l(locale, "默认不自动发布", "Not auto-published by default")}</strong><span>{l(locale, "智能体仅提出候选；脱敏、准确性、冲突和权限仍需审核。", "The agent only proposes a candidate; PII, accuracy, conflict, and access still require review.")}</span></p></div><Actions><button className="btn secondary" onClick={() => void emit("reject_knowledge_candidate", { candidateId, reason: "not_reusable" })}>{l(locale, "忽略候选", "Dismiss")}</button><button className="btn primary" disabled={!candidateId || !triggerReason || evidenceRefs.length === 0} onClick={() => void emit("create_knowledge_draft", { candidateId, trigger: data.trigger, triggerReason, evidenceRefs, targetAgentId: data.targetAgentId, sourceType: "agent_generated" })}>{l(locale, "生成待审核草稿", "Create review draft")}</button></Actions></Card>;
+  }
 
   if (view === "knowledge-draft") return <Card><CardHeader icon="◇" title={l(locale, "确认知识草稿", "Confirm knowledge draft")} subtitle={`${sourceTicketId || "—"} · ${asBoolean(data.piiRemoved) ? l(locale, "脱敏检查已通过", "PII check passed") : l(locale, "需人工完成脱敏核对", "Manual PII review required")}`} badge={<Badge tone="info">AI</Badge>} /><Field label={l(locale, "标题", "Title")} required><input value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} /></Field><Field label={l(locale, "标准处理方法", "Standard resolution")} required><textarea rows={4} value={draft.answer} onChange={(e) => setDraft({ ...draft, answer: e.target.value })} /></Field><Field label={l(locale, "标签", "Tags")}><input value={draft.tags} onChange={(e) => setDraft({ ...draft, tags: e.target.value })} /></Field><Actions><button className="btn secondary" onClick={() => void emit("save_knowledge_draft", { draft, sourceTicket: sourceTicketId })}>{l(locale, "保存草稿", "Save")}</button><button className="btn primary" disabled={!sourceTicketId || !draft.title.trim() || !draft.answer.trim() || !asBoolean(data.piiRemoved)} onClick={() => void emit("create_knowledge_draft", { ...draft, sourceTicket: sourceTicketId, piiReviewed: true })}>{l(locale, "提交审核", "Submit review")}</button></Actions></Card>;
 
@@ -404,6 +443,23 @@ export function HelpdeskApp() {
   const view = __VIEW_ID__;
   const searchParams = useMemo(() => new URLSearchParams(window.location.search), []);
   const previewMode = searchParams.get("preview") === "1";
+
+  if (previewMode) return <HelpdeskPreview componentId={componentId} view={view} searchParams={searchParams} />;
+  return <HelpdeskConnected componentId={componentId} view={view} searchParams={searchParams} />;
+}
+
+function HelpdeskPreview({ componentId, view, searchParams }: { componentId: ComponentId; view: string; searchParams: URLSearchParams }) {
+  const [locale, setLocale] = useState<Locale>(searchParams.get("locale") === "en-US" ? "en-US" : "zh-CN");
+  const scene = searchParams.get("scene") || "";
+  const emit: Emit = async () => false;
+  const data: DataMap = scene === "receipt" ? { status: "created", ticketId: "HD-2026-0811-0256", assignedTeam: "IT Infrastructure" } : scene === "progress" ? { ticket: tickets[0] } : {};
+  const props = { view, locale, data, emit, previewMode: true };
+  const content = componentId === "agent" ? <AgentCard {...props} /> : componentId === "manager" ? <ManagerCard {...props} /> : componentId === "approval" ? <ApprovalCard {...props} /> : componentId === "knowledge" ? <KnowledgeCard {...props} /> : <EmployeeCard {...props} />;
+  return <main className="card-host">{content}</main>;
+}
+
+function HelpdeskConnected({ componentId, view, searchParams }: { componentId: ComponentId; view: string; searchParams: URLSearchParams }) {
+  const previewMode = false;
   const [toolInput, setToolInput] = useState<DataMap | null>(null);
   const [toolResult, setToolResult] = useState<unknown>(null);
   const [hostContext, setHostContext] = useState<DataMap | null>(null);
@@ -485,7 +541,7 @@ export function HelpdeskApp() {
   const dark = hostContext?.theme === "dark";
 
   return <main className={cx("card-host", dark && "theme-dark")} aria-busy={pending}>
-    {previewMode && <DemoBanner locale={locale} />}
+    {false && <DemoBanner locale={locale} />}
     {content}
     {pending && <div className="pending" role="status" aria-live="polite"><span aria-hidden="true" /><b>{l(locale, "正在处理…", "Processing…")}</b></div>}
     {feedback && <div className={cx("inline-feedback", feedback.tone)} role={feedback.tone === "error" ? "alert" : "status"} aria-live={feedback.tone === "error" ? "assertive" : "polite"}><b aria-hidden="true">{feedback.tone === "success" ? "✓" : feedback.tone === "info" ? "i" : "!"}</b><span>{feedback.message}</span></div>}

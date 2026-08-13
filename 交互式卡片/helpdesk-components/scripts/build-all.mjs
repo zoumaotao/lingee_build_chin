@@ -27,10 +27,15 @@ function escapeHtml(value) {
 }
 
 function createPreviewIndex(definitions) {
+  const priorities = [...new Map(definitions.map((definition) => [definition.priority.code, definition.priority])).values()]
+    .sort((left, right) => left.code.localeCompare(right.code));
+  const legend = priorities
+    .map((priority) => `<span title="${escapeHtml(priority.description)}"><b class="priority priority-${priority.code.toLowerCase()}">${escapeHtml(priority.code)}</b>${escapeHtml(priority.label)}</span>`)
+    .join("");
   const groups = Object.entries(groupNames).map(([group, label]) => {
     const buttons = definitions
       .filter((definition) => definition.group === group)
-      .map((definition) => `<button type="button" data-card="${escapeHtml(definition.id)}"><span>${escapeHtml(definition.appName)}</span><code>${escapeHtml(definition.view)}</code></button>`)
+      .map((definition) => `<button type="button" data-card="${escapeHtml(definition.id)}" data-name="${escapeHtml(definition.appName)}" data-priority="${escapeHtml(definition.priority.code)}" data-priority-label="${escapeHtml(definition.priority.label)}"><span class="card-title"><b class="priority priority-${definition.priority.code.toLowerCase()}">${escapeHtml(definition.priority.code)}</b><span>${escapeHtml(definition.appName)}</span></span><code>${escapeHtml(definition.view)}</code></button>`)
       .join("\n");
     return `<section><h2>${label}<small>${definitions.filter((definition) => definition.group === group).length}</small></h2>${buttons}</section>`;
   }).join("\n");
@@ -43,10 +48,10 @@ function createPreviewIndex(definitions) {
   <title>HelpDesk MCP Apps 本地预览</title>
   <style>
     * { box-sizing: border-box; }
-    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #202126; background: #f3f4f7; }
-    body { margin: 0; min-height: 100vh; }
+    :root { font-family: Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif; color: #202126; background: #f5f6f8; }
+    body { margin: 0; min-height: 100vh; background: #f5f6f8; }
     .shell { display: grid; grid-template-columns: 300px minmax(0, 1fr); min-height: 100vh; }
-    aside { height: 100vh; overflow: auto; padding: 18px 14px; border-right: 1px solid #e1e3e8; background: #fff; }
+    aside { height: 100vh; overflow: auto; padding: 18px 14px; border-right: 1px solid #e3e5e8; background: #fff; }
     header { margin: 0 4px 18px; }
     h1 { margin: 0; font-size: 17px; }
     header p { margin: 5px 0 0; color: #70737d; font-size: 12px; }
@@ -56,14 +61,22 @@ function createPreviewIndex(definitions) {
     button { display: flex; align-items: center; justify-content: space-between; width: 100%; margin: 3px 0; padding: 8px 9px; border: 1px solid transparent; border-radius: 8px; color: #34363d; background: transparent; cursor: pointer; text-align: left; }
     button:hover { background: #f5f4ff; }
     button.active { border-color: #d8d4ff; color: #5146c7; background: #efedff; }
-    button span { overflow: hidden; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+    .card-title { display: flex; min-width: 0; align-items: center; gap: 7px; }
+    .card-title > span { overflow: hidden; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
     button code { margin-left: 8px; color: #8a8d97; font-size: 10px; }
-    main { min-width: 0; padding: 18px; }
-    .toolbar { display: flex; align-items: center; gap: 10px; max-width: 900px; margin: 0 auto 12px; }
+    .priority { display: inline-flex; flex: 0 0 auto; min-width: 30px; height: 20px; align-items: center; justify-content: center; padding: 0 6px; border-radius: 6px; font-size: 10px; font-weight: 800; line-height: 1; }
+    .priority-p0 { color: #9f1239; background: #ffe4e6; }
+    .priority-p1 { color: #9a3412; background: #ffedd5; }
+    .priority-p2 { color: #475569; background: #e2e8f0; }
+    .legend { display: flex; flex-wrap: wrap; gap: 7px 10px; margin-top: 10px; }
+    .legend > span { display: inline-flex; align-items: center; gap: 5px; color: #60636d; font-size: 11px; }
+    .legend .priority { height: 18px; }
+    main { min-width: 0; padding: 18px; background: #f5f6f8; }
+    .toolbar { display: flex; align-items: center; gap: 10px; max-width: 720px; margin: 0 auto 12px; }
     .toolbar strong { overflow: hidden; flex: 1; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
-    select, a { height: 32px; padding: 0 10px; border: 1px solid #d9dbe2; border-radius: 7px; color: #34363d; background: #fff; font: inherit; font-size: 12px; }
+    select, a { height: 36px; padding: 0 11px; border: 1px solid #e3e5e8; border-radius: 8px; color: #34363d; background: #fff; font: inherit; font-size: 12px; }
     a { display: inline-flex; align-items: center; text-decoration: none; }
-    .stage { max-width: 900px; min-height: calc(100vh - 80px); margin: 0 auto; padding: 24px; border: 1px solid #e0e2e8; border-radius: 12px; background: #fff; box-shadow: 0 3px 14px rgba(23, 29, 43, .05); }
+    .stage { max-width: 720px; min-height: calc(100vh - 80px); margin: 0 auto; padding: 0; background: transparent; }
     iframe { display: block; width: 100%; min-height: 720px; border: 0; }
     @media (max-width: 760px) {
       .shell { grid-template-columns: 1fr; }
@@ -77,7 +90,7 @@ function createPreviewIndex(definitions) {
 <body>
   <div class="shell">
     <aside>
-      <header><h1>HelpDesk MCP Apps</h1><p>26 张独立原子卡 · 本地快速预览</p></header>
+      <header><h1>HelpDesk MCP Apps</h1><p>${definitions.length} 张独立原子卡 · 本地快速预览</p><div class="legend" aria-label="优先级说明">${legend}</div></header>
       ${groups}
     </aside>
     <main>
@@ -104,7 +117,7 @@ function createPreviewIndex(definitions) {
       const active = buttons.find((button) => button.dataset.card === selected);
       const source = "./" + selected + "/dist/index.html?preview=1&locale=" + encodeURIComponent(locale.value);
       buttons.forEach((button) => button.classList.toggle("active", button === active));
-      title.textContent = active ? active.querySelector("span").textContent + " · " + selected : selected;
+      title.textContent = active ? "[" + active.dataset.priority + " · " + active.dataset.priorityLabel + "] " + active.dataset.name + " · " + selected : selected;
       frame.src = source;
       open.href = source;
       if (updateUrl) {
@@ -138,4 +151,4 @@ for (const definition of componentDefinitions) {
 }
 
 await writeFile(path.join(outputRoot, "index.html"), createPreviewIndex(componentDefinitions));
-console.log("Built local preview index for 26 cards");
+console.log(`Built local preview index for ${componentDefinitions.length} cards`);

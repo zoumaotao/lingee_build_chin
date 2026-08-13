@@ -217,10 +217,11 @@ const agentConversationScripts = {
     ],
     turns: [
       { user: "VPN 已经连接成功，但 ERP 和内部文件服务器都打不开，怎么处理？", replies: [{ kind: "knowledge-solution", title: "找到一个可能的解决方案", source: "远程访问与 VPN 使用指南 · 4.2", badge: "KB", solutionTitle: "重新导入最新 VPN 配置", steps: ["删除当前 VPN 配置", "从 IT Portal 导入最新配置", "完成 MFA 后重新连接并刷新本机 DNS"], question: "这个方案解决了问题吗？", meta: "预设知识结果 · 非实时 DC 检索" }] },
-      { user: "已经重新导入配置、完成 MFA 并重启电脑，还是不行。", replies: [{ kind: "assistant", text: "了解。为了形成工单草稿，还需要确认影响范围：只有你受影响，还是同一网络下有多位同事受影响？" }] },
-      { user: "目前只有我，影响今天的财务月结工作。", replies: [{ kind: "card", title: "工单草稿确认", badge: "等待人工确认", fields: [["标题", "VPN 连接后无法访问内部系统"], ["分类", "IT / Network & VPN"], ["影响范围", "单个用户 · 财务月结受阻"], ["已尝试", "重导配置、完成 MFA、重启电脑"], ["附件", "vpn-error.png (245KB), network-log.txt (12KB)"]], draft: "确认后才允许调用 Create_Ticket；本演示未连接该 Tool。", action: "确认并提交工单", tool: "Create_Ticket" }] },
-      { user: "查一下我的工单进度", replies: [{ kind: "card", title: "员工工单列表", badge: "3 张进行中", fields: [["HD-0811-0238", "VPN 连接问题 · 处理中"], ["HD-0811-0215", "Power BI 安装 · 待审批"], ["HD-0810-0198", "Outlook 同步 · 待确认"]], draft: "工单列表来源于 List_My_Tickets；只展示本人可见工单。", action: "查看详情", tool: "Get_Ticket_Detail" }] },
-      { user: "HR Portal 密码重置那个工单已经解决了，我来评价一下", replies: [{ kind: "card", title: "服务评价", badge: "HD-0809-0174", fields: [["工单", "重置 HR Portal 密码"], ["处理人", "Sarah Lim"], ["解决时长", "15 分钟"]], draft: "评价提交调用 Rate_Ticket；本演示未连接该 Tool。", action: "提交 5 星评价", tool: "Rate_Ticket" }] }
+      { user: "已经重新导入配置、完成 MFA 并重启电脑，还是不行。", replies: [{ kind: "iframe", component: "employee/ticket-draft", title: "工单草稿确认" }] },
+      { user: "确认提交", replies: [{ kind: "assistant", text: "工单已创建成功。" }, { kind: "iframe", component: "employee/ticket-detail", title: "工单回执", params: "scene=receipt" }] },
+      { user: "查一下我的工单", replies: [{ kind: "iframe", component: "employee/ticket-list", title: "我的工单列表" }] },
+      { user: "看一下 VPN 那个工单的进度", replies: [{ kind: "iframe", component: "employee/ticket-detail", title: "工单进度", params: "scene=progress" }] },
+      { user: "HR Portal 密码重置那个工单已经解决了，我来评价一下", replies: [{ kind: "iframe", component: "employee/rating", title: "服务评价" }] }
     ]
   },
   agent: {
@@ -233,10 +234,10 @@ const agentConversationScripts = {
       { kind: "assistant", text: "你好，我是 Agent Workbench。我可以基于你有权查看的工单形成摘要、排查建议和答复草稿；任何发送或转派都必须由处理人确认。" }
     ],
     turns: [
-      { user: "分析工单 HD-2026-0811-0238，先不要发送任何回复。", replies: [{ kind: "assistant", text: "演示摘要：员工已重新导入配置、完成 MFA 并重启电脑；VPN 隧道已连接，但 ERP 与文件服务器不可达，当前影响财务月结。", meta: "预设工单详情 · 非实时 Get_Ticket_Detail" }, { kind: "assistant", text: "建议优先核对 VPN 客户端配置版本、分流路由和 DNS；如仅该员工受影响，再检查账号对应的访问策略。发送前仍需处理人核实后台事实。" }] },
-      { user: "生成一版给员工的排查回复，我确认后再发送。", replies: [{ kind: "card", title: "答复草稿", badge: "等待处理人确认", fields: [["工单", "HD-2026-0811-0238"], ["回复对象", "工单提问人"], ["建议", "请更新 VPN 配置后重新连接，并执行 DNS 刷新；若仍失败，请补充客户端版本和报错截图。"]], draft: "生成草稿不等于发送。确认后才允许调用 Reply_Ticket。", action: "确认并发送答复", tool: "Reply_Ticket" }] },
-      { user: "HD-0811-0227 新员工登录问题转派给 Mei Ling 处理。", replies: [{ kind: "card", title: "工单转派确认", badge: "等待处理人确认", fields: [["工单", "HD-0811-0227 · 新员工无法登录协作平台"], ["目标处理人", "Mei Ling · IT Service Desk"], ["转派原因", "身份同步问题属于 Identity 组"]], draft: "确认后才允许调用 Reassign_Ticket；本演示未连接该 Tool。", action: "确认转派", tool: "Reassign_Ticket" }] },
-      { user: "VPN 工单处理完毕后帮我生成一条知识产物。", replies: [{ kind: "card", title: "知识产物确认", badge: "待确认沉淀", fields: [["来源工单", "HD-0811-0238 · VPN 连接后无法访问内部系统"], ["知识标题", "VPN 连接后无法访问内部系统的排查步骤"], ["处理方法", "1.删除旧配置 2.导入最新配置 3.完成MFA 4.刷新DNS 5.检查分割路由"], ["标签", "VPN, 网络, DNS, 路由"]], draft: "知识沉淀调用 DC 标准一键上传（8/21 PLANNED）；本演示未连接。", action: "确认沉淀为企业知识", tool: "Create_Knowledge_Ingestion" }] }
+      { user: "分析工单 HD-2026-0811-0238，先不要发送任何回复。", replies: [{ kind: "assistant", text: "演示摘要：员工已重新导入配置、完成 MFA 并重启电脑；VPN 隧道已连接，但 ERP 与文件服务器不可达，当前影响财务月结。\n\n建议优先核对 VPN 客户端配置版本、分流路由和 DNS。" }] },
+      { user: "生成一版给员工的排查回复，我确认后再发送。", replies: [{ kind: "iframe", component: "agent/reply", title: "答复草稿" }] },
+      { user: "HD-0811-0227 新员工登录问题转派给 Mei Ling 处理。", replies: [{ kind: "iframe", component: "agent/reassign", title: "工单转派确认" }] },
+      { user: "VPN 工单处理完毕后帮我生成一条知识产物。", replies: [{ kind: "iframe", component: "knowledge/knowledge-draft", title: "知识产物确认" }] }
     ]
   }
 };
@@ -248,8 +249,16 @@ const conversationOutcomes = { employee: null, agent: null };
 
 function conversationMessageHtml(message, script) {
   if (message.kind === "system") return `<div class="conversation-system"><span>边界提示</span><p>${escapeHtml(message.text)}</p></div>`;
-  if (message.kind === "knowledge-solution") return `<article class="conversation-card knowledge-solution-card"><header><div><span>${escapeHtml(message.source)}</span><h4>${escapeHtml(message.title)}</h4></div><b>${escapeHtml(message.badge)}</b></header><div class="knowledge-solution-body"><strong>${escapeHtml(message.solutionTitle)}</strong><ol>${message.steps.map((step) => `<li><span>${escapeHtml(step)}</span></li>`).join("")}</ol><em>${escapeHtml(message.meta)}</em></div><p class="knowledge-question">${escapeHtml(message.question)}</p><footer class="knowledge-actions"><button class="secondary-button" type="button" data-knowledge-action="resolved">已解决</button><button class="primary-button" type="button" data-knowledge-action="unresolved">仍未解决，继续提单</button></footer></article>`;
-  if (message.kind === "card") return `<article class="conversation-card"><header><div><span>交互式确认卡 · 演示</span><h4>${escapeHtml(message.title)}</h4></div><b>${escapeHtml(message.badge)}</b></header><div class="conversation-card-fields">${message.fields.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}</div><p>${escapeHtml(message.draft)}</p><footer><code>${escapeHtml(message.tool)}</code><button class="primary-button" type="button" data-scripted-tool="${escapeHtml(message.tool)}">${escapeHtml(message.action)}</button></footer></article>`;
+  if (message.kind === "knowledge-solution") return `<div class="conversation-message assistant"><span class="message-avatar">${escapeHtml(script.icon)}</span><div><div class="conversation-card-iframe"><iframe allowtransparency="true" src="http://localhost:5173/employee/resolution/dist/index.html?preview=1&t=${Date.now()}" title="知识检索卡"></iframe></div></div></div>`;
+  if (message.kind === "iframe") return `<div class="conversation-message assistant"><span class="message-avatar">${escapeHtml(script.icon)}</span><div><div class="conversation-card-iframe"><iframe allowtransparency="true" src="http://localhost:5173/${message.component}/dist/index.html?preview=1${message.params ? '&' + message.params : ''}&t=${Date.now()}" title="${escapeHtml(message.title)}"></iframe></div></div></div>`;
+  if (message.kind === "card") {
+    const iframeMap = { "工单草稿确认": "employee/ticket-draft", "答复草稿": "agent/reply", "工单转派确认": "agent/reassign", "知识产物确认": "knowledge/knowledge-draft", "员工工单列表": "employee/ticket-list", "服务评价": "employee/rating" };
+    const componentPath = iframeMap[message.title];
+    if (componentPath) {
+      return `<div class="conversation-card-iframe"><iframe allowtransparency="true" src="http://localhost:5173/${componentPath}/dist/index.html?preview=1&t=${Date.now()}" title="${escapeHtml(message.title)}"></iframe></div>`;
+    }
+    return `<article class="conversation-card"><header><div><span>交互式确认卡 · 演示</span><h4>${escapeHtml(message.title)}</h4></div><b>${escapeHtml(message.badge)}</b></header><div class="conversation-card-fields">${message.fields.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}</div><p>${escapeHtml(message.draft)}</p><footer><code>${escapeHtml(message.tool)}</code><button class="primary-button" type="button" data-scripted-tool="${escapeHtml(message.tool)}">${escapeHtml(message.action)}</button></footer></article>`;
+  }
   const isUser = message.kind === "user";
   return `<div class="conversation-message ${isUser ? "user" : "assistant"}"><span class="message-avatar">${isUser ? "你" : escapeHtml(script.icon)}</span><div><small>${isUser ? "演示用户" : escapeHtml(script.name)}</small><p>${escapeHtml(message.text)}</p>${message.meta ? `<em>${escapeHtml(message.meta)}</em>` : ""}</div></div>`;
 }

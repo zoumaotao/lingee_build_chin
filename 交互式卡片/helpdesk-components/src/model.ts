@@ -71,13 +71,15 @@ export const components: Record<ComponentId, ComponentDefinition> = {
   },
   knowledge: {
     id: "knowledge", icon: "◇", zh: "知识沉淀中心", en: "Knowledge Contribution",
-    subtitleZh: "工单转知识 · 审核 · 发布回写", subtitleEn: "Ticket-to-knowledge · Review · Publish",
-    defaultView: "knowledge-draft",
+    subtitleZh: "手工/对话/内驱沉淀 · 治理 · DC 发布", subtitleEn: "Manual/conversational/proactive ingestion · Governance · DC publish",
+    defaultView: "knowledge-ingestion",
     views: [
+      { id: "knowledge-ingestion", zh: "对话式摄取", en: "Conversational ingestion" },
+      { id: "knowledge-candidate", zh: "内驱候选", en: "Proactive candidate" },
       { id: "knowledge-draft", zh: "知识草稿", en: "Knowledge draft" },
       { id: "source-ticket", zh: "来源工单", en: "Source ticket" },
       { id: "review", zh: "发布审核", en: "Publish review" },
-      { id: "publish-result", zh: "发布结果", en: "Publish result" }
+      { id: "publish-result", zh: "DC 发布结果", en: "DC publish result" }
     ]
   }
 };

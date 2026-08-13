@@ -291,16 +291,30 @@ Build：生成 APPS 项目（App.tsx + info.json + SKILL.md）
     ↓
 Build：更新代码，刷新预览
     ↓
-用户：点击"沙箱测试"
+用户：点击“测试”
     ↓
-Build：自动构建打包 → 提交沙箱 Console → 用户在沙箱 Work 中端到端联调
+Build：如需则先构建打包 → 上传沙箱 Console → 保持当前 Build 页面
     ↓
-用户：测试通过，点击"提交生产"
+Console 返回与当前制品匹配的真实成功回执后，Build 原页显示绿色提示：
+“已经上传到沙箱，您可以开始制作技能进行测试”
+    ↓
+用户：继续在 Build 制作/关联 Skill；需要完整联调时再显式发起 Skill 测试
+    ↓
+用户：验证通过，点击“提交生产”
     ↓
 Build：构建 → 打包 zip → 提交生产 Console → 管理员审核 → 上架
     ↓
 生产 Work 中智能体可使用该 APPS 组件
 ```
+
+#### “测试”按钮交互约束
+
+- 按钮展示名固定为“测试”，含义是上传当前合格 MCP App 制品到沙箱，不是直接宣告完整测试通过。
+- 点击后始终留在当前 Build 页面，不打开新页、不切换路由、不自动跳转沙箱 Work。
+- 当前修订合格但尚未打包时，本次点击可显式触发构建打包后继续上传；无用户动作时不得后台自动上传。
+- 只有 Console 返回与当前修订、构建及制品哈希匹配的真实成功回执，才显示绿色原文：**“已经上传到沙箱，您可以开始制作技能进行测试”**。
+- 失败、超时、Console 不可用、回执缺失或哈希不一致时，原页保留产物和错误并允许重试，不得显示成功。
+- 上传成功仅表示沙箱资源已就绪，不等于 Skill 已制作、端到端测试通过或生产发布成功；“提交生产”保持独立按钮、权限和审核流程。
 
 ### 5.2 开发过程中的对话示例
 
@@ -408,7 +422,7 @@ MCP APPS 开发不是孤立的，它与 Build 的其他开发能力天然配合�
 **一体化开发场景：**
 - 用户可以在同一个项目中同时开发 APPS + Skill + 智能体
 - Build 感知它们之间的依赖关系
-- 如果 Skill 引用了一个本项目中尚未提交的 APPS，Build 会在沙箱测试前自动先将 APPS 提交到沙箱 Console，确保联调可用
+- 如果 Skill 引用了一个本项目中尚未在沙箱就绪的 APPS，Build 会在 Skill 测试前按制品哈希自动先上传 APPS 并核对真实回执；APPS 自身点击“测试”时只完成沙箱资源准备和原页反馈
 
 ---
 
@@ -424,8 +438,9 @@ Build 内部使用 Skill 来支撑各项开发能力。以下是 MCP APPS 开发
 | APPS 代码生成 Skill | 基于确认后的需求，生成 App.tsx、info.json、SKILL.md 等项目文件 | 需求澄清确认后 |
 | APPS 代码修改 Skill | 根据用户对话指令修改已有代码，支持增删字段、调整样式、修改交互逻辑等 | 用户描述修改需求时（如"把按钮改成蓝色"） |
 | APPS 预览调试 Skill | 启动沙箱 iframe 预览，注入模拟 toolInput 数据，检查渲染问题并给出修复建议 | 用户点击预览或说"看看效果"时 |
-| APPS 构建打包 Skill | 执行 vite build，生成 dist/ 目录，将 dist/ + info.json 打包为标准 zip | 用户点击"沙箱测试"或"提交生产"时 |
-| APPS 提交发布 Skill | 调用 Console API 上传 zip 包，处理注册结果和审核状态反馈 | 构建打包完成后 |
+| APPS 构建打包 Skill | 执行 vite build，生成 dist/ 目录，将 dist/ + info.json 打包为标准 zip | 用户点击“构建打包”“测试”或“提交生产”时 |
+| APPS 沙箱上传 Skill | 调用 Console 沙箱 API 上传 zip，校验真实回执并更新 SandboxDeployment | 用户点击“测试”且构建产物合格后 |
+| APPS 提交发布 Skill | 调用生产 Console API 上传 zip 包，处理注册结果和审核状态反馈 | 用户点击“提交生产”且完成确认后 |
 
 ### 4.2 支撑 MCP APPS 开发所需的 Tool
 
@@ -435,7 +450,8 @@ Build 内部使用 Tool 执行具体操作。以下是支撑 APPS 开发的底�
 |---|---|---|
 | Vite_Build | 执行 `vite build` 前端构建命令，生成 dist/ 产物 | APPS 构建打包 Skill |
 | Zip_Package | 将 dist/ + info.json 按规范打包为上传用 zip 文件 | APPS 构建打包 Skill |
-| Console_Upload_API | 调用 Console 组件上传接口，提交 zip 并获取注册状态 | APPS 提交发布 Skill |
+| Console_Sandbox_Upload_API | 上传合格制品到 Console 沙箱并返回组件 ID、版本、制品哈希、request ID 等真实回执 | APPS 沙箱上传 Skill |
+| Console_Production_Upload_API | 调用生产 Console 组件提交接口，进入审核流程 | APPS 提交发布 Skill |
 | Console_List_API | 查询当前租户已上架的 APPS 组件列表 | 技能开发中引用 APPS 时 |
 | Sandbox_Preview | 在沙箱 iframe 中渲染 APPS，注入模拟 toolInput 数据 | APPS 预览调试 Skill |
 | Template_Generator | 基于用户选定的模板生成标准项目结构文件 | APPS 代码生成 Skill |
@@ -477,8 +493,8 @@ Build 预置常用 APPS 模板，降低开发门槛：
 │                          灵基 Build                                      │
 │                                                                          │
 │  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐          │
-│  │ 创建APPS │───▶│ 开发APPS │───▶│ 调试APPS │───▶│ 沙箱测试 │          │
-│  │ (对话)   │    │ (对话)   │    │ (预览)   │    │ (→沙箱)  │          │
+│  │ 创建APPS │───▶│ 开发APPS │───▶│ 调试APPS │───▶│ 测试上传 │          │
+│  │ (对话)   │    │ (对话)   │    │ (预览)   │    │ (原页反馈)│          │
 │  └──────────┘    └──────────┘    └──────────┘    └──────────┘          │
 │                                                        │                 │
 │                                                        │ 测试通过        │
@@ -511,11 +527,13 @@ Build 预置常用 APPS 模板，降低开发门槛：
 3. Build 澄清需求，确认后生成项目代码
 4. 用户在 Build 中通过对话迭代修改
 5. 用户预览效果，确认 UI 和交互正确
-6. 用户点击"沙箱测试"
-   └── Build 执行 vite build → 打包 zip → 提交沙箱 Console（自动注册，无需审核）
-7. 用户在沙箱 Work 中端到端测试
+6. 用户点击“测试”
+   └── Build 保持当前页面；如需则执行 vite build → 打包 zip → 上传沙箱 Console
+   └── 仅真实回执与当前制品匹配后，原页显示绿色提示：
+       “已经上传到沙箱，您可以开始制作技能进行测试”
+7. 用户继续在 Build 制作/关联 Skill；需要完整端到端联调时，再由用户显式发起 Skill 测试
    └── 对话 → 触发 Skill → 渲染 APPS → 用户交互 → MCP Tool 调用 → 结果展示
-8. 测试通过，用户点击"提交生产"
+8. 验证通过，用户点击“提交生产”
    └── Build 构建打包 → 提交生产 Console → 进入审核流程
 9. 管理员审核上架
 10. 生产 Work 中智能体可使用该 APPS 组件
@@ -531,29 +549,34 @@ Build 预置常用 APPS 模板，降低开发门槛：
 3. Build 识别需要创建 APPS，切换到 APPS 开发上下文
 4. Build 澄清 APPS 需求，生成代码
 5. 用户确认后，Build 自动将 APPS 的 appCode 写入 Skill 的 allowed-tools
-6. 用户点击"测试"
-   └── Build 检测到 Skill 依赖一个未提交的 APPS
-   └── Build 自动先将 APPS 提交到沙箱 Console
-   └── 再将 Skill 提交到沙箱
-7. 用户在沙箱 Work 中联调
+6. 用户点击 Skill 的“测试”
+   └── Build 检测到 Skill 依赖一个尚未在沙箱就绪的 APPS
+   └── Build 自动先将 APPS 上传到沙箱 Console，并核对真实回执
+   └── 再将 Skill 提交到沙箱；依赖已就绪时复用对应制品回执
+7. Build 保持当前页面并展示测试入口/执行状态，不自动跳转沙箱 Work
 8. 一体化提交：APPS + Skill 按依赖顺序提交生产
 ```
 
-> **依赖感知规则**：如果 Skill 引用了一个本项目中尚未提交的 APPS，Build 必须在 Skill 测试前自动先提交 APPS。否则沙箱 Work 无法加载该组件。
+> **依赖感知规则**：如果 Skill 引用了一个本项目中尚未在沙箱就绪的 APPS，Build 必须在 Skill 测试前自动先上传 APPS，否则测试运行时无法加载该组件。APPS Builder 自身的“测试”按钮只负责准备沙箱资源并原页反馈；它与 Skill 测试、端到端测试通过和生产提交是不同状态。
 
 ### 5.4 联调测试流程
 
 ```
-开发者在 Build 中点击"测试"
+APPS 开发者在 Build 中点击“测试”
     ↓
-Build 将 APPS + Skill 自动提交到沙箱环境
+Build 如需则构建打包，并将当前合格 APPS 制品上传沙箱
     ↓
-沙箱 Work 启动，开发者在对话框中输入测试话术
+真实回执校验通过，Build 原页显示绿色提示；不跳转
+“已经上传到沙箱，您可以开始制作技能进行测试”
+    ↓
+开发者继续制作/关联 Skill，并显式发起 Skill 测试
+    ↓
+Build 内测试入口启动执行，测试过程和结果回传当前上下文
     （如："帮我提个工单"）
     ↓
 智能体：意图路由 → 匹配 Skill → 调用 entryTool（虚拟入口）
     ↓
-沙箱 Work：加载 APPS 组件 → 注入 toolInput 参数
+Build 内测试 Harness（可复用沙箱 Work 运行链路）：加载 APPS 组件 → 注入 toolInput 参数
     ↓
 APPS 组件：渲染 UI → 用户在卡片中操作（填写表单、点击按钮）
     ↓
@@ -640,20 +663,22 @@ Build 在生成 APPS 项目时会自动生成配套的 SKILL.md，用户也可�
 | B3 | APPS 代码生成 | 基于需求生成完整项目代码（App.tsx + info.json + SKILL.md） | Skill + Tool | 高 |
 | B4 | APPS 代码修改 | 根据对话指令修改已有代码 | Skill | 高 |
 | B5 | APPS 实时预览 | 在右侧面板沙箱 iframe 中渲染 APPS，注入模拟 toolInput | Tool + UI | 高 |
-| B6 | APPS 构建打包 | 执行 vite build，生成 dist/，打包为标准 zip | Tool | 高 |
-| B7 | 一键提交到 Console | 调用 Console API 上传 zip 并获取注册状态 | Tool | 高 |
+| B6 | APPS 构建打包 | 执行 vite build，生成 dist/，打包为标准 zip；“测试”点击可显式触发 | Tool | 高 |
+| B7 | “测试”上传沙箱 | 结果卡/详情提供“测试”按钮；上传沙箱、留在当前页面，真实回执后显示指定绿色提示 | Tool + UI | 高 |
 | B8 | 从 Console 拉取组件列表 | 查询已上架 APPS 供 Skill 引用 | Tool | 高 |
 | B9 | Skill 中引用 APPS | allowed-tools 关联 appCode，自动生成引用配置 | Skill 逻辑 | 高 |
-| B10 | 端到端联调环境 | 对话→Skill→APPS→MCP Tool 全链路可在沙箱中跑通 | 环境 | 高 |
+| B10 | Build 内测试入口 | 沙箱资源就绪后，在 Build 内显式发起 Skill 全链路测试并回传状态；不由 APPS 上传按钮自动跳转 | 环境 + UI | 高 |
 | B11 | 模板库 | 预置常用 APPS 模板，降低开发门槛 | 资源 | 中 |
-| B12 | 依赖感知与自动提交 | 识别 Skill 对未提交 APPS 的依赖，自动先提交 APPS | Skill 逻辑 | 中 |
+| B12 | 依赖感知与幂等上传 | Skill 测试前识别未就绪 APPS，按制品哈希自动先上传并复用真实回执 | Skill 逻辑 | 中 |
+| B13 | 提交生产 | 与“测试”独立，调用生产 Console API 并进入审核流程 | Tool + UI | 高 |
 
 ### 7.2 Console 侧需要做什么
 
 | # | 能力 | 说明 | 优先级 |
 |---|------|------|--------|
-| C1 | 组件上传 API | 提供标准 API 供 Build 调用，接收 zip 包并注册为业务组件 | 高 |
-| C2 | 租户级组件仓库 | 每个租户有自己的组件列表，支持"我上传的"和"官方预置的"分类 | 高 |
+| C1 | 沙箱组件上传 API | 接收 zip、租户、环境、构建与制品哈希；返回组件 ID、版本、哈希、request ID 和完成时间等真实回执 | 高 |
+| C2 | 租户级组件仓库 | 每个租户有自己的组件列表，支持“我上传的”和“官方预置的”分类 | 高 |
+| C8 | 生产组件提交 API | 与沙箱上传隔离，接收生产提交并进入审核流程 | 高 |
 | C3 | 组件审核流程 | 上传后可配置是否需要审核（租户可选：免审核/需管理员审核） | 高 |
 | C4 | 组件版本管理 | 支持上传新版本、查看历史版本列表、回滚到指定版本 | 中 |
 | C5 | 组件启用/停用/下架 | 管理组件的生命周期状态 | 中 |
@@ -688,7 +713,7 @@ Build 在生成 APPS 项目时会自动生成配套的 SKILL.md，用户也可�
 
 | # | 任务 | 归属团队 | 前置依赖 | 时间 | 责任人 |
 |---|------|---------|---------|------|--------|
-| 1 | Console 提供组件上传 API（接收 zip + 注册） | Console/TManage | — | | |
+| 1 | Console 提供沙箱组件上传 API（真实回执 + 幂等 + 审计） | Console/TManage | — | | |
 | 2 | Console 提供组件列表查询 API | Console/TManage | — | | |
 | 3 | Console 租户级组件管理界面（上传/审核/版本/上下架） | Console/TManage | #1 | | |
 | 4 | MCP APPS 开发规范文档对外公开 | APPS 平台 | — | | |
@@ -699,11 +724,12 @@ Build 在生成 APPS 项目时会自动生成配套的 SKILL.md，用户也可�
 | 9 | Build APPS 代码修改 Skill 开发 | Build | #8 | | |
 | 10 | Build APPS 预览能力（沙箱 iframe + 模拟 toolInput） | Build | #6 | | |
 | 11 | Build APPS 构建打包 Tool（vite build → zip） | Build | #6 | | |
-| 12 | Build 一键提交到 Console（调用上传 API） | Build | #1, #11 | | |
+| 12 | Build “测试”按钮、SandboxDeployment 状态、原页绿色反馈与失败重试 | Build | #1, #11 | | |
 | 13 | Build 从 Console 拉取组件列表 | Build | #2 | | |
 | 14 | Build Skill 中引用 APPS 组件（写入 allowed-tools） | Build | #13 | | |
-| 15 | Build 端到端联调测试环境 | Build | #10, #14 | | |
+| 15 | Build 内端到端联调测试入口与结果回传 | Build | #10, #12, #14 | | |
 | 16 | 组件版本管理（Console 侧 + Build 侧展示） | Console + Build | #3 | | |
+| 17 | Build 独立“提交生产”动作与 Console 审核回调 | Build + Console | #11 | | |
 
 ---
 
@@ -712,7 +738,7 @@ Build 在生成 APPS 项目时会自动生成配套的 SKILL.md，用户也可�
 | # | 风险/待确认 | 影响 | 建议 |
 |---|------------|------|------|
 | 1 | Build 是否具备运行前端构建工具（vite）的能力 | 决定构建打包的实现方式 | 如 Build 无法运行 vite，则改为服务端构建：Build 将源码提交到构建服务，服务端执行 build 后返回 zip |
-| 2 | Console 上传 API 的鉴权和权限模型 | 决定租户只能管理自己的组件 | 需 Console 团队确认 API 权限设计 |
+| 2 | Console 沙箱上传 API 的鉴权、权限、幂等和真实回执字段 | 决定是否能安全展示“已经上传到沙箱” | 未确认或回执不完整时必须失败关闭，不能本地假成功 |
 | 3 | Build 沙箱预览是否支持真实 MCP Tool 调用 | 决定预览是"UI 渲染 only"还是"全功能联调" | 建议分两级：快速预览（mock toolResult）+ 联调测试（真实调用） |
 | 4 | APPS 引用的 MCP 工具是否必须在集群中已存在 | 影响开发阶段是否能预览 | 建议预览阶段允许 mock，提交时校验工具是否真实存在 |
 | 5 | 同一项目中 APPS + Skill 的发布顺序依赖 | APPS 需先上架才能被 Skill 引用 | Build 应感知依赖关系，自动先提交 APPS 再提交 Skill |
@@ -727,8 +753,9 @@ Console 需要提供以下接口能力（具体接口格式由 Console 团队定
 
 | # | 能力 | 输入 | 输出 | 说明 |
 |---|------|------|------|------|
-| 1 | 组件上传 | zip 文件 + 租户信息 + 描述 | 注册状态（成功/待审核/失败） | 支持首次上传和版本更新 |
+| 1 | 沙箱组件上传 | zip + 租户/环境 + projectId/draftRevision/buildId + appCode + artifactSha256 + 幂等键 | 沙箱组件 ID、版本、制品哈希、request ID、完成时间、状态 | 只有结构化真实回执可触发原页绿色成功提示；支持同制品幂等重试 |
 | 2 | 组件列表查询 | 租户 ID + 状态筛选 | 组件列表（appCode、名称、描述、版本、状态） | 供 Build 拉取可用组件 |
 | 3 | 组件版本管理 | appCode + 操作（查看历史/回滚） | 版本列表或操作结果 | 支持多版本和回滚 |
 | 4 | 组件审核状态查询 | appCode | 当前审核状态 | Build 展示提交后的处理进度 |
 | 5 | 组件启停控制 | appCode + 操作（启用/停用/下架） | 操作结果 | Console 管理界面使用 |
+| 6 | 生产组件提交 | zip + 租户 + appCode + artifactSha256 + 生产提交幂等键 | submissionId、审核状态、request ID | 与沙箱上传记录和权限隔离，不复用 SandboxDeployment |

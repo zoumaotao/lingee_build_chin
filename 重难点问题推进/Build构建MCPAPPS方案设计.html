@@ -424,9 +424,9 @@ Call the MCP tool `{appCode}`</div>
 <text x="350" y="257" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="600">预览 + 对话迭代修改（右侧 iframe 实时渲染）</text>
 <path d="M350 271 L350 288" stroke="#374151" stroke-width="1.5" marker-end="url(#af)"/>
 <line x1="200" y1="310" x2="500" y2="310" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,3"/>
-<text x="350" y="303" text-anchor="middle" font-size="10" fill="#d97706" font-weight="700">▼ 沙箱测试</text>
+<text x="350" y="303" text-anchor="middle" font-size="10" fill="#d97706" font-weight="700">▼ 测试（上传沙箱）</text>
 <rect x="150" y="320" width="400" height="38" rx="8" fill="var(--warning-light)" stroke="#d97706"/>
-<text x="350" y="344" text-anchor="middle" fill="#92400e" font-size="11">Build 构建打包 → 提交沙箱 Console → 沙箱 Work 联调</text>
+<text x="350" y="344" text-anchor="middle" fill="#92400e" font-size="11">构建打包 → 上传沙箱 Console → 原页绿色反馈，不跳转</text>
 <path d="M350 358 L350 378" stroke="#374151" stroke-width="1.5" marker-end="url(#af)"/>
 <line x1="200" y1="400" x2="500" y2="400" stroke="#059669" stroke-width="1.5" stroke-dasharray="6,3"/>
 <text x="350" y="393" text-anchor="middle" font-size="10" fill="#059669" font-weight="700">▼ 提交生产</text>
@@ -436,6 +436,9 @@ Call the MCP tool `{appCode}`</div>
 <rect x="200" y="470" width="300" height="44" rx="22" fill="#059669"/>
 <text x="350" y="495" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">✓ 生产 Work 中可正式使用</text>
 </svg>
+</div>
+<div class="info-box" style="border-left:4px solid #059669">
+<strong>“测试”按钮交互约束：</strong>点击后上传当前合格 MCP App 制品到沙箱，并始终停留在当前 Build 页面，不打开或跳转沙箱 Work。当前修订合格但未打包时，本次点击可显式触发构建打包；无用户动作时不得后台上传。只有 Console 返回与当前修订、构建和制品哈希匹配的真实成功回执后，才在原页显示绿色提示：<strong style="color:#059669">已经上传到沙箱，您可以开始制作技能进行测试</strong>。失败、超时、接口不可用或回执不匹配时保留产物和错误并允许重试，不得显示成功。上传成功只表示沙箱资源已就绪，不代表 Skill 已制作、端到端测试通过或生产发布成功。
 </div>
 
 <h3 class="section-subtitle">3.2 开发过程中的对话示例</h3>
@@ -495,8 +498,9 @@ Call the MCP tool `{appCode}`</div>
 <tr><td><strong>APPS 代码生成 Skill</strong></td><td>基于确认的需求生成 App.tsx、info.json、SKILL.md</td><td>需求确认后</td></tr>
 <tr><td><strong>APPS 代码修改 Skill</strong></td><td>根据对话指令修改已有代码（增删字段、调整样式、修改逻辑）</td><td>用户说"修改xxx"时</td></tr>
 <tr><td><strong>APPS 预览调试 Skill</strong></td><td>启动沙箱 iframe 预览，注入模拟数据，检查问题并修复</td><td>用户点击预览或说"看看效果"</td></tr>
-<tr><td><strong>APPS 构建打包 Skill</strong></td><td>执行 vite build，生成 dist/，打包为标准 zip</td><td>点击"沙箱测试"或"提交生产"</td></tr>
-<tr><td><strong>APPS 提交发布 Skill</strong></td><td>调用 Console API 上传 zip，处理注册和审核状态</td><td>打包完成后</td></tr>
+<tr><td><strong>APPS 构建打包 Skill</strong></td><td>执行 vite build，生成 dist/，打包为标准 zip</td><td>点击“构建打包”“测试”或“提交生产”</td></tr>
+<tr><td><strong>APPS 沙箱上传 Skill</strong></td><td>上传合格制品到 Console 沙箱，校验真实回执并更新状态</td><td>点击“测试”且产物合格后</td></tr>
+<tr><td><strong>APPS 提交发布 Skill</strong></td><td>调用生产 Console API 上传 zip，处理审核状态</td><td>点击“提交生产”并确认后</td></tr>
 </tbody>
 </table>
 
@@ -506,7 +510,8 @@ Call the MCP tool `{appCode}`</div>
 <tbody>
 <tr><td><strong>Vite_Build</strong></td><td>执行 vite build 前端构建</td><td>APPS 构建打包 Skill</td></tr>
 <tr><td><strong>Zip_Package</strong></td><td>将 dist/ + info.json 打包为 zip</td><td>APPS 构建打包 Skill</td></tr>
-<tr><td><strong>Console_Upload_API</strong></td><td>调用 Console 组件上传接口</td><td>APPS 提交发布 Skill</td></tr>
+<tr><td><strong>Console_Sandbox_Upload_API</strong></td><td>上传沙箱并返回组件 ID、版本、制品哈希、request ID 等真实回执</td><td>APPS 沙箱上传 Skill</td></tr>
+<tr><td><strong>Console_Production_Upload_API</strong></td><td>提交生产 Console 并进入审核流程</td><td>APPS 提交发布 Skill</td></tr>
 <tr><td><strong>Console_List_API</strong></td><td>查询租户已上架组件列表</td><td>技能开发中引用 APPS 时</td></tr>
 <tr><td><strong>Sandbox_Preview</strong></td><td>沙箱 iframe 渲染 + 模拟 toolInput 注入</td><td>APPS 预览调试 Skill</td></tr>
 <tr><td><strong>Template_Generator</strong></td><td>基于模板生成标准项目结构</td><td>APPS 代码生成 Skill</td></tr>
@@ -553,7 +558,7 @@ Call the MCP tool `{appCode}`</div>
 <path d="M335 74 L355 74" stroke="#1a56db" stroke-width="1.5" marker-end="url(#ab)"/>
 <rect x="360" y="55" width="130" height="38" rx="6" fill="var(--purple)"/><text x="425" y="79" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">调试(预览)</text>
 <path d="M490 74 L510 74" stroke="var(--purple)" stroke-width="1.5" marker-end="url(#ab)"/>
-<rect x="515" y="55" width="130" height="38" rx="6" fill="#d97706"/><text x="580" y="79" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">沙箱测试</text>
+<rect x="515" y="55" width="130" height="38" rx="6" fill="#d97706"/><text x="580" y="72" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">测试</text><text x="580" y="86" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="8">上传沙箱·原页反馈</text>
 <path d="M645 74 L665 74" stroke="#059669" stroke-width="1.5" marker-end="url(#ag)"/>
 <rect x="670" y="55" width="130" height="38" rx="6" fill="#059669"/><text x="735" y="79" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">提交生产</text>
 <path d="M440 130 L300 170" stroke="#d97706" stroke-width="2" marker-end="url(#ab)"/>
@@ -580,11 +585,12 @@ Call the MCP tool `{appCode}`</div>
 <strong>2.</strong> 用户用自然语言描述需求<br>
 <strong>3.</strong> Build 澄清需求，确认后生成项目代码<br>
 <strong>4.</strong> 用户通过对话迭代修改 + 预览确认<br>
-<strong>5.</strong> 用户点击"沙箱测试"<br>
-&nbsp;&nbsp;&nbsp;&nbsp;└── Build: vite build → zip → 提交沙箱 Console（自动注册，无需审核）<br>
-<strong>6.</strong> 用户在沙箱 Work 中端到端测试<br>
+<strong>5.</strong> 用户点击“测试”<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── Build 保持当前页面；如需则 vite build → zip → 上传沙箱 Console<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── 仅真实回执匹配当前制品后，原页绿色显示“已经上传到沙箱，您可以开始制作技能进行测试”<br>
+<strong>6.</strong> 用户继续在 Build 制作/关联 Skill；需要完整联调时再显式发起 Skill 测试<br>
 &nbsp;&nbsp;&nbsp;&nbsp;└── 对话 → Skill → APPS 渲染 → 用户交互 → MCP Tool 调用 → 结果<br>
-<strong>7.</strong> 测试通过，用户点击"提交生产"<br>
+<strong>7.</strong> 验证通过，用户点击“提交生产”<br>
 &nbsp;&nbsp;&nbsp;&nbsp;└── Build 构建打包 → 提交生产 Console → 进入审核流程<br>
 <strong>8.</strong> 管理员审核上架<br>
 <strong>9.</strong> 生产 Work 中智能体可使用该 APPS 组件 ✓
@@ -598,18 +604,19 @@ Call the MCP tool `{appCode}`</div>
 <strong>3.</strong> Build 识别需要创建 APPS，切换到 APPS 开发上下文<br>
 <strong>4.</strong> Build 澄清 APPS 需求，生成代码<br>
 <strong>5.</strong> 用户确认后，Build 自动将 APPS 的 appCode 写入 Skill 的 allowed-tools<br>
-<strong>6.</strong> 用户点击"测试"<br>
-&nbsp;&nbsp;&nbsp;&nbsp;└── Build 检测到 Skill 依赖一个未提交的 APPS<br>
-&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--warning);font-weight:600">Build 自动先将 APPS 提交到沙箱 Console</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;└── 再将 Skill 提交到沙箱<br>
-<strong>7.</strong> 用户在沙箱 Work 中联调<br>
+<strong>6.</strong> 用户点击 Skill 的“测试”<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── Build 检测到 Skill 依赖尚未在沙箱就绪的 APPS<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── <span style="color:var(--warning);font-weight:600">Build 自动先上传 APPS 并核对真实回执</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── 再将 Skill 提交到沙箱；依赖已就绪时复用回执<br>
+<strong>7.</strong> Build 保持当前页面并展示测试入口/执行状态，不自动跳转沙箱 Work<br>
 <strong>8.</strong> 一体化提交：APPS + Skill 按依赖顺序提交生产
 </div>
 <div class="warning-box">
-<strong>依赖感知规则：</strong>如果 Skill 引用了本项目中尚未提交的 APPS，Build 必须在 Skill 测试前自动先提交 APPS。否则沙箱 Work 无法加载该组件。
+<strong>依赖感知规则：</strong>如果 Skill 引用了本项目中尚未在沙箱就绪的 APPS，Build 必须在 Skill 测试前自动先上传 APPS，否则测试运行时无法加载该组件。APPS Builder 自身的“测试”按钮只准备沙箱资源并原页反馈，不等于 Skill 测试或端到端测试通过。
 </div>
 
-<h3 class="section-subtitle">5.4 联调测试流程</h3>
+<h3 class="section-subtitle">5.4 Skill 端到端联调流程（沙箱资源就绪后的独立动作）</h3>
+<div class="info-box">APPS 开发者先在 Build 点击“测试”完成沙箱上传；真实回执校验后原页绿色提示且不跳转。随后继续制作/关联 Skill，并由用户显式发起 Skill 测试。下图描述的是后续 Skill 运行链路，不是 APPS“测试”按钮点击后的自动跳转。</div>
 <div class="diagram">
 <svg width="880" height="90" viewBox="0 0 880 90" xmlns="http://www.w3.org/2000/svg">
 <defs><marker id="afl" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#374151"/></marker></defs>
@@ -694,13 +701,14 @@ Call the MCP tool `{appCode}` with the following arguments:
 <tr><td>B3</td><td>代码生成</td><td>生成完整项目代码</td><td>Skill+Tool</td><td><span class="tag tag-high">高</span></td></tr>
 <tr><td>B4</td><td>代码修改</td><td>对话指令修改代码</td><td>Skill</td><td><span class="tag tag-high">高</span></td></tr>
 <tr><td>B5</td><td>实时预览</td><td>沙箱iframe渲染</td><td>Tool+UI</td><td><span class="tag tag-high">高</span></td></tr>
-<tr><td>B6</td><td>构建打包</td><td>vite build → zip</td><td>Tool</td><td><span class="tag tag-high">高</span></td></tr>
-<tr><td>B7</td><td>提交Console</td><td>调用上传API</td><td>Tool</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B6</td><td>构建打包</td><td>vite build → zip；“测试”点击可显式触发</td><td>Tool</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B7</td><td>“测试”上传沙箱</td><td>原页上传；真实回执后显示指定绿色提示，不跳转</td><td>Tool+UI</td><td><span class="tag tag-high">高</span></td></tr>
 <tr><td>B8</td><td>拉取组件列表</td><td>查询已上架APPS</td><td>Tool</td><td><span class="tag tag-high">高</span></td></tr>
 <tr><td>B9</td><td>Skill引用APPS</td><td>自动写allowed-tools</td><td>Skill逻辑</td><td><span class="tag tag-high">高</span></td></tr>
-<tr><td>B10</td><td>联调环境</td><td>全链路沙箱跑通</td><td>环境</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>B10</td><td>Build内测试入口</td><td>资源就绪后显式发起Skill全链路测试并回传状态，不由上传按钮自动跳转</td><td>环境+UI</td><td><span class="tag tag-high">高</span></td></tr>
 <tr><td>B11</td><td>模板库</td><td>预置常用模板</td><td>资源</td><td><span class="tag tag-mid">中</span></td></tr>
-<tr><td>B12</td><td>依赖感知</td><td>自动先提交APPS</td><td>Skill逻辑</td><td><span class="tag tag-mid">中</span></td></tr>
+<tr><td>B12</td><td>依赖感知与幂等上传</td><td>Skill测试前按制品哈希自动先上传未就绪APPS并复用回执</td><td>Skill逻辑</td><td><span class="tag tag-mid">中</span></td></tr>
+<tr><td>B13</td><td>提交生产</td><td>与“测试”独立，进入生产审核流程</td><td>Tool+UI</td><td><span class="tag tag-high">高</span></td></tr>
 </tbody>
 </table>
 
@@ -708,8 +716,9 @@ Call the MCP tool `{appCode}` with the following arguments:
 <table>
 <thead><tr><th>#</th><th>能力</th><th>说明</th><th>优先级</th></tr></thead>
 <tbody>
-<tr><td>C1</td><td>组件上传 API</td><td>接收zip包注册为业务组件</td><td><span class="tag tag-high">高</span></td></tr>
-<tr><td>C2</td><td>租户级组件仓库</td><td>"我上传的"+"官方预置"分类</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>C1</td><td>沙箱组件上传 API</td><td>接收zip、租户、环境、构建和制品哈希；返回组件ID、版本、哈希、request ID、完成时间等真实回执</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>C2</td><td>租户级组件仓库</td><td>“我上传的”+“官方预置”分类</td><td><span class="tag tag-high">高</span></td></tr>
+<tr><td>C8</td><td>生产组件提交 API</td><td>与沙箱上传隔离，进入生产审核流程</td><td><span class="tag tag-high">高</span></td></tr>
 <tr><td>C3</td><td>组件审核流程</td><td>可配置免审核/需审核</td><td><span class="tag tag-high">高</span></td></tr>
 <tr><td>C4</td><td>组件版本管理</td><td>多版本+回滚</td><td><span class="tag tag-mid">中</span></td></tr>
 <tr><td>C5</td><td>组件启停下架</td><td>生命周期管理</td><td><span class="tag tag-mid">中</span></td></tr>
@@ -752,7 +761,7 @@ Call the MCP tool `{appCode}` with the following arguments:
 <table>
 <thead><tr><th>#</th><th>任务</th><th>归属团队</th><th>前置依赖</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>Console 提供组件上传 API（接收 zip + 注册）</td><td>Console/TManage</td><td>—</td></tr>
+<tr><td>1</td><td>Console 提供沙箱组件上传 API（真实回执 + 幂等 + 审计）</td><td>Console/TManage</td><td>—</td></tr>
 <tr><td>2</td><td>Console 提供组件列表查询 API</td><td>Console/TManage</td><td>—</td></tr>
 <tr><td>3</td><td>Console 租户级组件管理界面（上传/审核/版本/上下架）</td><td>Console/TManage</td><td>#1</td></tr>
 <tr><td>4</td><td>MCP APPS 开发规范文档对外公开</td><td>APPS 平台</td><td>—</td></tr>
@@ -763,11 +772,12 @@ Call the MCP tool `{appCode}` with the following arguments:
 <tr><td>9</td><td>Build APPS 代码修改 Skill 开发</td><td>Build</td><td>#8</td></tr>
 <tr><td>10</td><td>Build APPS 预览能力（沙箱 iframe + 模拟 toolInput）</td><td>Build</td><td>#6</td></tr>
 <tr><td>11</td><td>Build APPS 构建打包 Tool（vite build → zip）</td><td>Build</td><td>#6</td></tr>
-<tr><td>12</td><td>Build 一键提交到 Console（调用上传 API）</td><td>Build</td><td>#1, #11</td></tr>
+<tr><td>12</td><td>Build “测试”按钮、SandboxDeployment 状态、原页绿色反馈与失败重试</td><td>Build</td><td>#1, #11</td></tr>
 <tr><td>13</td><td>Build 从 Console 拉取组件列表</td><td>Build</td><td>#2</td></tr>
 <tr><td>14</td><td>Build Skill 中引用 APPS 组件（写入 allowed-tools）</td><td>Build</td><td>#13</td></tr>
-<tr><td>15</td><td>Build 端到端联调测试环境</td><td>Build</td><td>#10, #14</td></tr>
+<tr><td>15</td><td>Build 内端到端联调测试入口与结果回传</td><td>Build</td><td>#10, #12, #14</td></tr>
 <tr><td>16</td><td>组件版本管理（Console 侧 + Build 侧展示）</td><td>Console + Build</td><td>#3</td></tr>
+<tr><td>17</td><td>Build 独立“提交生产”动作与 Console 审核回调</td><td>Build + Console</td><td>#11</td></tr>
 </tbody>
 </table>
 </div>
@@ -779,7 +789,7 @@ Call the MCP tool `{appCode}` with the following arguments:
 <thead><tr><th>#</th><th>风险/待确认</th><th>影响</th><th>建议</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>Build 是否具备运行 vite 的能力</td><td>决定构建方式</td><td>无法运行则改为服务端构建</td></tr>
-<tr><td>2</td><td>Console 上传 API 权限模型</td><td>租户隔离</td><td>需Console团队确认</td></tr>
+<tr><td>2</td><td>Console 沙箱上传 API 的鉴权、权限、幂等和真实回执字段</td><td>决定能否安全展示“已经上传到沙箱”</td><td>未确认或回执不完整时失败关闭，不能本地假成功</td></tr>
 <tr><td>3</td><td>预览是否支持真实 MCP Tool 调用</td><td>预览深度</td><td>分两级：mock预览 + 真实联调</td></tr>
 <tr><td>4</td><td>APPS 引用的 Tool 是否必须已存在</td><td>开发体验</td><td>预览允许mock，提交时校验</td></tr>
 <tr><td>5</td><td>APPS + Skill 发布顺序依赖</td><td>一体化发布</td><td>Build感知依赖，自动先提交APPS</td></tr>
@@ -796,11 +806,12 @@ Call the MCP tool `{appCode}` with the following arguments:
 <table>
 <thead><tr><th>#</th><th>能力</th><th>输入</th><th>输出</th><th>说明</th></tr></thead>
 <tbody>
-<tr><td>1</td><td><strong>组件上传</strong></td><td>zip 文件 + 租户信息 + 描述</td><td>注册状态（成功/待审核/失败）</td><td>支持首次上传和版本更新</td></tr>
+<tr><td>1</td><td><strong>沙箱组件上传</strong></td><td>zip + 租户/环境 + projectId/draftRevision/buildId + appCode + artifactSha256 + 幂等键</td><td>沙箱组件ID、版本、制品哈希、request ID、完成时间、状态</td><td>只有结构化真实回执可触发原页绿色提示；支持同制品幂等重试</td></tr>
 <tr><td>2</td><td><strong>组件列表查询</strong></td><td>租户 ID + 状态筛选</td><td>组件列表（appCode、名称、描述、版本、状态）</td><td>供 Build 拉取可用组件</td></tr>
 <tr><td>3</td><td><strong>组件版本管理</strong></td><td>appCode + 操作（查看历史/回滚）</td><td>版本列表或操作结果</td><td>支持多版本和回滚</td></tr>
 <tr><td>4</td><td><strong>组件审核状态查询</strong></td><td>appCode</td><td>当前审核状态</td><td>Build 展示提交后的处理进度</td></tr>
 <tr><td>5</td><td><strong>组件启停控制</strong></td><td>appCode + 操作（启用/停用/下架）</td><td>操作结果</td><td>Console 管理界面使用</td></tr>
+<tr><td>6</td><td><strong>生产组件提交</strong></td><td>zip + 租户 + appCode + artifactSha256 + 生产提交幂等键</td><td>submissionId、审核状态、request ID</td><td>与沙箱上传记录和权限隔离</td></tr>
 </tbody>
 </table>
 </div>

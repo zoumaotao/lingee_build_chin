@@ -310,6 +310,7 @@ body { background: #e9ebf2; }
 .message-avatar { display: grid; place-items: center; flex: 0 0 auto; width: 26px; height: 26px; color: #574cc8; border-radius: 8px; background: #e7e4ff; font-size: 9px; font-weight: 800; }
 .conversation-message.user .message-avatar { color: #fff; background: #596070; }
 .conversation-message > div { max-width: min(480px, 78%); }
+.conversation-message > div:has(.conversation-card-iframe) { max-width: 480px; }
 .conversation-message small { display: block; margin: 0 0 2px 2px; color: var(--text-3); font-size: 10px; }
 .conversation-message.user small { margin-right: 2px; text-align: right; }
 .conversation-message p { padding: 8px 10px; color: var(--text-2); border: 1px solid #e4e5eb; border-radius: 4px 10px 10px 10px; background: #fff; box-shadow: 0 1px 4px rgba(40, 43, 56, .03); font-size: 12px; line-height: 1.5; }
@@ -471,3 +472,10 @@ body { background: #e9ebf2; }
 .trend-bar span { font-size: 10px; color: var(--text-3); }
 .trend-bar b { font-size: 11px; color: var(--text); }
 .period-select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 7px; font-size: 12px; color: var(--text-2); background: var(--surface); }
+
+/* ===== Embedded Component iframes ===== */
+.conversation-card-iframe { width: 480px; min-width: 480px; margin: 0 0 10px; overflow: hidden; background: transparent; }
+.conversation-card-iframe iframe { display: block; width: 100%; height: 280px; border: none; background: transparent; }
+.conversation-card-iframe footer { display: flex; padding: 8px 12px; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid #eeecf5; }
+.conversation-card-iframe footer code { color: var(--text-3); font-size: 10px; }
+.conversation-card-iframe .knowledge-actions { justify-content: flex-end; gap: 8px; }

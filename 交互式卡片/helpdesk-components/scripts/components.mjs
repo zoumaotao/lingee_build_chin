@@ -1,8 +1,48 @@
+const priorityCatalog = {
+  P0: { label: "核心闭环", description: "当前上线闭环所需" },
+  P1: { label: "二期增强", description: "已有需求，依赖后续平台或业务能力" },
+  P2: { label: "待确认", description: "方案扩展，需客户或平台进一步确认" }
+};
+
+const componentPriorities = {
+  "employee/resolution": "P0",
+  "employee/ticket-draft": "P0",
+  "employee/ticket-list": "P0",
+  "employee/ticket-detail": "P0",
+  "employee/rating": "P1",
+  "employee/attachments": "P0",
+  "agent/notification": "P1",
+  "agent/queue": "P0",
+  "agent/ticket-detail": "P0",
+  "agent/reply": "P0",
+  "agent/reassign": "P1",
+  "agent/sla-alert": "P1",
+  "manager/dashboard": "P1",
+  "manager/team-tickets": "P1",
+  "manager/workload": "P2",
+  "manager/sla": "P1",
+  "manager/reassign": "P1",
+  "approval/approval-list": "P1",
+  "approval/approval-detail": "P1",
+  "approval/decision": "P1",
+  "approval/timeline": "P1",
+  "knowledge/knowledge-ingestion": "P1",
+  "knowledge/knowledge-candidate": "P1",
+  "knowledge/knowledge-draft": "P1",
+  "knowledge/source-ticket": "P1",
+  "knowledge/review": "P2",
+  "knowledge/publish-result": "P2"
+};
+
 function card(group, view, appName, description, support, tools = []) {
+  const id = `${group}/${view}`;
+  const priorityCode = componentPriorities[id];
+  if (!priorityCode) throw new Error(`Missing priority for ${id}`);
   return {
     group,
     view,
-    id: `${group}/${view}`,
+    id,
+    priority: { code: priorityCode, ...priorityCatalog[priorityCode] },
     appCode: `zcy_kingdee_helpdesk_${group}_${view.replaceAll("-", "_")}`,
     appName,
     description,
@@ -15,8 +55,7 @@ function card(group, view, appName, description, support, tools = []) {
 const componentDefinitions = [
   card("employee", "resolution", "HelpDesk解决方案确认卡", "在 Agent 对话中展示知识解决方案并收集是否解决的反馈", "知识答案展示与解决结果确认"),
   card("employee", "ticket-draft", "HelpDesk工单确认卡", "在 Agent 对话中展示 AI 生成的工单草稿并收集提交确认", "工单信息核对与确认提交", ["Create_Ticket"]),
-  card("employee", "ticket-receipt", "HelpDesk工单回执卡", "在 Agent 对话中展示工单创建成功或失败结果", "工单提交结果与进度入口", ["Get_Ticket_Detail"]),
-  card("employee", "ticket-list", "HelpDesk我的工单摘要卡", "在 Agent 对话中展示最近更新的个人工单摘要", "个人工单摘要查询", ["List_My_Tickets", "Get_Ticket_Detail"]),
+  card("employee", "ticket-list", "HelpDesk我的工单列表卡", "在 Agent 对话中展示员工的工单列表", "员工工单列表查询", ["List_My_Tickets", "Get_Ticket_Detail"]),
   card("employee", "ticket-detail", "HelpDesk员工工单进度卡", "在 Agent 对话中展示单个工单的处理进度并收集解决确认", "工单进度展示与关闭确认", ["Close_Ticket"]),
   card("employee", "rating", "HelpDesk服务评价卡", "在 Agent 对话中收集用户对已完成工单的服务评价", "服务评分与评价提交", ["Rate_Ticket"]),
   card("employee", "attachments", "HelpDesk附件确认卡", "在 Agent 对话中展示并确认随工单提交的附件", "工单附件选择与上传确认", ["Upload_Ticket_Attachment"]),
@@ -39,6 +78,8 @@ const componentDefinitions = [
   card("approval", "decision", "HelpDesk审批决策卡", "在 Agent 对话中收集审批意见并执行同意或驳回", "审批决策确认", ["Approve_Ticket_Request", "Reject_Ticket_Request"]),
   card("approval", "timeline", "HelpDesk审批轨迹卡", "在 Agent 对话中展示申请的审批审计轨迹", "审批流程与审计轨迹展示"),
 
+  card("knowledge", "knowledge-ingestion", "HelpDesk对话式知识摄取确认卡", "在 Agent 对话中核对附件、目标智能体、权限和治理策略后创建待审核知识摄取任务", "自然语言/附件写知识的受控确认", ["Create_Knowledge_Ingestion"]),
+  card("knowledge", "knowledge-candidate", "HelpDesk智能体内驱知识候选卡", "展示智能体基于高频问题、解决确认和反馈信号发现的知识候选", "内驱候选解释、证据与转草稿", ["Create_Knowledge_Draft"]),
   card("knowledge", "knowledge-draft", "HelpDesk知识草稿确认卡", "在 Agent 对话中编辑并确认由工单生成的知识草稿", "知识草稿编辑与提交", ["Create_Knowledge_Draft"]),
   card("knowledge", "source-ticket", "HelpDesk知识来源工单卡", "在 Agent 对话中展示适合沉淀知识的来源工单摘要", "知识来源工单核对与草稿生成", ["Create_Knowledge_Draft"]),
   card("knowledge", "review", "HelpDesk知识发布审核卡", "在 Agent 对话中执行知识质量、冲突检查和发布确认", "知识质量审核与发布", ["Check_Knowledge_Conflict", "Publish_Knowledge"]),
@@ -67,7 +108,6 @@ function createDataSchema(definition) {
   const schemas = {
     "employee/resolution": { properties: { solutionTitle: stringField("解决方案标题"), solutionSteps: { type: "array", items: { type: "string" } }, source: stringField("知识来源"), knowledgeId: stringField("知识编号") }, required: ["solutionTitle", "solutionSteps", "source"] },
     "employee/ticket-draft": { properties: { requesterName: stringField("提单人姓名"), requesterEmail: stringField("提单人邮箱"), title: stringField("工单标题"), category: stringField("分类"), priority: stringField("优先级"), description: stringField("问题描述"), attachments: { type: "array", items: attachmentSchema } }, required: ["title", "category", "priority", "description"] },
-    "employee/ticket-receipt": { properties: { ticketId: stringField("后台返回的工单编号"), status: { type: "string", enum: ["success", "created", "pending", "processing", "failed", "error", "unknown"] }, assignedTeam: stringField("处理团队"), errorMessage: stringField("失败原因") }, required: ["status"], allOf: [{ if: { properties: { status: { enum: ["success", "created"] } }, required: ["status"] }, then: { required: ["ticketId"] } }] },
     "employee/ticket-list": { properties: { tickets: { type: "array", items: ticketSchema } }, required: ["tickets"] },
     "employee/ticket-detail": { properties: { ticket: ticketSchema, latestReply: stringField("最新回复"), latestReplyAuthor: stringField("回复人"), latestReplyTime: stringField("回复时间"), timeline: { type: "array", items: { type: "object" } } }, required: ["ticket"] },
     "employee/rating": { properties: { ticketId: stringField("已完成工单编号"), assignee: stringField("服务处理人") }, required: ["ticketId"] },
@@ -87,6 +127,8 @@ function createDataSchema(definition) {
     "approval/approval-detail": { properties: { approval: { type: "object" }, description: stringField("申请说明"), timeLeft: stringField("审批剩余时间"), timeline: { type: "array", items: { type: "object" } } }, required: ["approval"] },
     "approval/decision": { properties: { approval: { type: "object" }, checks: { type: "object", properties: { policy: booleanField("政策符合性"), businessNeed: booleanField("业务必要性"), requiresL2: booleanField("是否需要 L2") } } }, required: ["approval"] },
     "approval/timeline": { properties: { approval: { type: "object" }, timeline: { type: "array", items: { type: "object" } } }, required: ["approval", "timeline"] },
+    "knowledge/knowledge-ingestion": { properties: { targetAgentId: stringField("目标智能体稳定标识"), targetAgentName: stringField("目标智能体名称"), knowledgeSpaceId: stringField("企业级 DC 知识域"), sourceType: { type: "string", enum: ["conversation", "ticket", "file", "manual"] }, conversationId: stringField("来源会话"), ticketId: stringField("来源工单"), attachments: { type: "array", items: attachmentSchema }, audience: stringField("可见范围"), reviewMode: { type: "string", enum: ["manual", "policy"] }, piiStatus: stringField("脱敏检查状态"), conflictStatus: stringField("冲突检查状态") }, required: ["targetAgentId", "knowledgeSpaceId", "sourceType", "attachments", "audience", "reviewMode"] },
+    "knowledge/knowledge-candidate": { properties: { candidateId: stringField("候选编号"), trigger: stringField("内驱触发规则"), triggerReason: stringField("触发原因"), evidenceRefs: { type: "array", items: { type: "string" } }, qualityScore: numberField("候选质量分"), similarTickets30d: numberField("近30天相似工单"), targetAgentId: stringField("目标智能体"), audience: stringField("候选可见范围") }, required: ["candidateId", "trigger", "triggerReason", "evidenceRefs", "targetAgentId"] },
     "knowledge/knowledge-draft": { properties: { sourceTicket: stringField("来源工单"), title: stringField("知识标题"), answer: stringField("标准处理方法"), tags: stringField("知识标签"), piiRemoved: booleanField("脱敏检查是否通过") }, required: ["sourceTicket", "title", "answer", "piiRemoved"] },
     "knowledge/source-ticket": { properties: { sourceTicket: stringField("来源工单"), summary: stringField("来源摘要"), steps: { type: "array", items: { type: "string" } }, rating: numberField("来源服务评分"), similarTickets30d: numberField("近 30 天相似工单数"), estimatedDeflection: stringField("预计分流量") }, required: ["sourceTicket", "summary", "steps"] },
     "knowledge/review": { properties: { sourceTicket: stringField("来源工单"), qualityScore: numberField("质量评分 0-100"), similarity: numberField("相似度 0-100"), checks: { type: "object" }, conflictSuggestion: stringField("冲突处理建议"), publishMode: stringField("发布模式") }, required: ["sourceTicket", "qualityScore", "checks"] },
