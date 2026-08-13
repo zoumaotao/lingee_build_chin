@@ -376,11 +376,11 @@
 <!-- Header -->
 <div class="header">
     <h1>振兴 HelpDesk 项目计划书</h1>
-    <div class="subtitle">基于灵基平台的 AI-Native 企业服务台解决方案</div>
+    <div class="subtitle">当前执行基线、能力边界与验收门禁总览</div>
     <div class="meta">
         <span>客户：振兴集团</span>
-        <span>版本：v1.1</span>
-        <span>更新：2026年8月12日</span>
+        <span>版本：v1.2</span>
+        <span>信息基线：2026年8月12日</span>
     </div>
 </div>
 
@@ -416,8 +416,20 @@
 
     <h3>1.3 核心价值主张</h3>
     <div class="highlight highlight-blue">
-        <strong>一句话目标：</strong>能自助的自助，自助不了的一键转人工，且转人工时信息完整、不用重复填。<br>
-        <strong>终态愿景：</strong>灵基取代邮件成为唯一服务入口，AI 持续学习形成知识飞轮，服务效率指数级提升。
+        <strong>一句话目标：</strong>能自助的自助，自助不了的转人工，且转人工时信息完整、不用重复填。<br>
+        <strong>终态愿景：</strong>灵基取代邮件成为统一服务入口，AI 持续学习形成知识飞轮；该愿景不等于 8/31 试运行范围已全部具备。
+    </div>
+
+    <h3>1.4 当前结论与证据口径</h3>
+    <table>
+        <tr><th>状态</th><th>判定标准</th><th>本计划中的用法</th></tr>
+        <tr><td><span class="tag tag-done">本地已实现</span></td><td>仓库中已有可检查的源码、构建产物或脚本化 Demo</td><td>只能证明原型/契约实现，不等于 Console 上传、Host 集成、真实 Tool、UAT 或生产发布</td></tr>
+        <tr><td><span class="tag tag-doing">目标节点</span></td><td>会议计划给出责任人与日期，但尚无真实交付/验收证据</td><td>8/13、8/14、8/17、8/18、8/20、8/31 均按目标管理</td></tr>
+        <tr><td><span class="tag tag-p1">PLANNED</span></td><td>标准能力方案或发布日期已确认，尚未发布或未完成 HelpDesk UAT</td><td>Foundation + DC 产物/附件写入 DC：2026-08-21</td></tr>
+        <tr><td><span class="tag tag-todo">TBD</span></td><td>接口、责任人、日期或产品规则未确认</td><td>用户初始化、Build 培训、知识触发/选单、带上下文会话</td></tr>
+    </table>
+    <div class="highlight highlight-yellow">
+        <strong>当前总判断：</strong>四场景 Demo 和 MCP Apps 参考工程已有本地实现证据；平台发布、海外 HelpDesk 连通、Console/Host 集成、真实 MCP Tool、SSO/用户初始化、UAT 签字与 8/31 试运行尚无完整验收证据，不能标记为已完成。
     </div>
 </div>
 
@@ -462,7 +474,10 @@
 <div class="section" id="sec3">
     <h2>03 解决方案蓝图</h2>
     
-    <h3>3.1 系统架构图</h3>
+    <h3>3.1 目标架构图（包含二期与平台路线图能力）</h3>
+    <div class="highlight highlight-yellow">
+        <strong>阅读说明：</strong>本图描述终态部件关系，不代表所有部件都进入 8/31 试运行。员工/处理人 Skill、工单服务、Work 菜单与基础 DC 属当前交付主线；消息中心、后台主动推送、自动分配、SLA/评分/仪表盘和完整知识飞轮按二期或平台路线图管理。
+    </div>
     <svg viewBox="0 0 920 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:920px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
       <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7280"/></marker></defs>
 
@@ -607,7 +622,10 @@
       <text x="830" y="514" font-size="9" fill="#6b7280">外部数据源</text>
     </svg>
 
-    <h3>3.2 端到端时序图（完整部件视角）</h3>
+    <h3>3.2 目标端到端时序图（含二期消息与评价能力）</h3>
+    <div class="highlight highlight-red">
+        <strong>非当前完成声明：</strong>图中的消息中心主动推送、自动分配、实时跨角色通知和评分回流是目标流程。8/31 试运行只按实际通过 UAT 的链路纳入；消息中心未就绪时以 Work 待办/主动查询和邮件降级，不得把脚本化 Demo 当作生产闭环证据。
+    </div>
     <svg viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1100px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
       <defs><marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#374151"/></marker>
       <marker id="arr-green" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#059669"/></marker>
@@ -815,7 +833,7 @@
 
       <!-- 完成标记 -->
       <rect x="300" y="775" width="500" height="22" rx="4" fill="#ecfdf5" stroke="#6ee7b7"/>
-      <text x="550" y="790" font-size="9" fill="#065f46" text-anchor="middle" font-weight="500">✅ 完整闭环：问询 → 知识检索 → 提单 → 分配 → 推送 → 处理 → 答复 → 确认 → 评价</text>
+      <text x="550" y="790" font-size="9" fill="#065f46" text-anchor="middle" font-weight="500">目标全闭环（含二期能力）：问询 → 检索 → 提单 → 分配 → 推送 → 处理 → 答复 → 评价</text>
     </svg>
 
     <h3>3.3 知识生命周期图</h3>
@@ -968,7 +986,7 @@
         <span class="flow-arrow">→</span>
         <span class="flow-step">提问人评价打分</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">一键上传企业知识<br><small>有智能体自动归属；无智能体游离</small></span>
+        <span class="flow-step">一键上传企业知识（条件能力）<br><small>8/21 PLANNED；有智能体自动归属，无智能体游离</small></span>
     </div>
 
     <h4>场景四：查询工单进度</h4>
@@ -991,17 +1009,18 @@
 <div class="section" id="sec4">
     <h2>04 功能架构设计</h2>
     
-    <h3>4.1 系统全景</h3>
+    <h3>4.1 系统全景与本期范围</h3>
     <div class="highlight highlight-green">
-        <strong>整体架构：</strong>2 个智能体 + 1 套后台工单服务 + 1 个知识中心，通过 MCP Server 双向连接，灵基作为所有角色的唯一工作台。
+        <strong>终态架构：</strong>2 个智能体 + 1 套后台工单服务 + 1 个知识中心，通过 MCP Server 连接；8/31 目标是验收、部署并上线试运行，不是终态能力一次性全部上线。
     </div>
     <table>
-        <tr><th>层级</th><th>组件</th><th>面向角色</th><th>部署位置</th></tr>
-        <tr><td>用户交互层</td><td>Helpdesk Assistant（员工端智能体）</td><td>全体员工（1000+）</td><td>灵基 Work</td></tr>
-        <tr><td>用户交互层</td><td>Agent Workbench（处理人端智能体）</td><td>IT/HR 处理人（20-30 人）</td><td>灵基 Work</td></tr>
-        <tr><td>业务逻辑层</td><td>工单后台服务 + MCP Server</td><td>—</td><td>苍穹/云服务器</td></tr>
-        <tr><td>知识层</td><td>灵基 DC 知识中心</td><td>—</td><td>灵基 DC（新加坡节点）</td></tr>
-        <tr><td>数据源</td><td>SharePoint 文档库</td><td>—</td><td>微软云</td></tr>
+        <tr><th>层级</th><th>组件</th><th>当前定位</th><th>证据/边界</th></tr>
+        <tr><td>用户交互层</td><td>Helpdesk Assistant（员工端）</td><td>8/14 目标：提问、提单、查单、评价入口</td><td>已有本地 Demo/组件源码；真实 Skill、Tool 与 UAT 待验收</td></tr>
+        <tr><td>用户交互层</td><td>Agent Workbench（处理人端）</td><td>8/17 目标：提问、回复、转派、查单、知识产物入口</td><td>知识触发方式与 eligible ticket 未定；主动推送不在当前能力基线</td></tr>
+        <tr><td>Work 应用</td><td>我的工单 / 我的任务、SSO、数据权限、一键会话</td><td>8/14 目标</td><td>带工单/附件上下文能力待对齐；未确认时降级为通用新会话</td></tr>
+        <tr><td>业务逻辑层</td><td>工单后台服务 + MCP Server</td><td>基础 CRUD、查询、回复、转派、状态流转</td><td>部署方案 8/13 二次沟通；用户初始化责任和日期 TBD</td></tr>
+        <tr><td>知识层</td><td>灵基 DC（新加坡节点）</td><td>基础部署已有；8/13 验证 HelpDesk 连通</td><td>产物/附件写入 DC 为 8/21 PLANNED，发布后再验收</td></tr>
+        <tr><td>平台路线图</td><td>消息中心、主动推送、SLA、评分、仪表盘、完整知识飞轮</td><td>二期/后续</td><td>不得作为 8/31 无条件试运行前置完成项或既成能力</td></tr>
     </table>
 
     <h3>4.2 员工端智能体（Helpdesk Assistant）</h3>
@@ -1013,6 +1032,7 @@
         <tr><td>Ticket Draft Skill</td><td>工单草稿生成</td><td>读取 Schema 获取分类/字段规则、基于对话上下文自动生成草稿、校验必填项、展示确认卡（可编辑）</td></tr>
         <tr><td>Ticket Submission Skill</td><td>工单提交（副作用隔离）</td><td>上传附件（全成功才建单）、幂等建单（idempotencyKey）、错误处理、展示工单回执卡</td></tr>
         <tr><td>Ticket History Skill</td><td>工单查询</td><td>查本人工单列表/详情/进度/人工回复记录，只能查本人</td></tr>
+        <tr><td>Ticket Rating</td><td>评价入口</td><td>员工 Skill 8/14 范围；评价卡可本地实现，完整评分/KPI 与主动邀评属于二期闭环</td></tr>
     </table>
     <h4>关键规则</h4>
     <ul>
@@ -1023,22 +1043,22 @@
         <li>直接提单场景最多一次 RAG 尝试</li>
     </ul>
 
-    <h3>4.3 处理人端智能体（Agent Workbench）</h3>
-    <p>面向 IT/HR 处理人员（约 20-30 人），提供工单接收、处理答复、知识沉淀能力。</p>
+    <h3>4.3 处理人端智能体（Agent Workbench，8/17 目标）</h3>
+    <p>面向 IT/HR 处理人员（约 20-30 人），当前目标是提问、查单、回复、转派和生成知识产物入口；实时事件推送、完整经理看板及完整知识飞轮不作为当前已具备能力。</p>
     <table>
-        <tr><th>组件</th><th>职责</th><th>说明</th></tr>
-        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一工作台入口</td><td>接收新工单分配通知（MCP 推送）、工单队列管理、处理状态路由</td></tr>
-        <tr><td>Ticket Process Skill</td><td>工单处理与答复</td><td>查看工单详情/提问上下文/对话历史，编写答复并推送给提问人，更新工单状态</td></tr>
-        <tr><td>Ticket Reassign Skill</td><td>工单转派</td><td>经理/分发员可将工单重新分配给其他处理人</td></tr>
-        <tr><td>Knowledge Contribute Skill</td><td>知识沉淀</td><td>将已确认处理产物/附件一键上传企业知识；有智能体上下文时自动归属，无智能体时游离。计划 8/21 发布，真实回执与检索验收前不得标记已上线</td></tr>
-        <tr><td>Workload Dashboard Skill</td><td>工作看板（对话内轻量查询）</td><td>处理人在对话中快速查看本人待办数量/SLA 临近工单/处理统计。<em>注：完整管理大屏见 4.6 第 9 项"仪表盘"，面向经理角色</em></td></tr>
+        <tr><th>组件</th><th>职责</th><th>当前边界</th></tr>
+        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过“我的任务”或主动查询进入；新工单实时推送依赖 #31，未就绪时使用待办/邮件降级</td></tr>
+        <tr><td>Ticket Process Skill</td><td>查看与回复工单</td><td>真实 Tool 成功回执后才展示处理成功，不以本地模拟数据冒充</td></tr>
+        <tr><td>Ticket Reassign Skill</td><td>工单转派</td><td>需权限校验、目标处理人合法性和真实回执</td></tr>
+        <tr><td>Knowledge Contribute Skill</td><td>生成知识产物入口</td><td>8/17 Skill 目标不等于已写入 DC；定时/对话触发、选单规则待定，8/21 DC 仍为 PLANNED</td></tr>
+        <tr><td>Workload / Manager Views</td><td>队列、SLA、团队统计</td><td>本地组件参考工程已有页面逻辑；生产数据、权限、Host 集成与 UAT 未证明</td></tr>
     </table>
     <h4>关键规则</h4>
     <ul>
-        <li>处理人只能看到分配给自己（或自己团队共享池）的工单</li>
-        <li>答复实时推送给提问人，提问人在灵基即可收到</li>
-        <li>经理监管视角：可查看团队全部工单、SLA 统计、转派操作</li>
-        <li>缺席处理人的工单可由上级经理代为处理</li>
+        <li>处理人只能看到分配给自己或授权共享池的工单；经理视角另做权限验收</li>
+        <li>回复、转派和知识写入均以真实 Tool/DC 回执为成功依据</li>
+        <li>消息中心未就绪时，不承诺灵基内实时跨角色通知</li>
+        <li>知识产物卡只负责展示/确认，不自行决定触发规则或可生成知识的工单</li>
     </ul>
 
     <h3>4.4 消息中心（灵基平台级能力 — 目标架构，当前不具备）</h3>
@@ -1046,8 +1066,7 @@
         <strong>核心定位：</strong>灵基平台级的消息中枢，承接后台应用事件、智能体间通信、系统通知的统一路由与投递。不仅服务于 HelpDesk，也是灵基作为"唯一工作台"的基础设施。
     </div>
     <div class="highlight highlight-red">
-        <strong>⚠️ 当前状态：灵基标品尚不具备此能力（对应问题清单 #31）。</strong>以下为目标架构设计，需标品补齐后方可实现。1.0 阶段工单通知暂退化为邮件（SMTP）方式。<br><br>
-        <strong>8.11 更新：</strong>经与彭卫华老师当面沟通确认，灵基开放 API 给外部调用涉及<strong>商业模式定义</strong>，目前没有定论。月底上线目标已剥离"工作台发起智能体会话处理"和事件驱动能力。
+        <strong>⚠️ 当前状态：灵基标品尚不具备完整消息中心能力（问题 #31）。</strong>以下仅为目标架构，8/31 试运行不以后台主动事件推送为已具备能力；当前采用 Work 待办/主动查询和邮件（SMTP）降级。Work 一键会话入口已纳入 8/14 目标，但是否携带安全工单/附件上下文须单独验收，不能与消息主动推送混为一项。
     </div>
     <h4>职责</h4>
     <table>
@@ -1095,16 +1114,16 @@
         <tr><td>Get_Ticket_Detail</td><td>查指定工单详情/进度/回复记录</td><td>两端智能体</td></tr>
         <tr><td>Reply_Ticket</td><td>处理人提交答复</td><td>处理人端</td></tr>
         <tr><td>Reassign_Ticket</td><td>重新分配工单</td><td>处理人端</td></tr>
-        <tr><td>Close_Ticket</td><td>关闭工单</td><td>两端/系统自动</td></tr>
-        <tr><td>Rate_Ticket</td><td>提问人评价打分（1-5 星）</td><td>员工端</td></tr>
-        <tr><td>Push_Notification</td><td>向消息中心投递事件，触发消息推送</td><td>后台→消息中心</td></tr>
+        <tr><td>Close_Ticket</td><td>人工关闭工单；自动关单属于二期</td><td>两端/后台服务</td></tr>
+        <tr><td>Rate_Ticket</td><td>提问人评价打分（1-5 星），二期闭环</td><td>员工端</td></tr>
+        <tr><td>Push_Notification</td><td>目标接口：向消息中心投递事件</td><td>二期/平台依赖，当前不作为 1.0 已具备 Tool</td></tr>
     </table>
 
     <h3>4.6 后台工单应用功能清单</h3>
     <table>
         <tr><th>#</th><th>功能模块</th><th>说明</th><th>阶段</th></tr>
         <tr><td>1</td><td>工单列表与详情</td><td>全量工单管理视图，支持筛选/搜索</td><td>1.0</td></tr>
-        <tr><td>2</td><td>工单自动分配</td><td>基于分类 Round-robin 自动派单到对应工作组</td><td>1.0</td></tr>
+        <tr><td>2</td><td>工单自动分配</td><td>基于分类 Round-robin 自动派单到对应工作组；当前可由人工/固定规则降级</td><td>2.0</td></tr>
         <tr><td>3</td><td>状态流转引擎</td><td>待分配→待处理→处理中→待确认→已关闭</td><td>1.0</td></tr>
         <tr><td>4</td><td>答复与通知</td><td>处理人答复 + 通知提问人。<strong>1.0 阶段通知走邮件（SMTP）</strong>；消息中心就绪后（2.0）升级为灵基内实时推送</td><td>1.0</td></tr>
         <tr><td>5</td><td>邮件通知</td><td>工单创建/答复/关闭时发送邮件（SMTP）</td><td>1.0</td></tr>
@@ -1131,20 +1150,28 @@
         <tr><td>知识质量管理</td><td>新旧知识冲突检测、知识更新版本化</td><td>后续</td></tr>
     </table>
 
-    <h3>4.8 交互式组件（MCP APPS）</h3>
-    <p>智能体与用户的可视化交互层，承载表单、卡片、列表等结构化展示。</p>
+    <h3>4.8 交互式组件（MCP Apps）：业务验收与实现颗粒度</h3>
+    <div class="highlight highlight-blue">
+        <strong>最新实现证据：</strong><code>helpdesk-components</code> 参考工程当前在源码/构建脚本中定义 <strong>28 个原子组件</strong>（员工 7、处理人 6、经理 5、审批 4、知识 6），具备独立 appCode、输入/输出 Schema 和 Tool 关联；这只证明本地参考实现，不证明已上传 Console、完成 Host 集成或通过真实 MCP/UAT。
+    </div>
     <table>
-        <tr><th>组件</th><th>用途</th><th>使用端</th></tr>
-        <tr><td>工单草稿确认卡</td><td>展示自动生成的工单内容，支持编辑和确认提交</td><td>员工端</td></tr>
-        <tr><td>工单提交成功卡</td><td>展示工单号/处理团队/提单人/提交时间</td><td>员工端</td></tr>
-        <tr><td>工单列表卡</td><td>展示本人工单列表（工单号/标题/状态/更新时间）</td><td>两端</td></tr>
-        <tr><td>工单详情卡</td><td>展示工单详情/进度/回复记录</td><td>两端</td></tr>
-        <tr><td>评价打分卡</td><td>1-5 星评分 + 文字评价</td><td>员工端</td></tr>
-        <tr><td>新工单通知卡</td><td>展示新分配的工单摘要 + 操作按钮</td><td>处理人端</td></tr>
-        <tr><td>答复编辑卡</td><td>处理人编写答复内容 + 附件上传</td><td>处理人端</td></tr>
-        <tr><td>SLA 告警卡</td><td>即将超时/已超时工单提醒</td><td>处理人端</td></tr>
-        <tr><td>附件管理卡</td><td>展示对话中已有附件（图片/文件），支持勾选/删除/追加，提交时随表单一起传递</td><td>两端</td></tr>
+        <tr><th>#</th><th>11 类业务验收组件</th><th>关键依赖/边界</th></tr>
+        <tr><td>1</td><td>知识检索卡</td><td>DC 授权检索与引用来源</td></tr>
+        <tr><td>2</td><td>工单草稿卡（含附件）</td><td>会话附件 8/13 对齐、原计划 8/14 发布；确认前不得建单</td></tr>
+        <tr><td>3</td><td>附件确认卡</td><td>展示、删除、追加和结构化附件引用；失败保留草稿</td></tr>
+        <tr><td>4</td><td>工单回执卡</td><td>只在真实 Create_Ticket 成功回执后展示</td></tr>
+        <tr><td>5</td><td>员工工单列表卡</td><td>只查询当前用户工单</td></tr>
+        <tr><td>6</td><td>员工工单详情卡（含进度）</td><td>身份与数据权限校验</td></tr>
+        <tr><td>7</td><td>工单评价卡</td><td>评价入口纳入员工 Skill；完整评分/KPI 闭环按二期验收</td></tr>
+        <tr><td>8</td><td>工单答复卡</td><td>处理人权限和 Reply_Ticket 真实回执</td></tr>
+        <tr><td>9</td><td>处理人工单列表卡</td><td>本人/授权共享池范围</td></tr>
+        <tr><td>10</td><td>处理人工单详情卡（含转派）</td><td>转派权限、目标处理人和真实回执</td></tr>
+        <tr><td>11</td><td>知识产物卡</td><td>只承载展示/确认；触发方式和 eligible ticket 待定，DC 写入为 8/21 PLANNED</td></tr>
     </table>
+    <p><strong>映射要求：</strong>11 类业务组件必须逐项映射到 <code>appCode/view → 复用原子组件 → 依赖 Tool → 责任人 → 验收结果</code>。不能用“本地已有 28 个组件”替代 11 类 HelpDesk 业务验收；组件数量统一以当前构建清单为准。</p>
+    <div class="highlight highlight-yellow">
+        <strong>Demo 与生产隔离：</strong>本地四场景 Demo 已覆盖员工智能体、我的工单、处理人智能体、我的任务，并按失败关闭原则演示交互；生产模式无真实数据/回执时不得回退 Demo 成功数据。当前 <code>components/index.html</code> 生成物仍可能滞后于源码清单，应以 <code>scripts/components.mjs</code> 和实际构建结果为准并重新生成校验。另需在 8/14 前校正实现优先级：源码当前将 <code>agent/reassign</code> 标为 P1，但最新整体计划要求处理人转派能力随 8/17 Skill 交付，二者必须统一。
+    </div>
 </div>
 
 <!-- Section 5: 工单分类与 SLA -->
@@ -1158,7 +1185,7 @@
         <tr><td>Incident Request</td><td>IT</td><td>8</td><td>29</td><td>1 天</td><td>5 天</td><td>否</td></tr>
         <tr><td>Service Request</td><td>IT</td><td>8</td><td>27</td><td>1 天</td><td>5 天</td><td>部分需要</td></tr>
     </table>
-    <p><strong>共计 75 条二级分类</strong>，全部启用自动分配。</p>
+    <p><strong>共计 75 条二级分类</strong>，分类目录作为目标配置基线；Round-robin 自动分配属于二期，8/31 试运行可采用人工/固定规则分派降级。</p>
 
     <h3>5.2 SLA 规则</h3>
     <h4>Agent 侧 SLA</h4>
@@ -1195,19 +1222,20 @@
     <h3>6.1 平台能力匹配度（对照问题清单编号）</h3>
     <table>
         <tr><th>项目需求</th><th>灵基标品现状</th><th>差距（问题清单编号）</th><th>优先级</th></tr>
-        <tr><td>交互式卡片（自定义表单/工单卡）</td><td>⚠️ 仅标品预置组件</td><td>#1 不支持租户级自定义 APPS</td><td><span class="tag tag-p0">P0</span></td></tr>
+        <tr><td>交互式卡片（自定义表单/工单卡）</td><td>⚠️ 参考工程已有，本地可构建</td><td>#1 规范/SDK 未完整开放；#1b Console 上传入口未对租户开放；本地源码不等于生产可用</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>APPS 数据传递给 LLM</td><td>⚠️ 卡片填写内容不入上下文</td><td>#2 卡片内容不作为上下文<br>#2b 全量消息无精简机制</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>APPS 渲染稳定性</td><td>❌ 偶发白屏/不回显</td><td>#3 渲染性能差<br>#4 提交后用户手填内容不回显</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>APPS 操作对话附件（图片/文件）</td><td>🟡 8/13 对齐方案/效果；8/14 为原计划发布日</td><td>#32 待实际发布与 HelpDesk UAT；未取得证据前不得标记已解决</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>Agent 感知 APPS 逻辑</td><td>❌ 仅知入参出参</td><td>#6 无结构化能力描述</td><td><span class="tag tag-p3">P3</span></td></tr>
         <tr><td>DC 海外可用</td><td>🟡 新加坡节点已部署，8/13 验证 HelpDesk 连通性</td><td>#7 部署完成不等于业务链路已验收</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>企业知识一键上传（知识飞轮基础路径）</td><td>🟡 方案已确认，计划 2026-08-21 发布；尚未上线/UAT</td><td>#8 产物/附件一键上传；有智能体自动归属，无智能体游离。高级治理和主动候选仍见 #8b/#9</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>企业知识一键上传（知识飞轮基础路径）</td><td>🟡 Foundation + DC 方案已确认，计划 2026-08-21 发布；尚未上线/UAT</td><td>#8 基础上传；#8b 完整知识飞轮；#8c 外部数据源连接器；#9 权限体系</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>知识权限管控</td><td>❌ 存在越权</td><td>#9 检索越权</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>应用部署（非 ERP 用户可用）</td><td>❌ 仅支持苍穹</td><td>#10 部署强绑苍穹<br>#20 实例创建依赖苍穹</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>多语言（海外客户）</td><td>❌ 多处 Bug</td><td>#12-#15 翻译错误/AI 中英夹杂/语言切换</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>消息中心（MCP 主动推送）</td><td>❌ 仅支持灵基发起的请求—响应调用，缺少后台主动事件通道</td><td>#31 MCP Server 无法主动推送自定义格式消息</td><td><span class="tag tag-p0">P0</span></td></tr>
-        <tr><td>SSO 身份打通</td><td>⚠️ 计划中</td><td>灵基用户无 ERP 账号，SSO 方案需重新考虑</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>开发效率（端到端）</td><td>❌ 完全断裂</td><td>#28 端到端流程断裂<br>#16 测试需先上线<br>#17 同名覆盖<br>#19 无版本管理</td><td><span class="tag tag-p2">P2</span></td></tr>
+        <tr><td>SSO 身份打通与用户初始化</td><td>🟡 Work/SSO/权限为 8/14 目标；工单用户初始化仍 TBD</td><td>灵基用户无 ERP 账号；初始化接口、字段映射、批次、责任人和日期未确认</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>Work 一键会话</td><td>🟡 8/14 入口目标；上下文能力待 8/13 对齐</td><td>#35 候选 URL 只能打开通用新会话，不能证明携带 ticketId/描述/附件</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>开发效率（端到端）</td><td>🟡 本地 MCP Apps 参考工程已形成；Build 标准能力仍为方案/评审稿</td><td>#28 端到端流程断裂；#33 Build 内无法完整构建调试 MCP Apps；#16/#17/#19 测试与版本问题</td><td><span class="tag tag-p2">P2</span></td></tr>
         <tr><td>团队协作</td><td>❌ 不支持</td><td>#30 无多人协同机制<br>#29 状态检测 Bug</td><td><span class="tag tag-p2">P2</span></td></tr>
         <tr><td>技能发布流程</td><td>❌ 多处不通</td><td>#23 修改不同步<br>#25 同名提交失败<br>#21 缺乏批量发布</td><td><span class="tag tag-p2">P2</span></td></tr>
         <tr><td>模型服务稳定性</td><td>❌ 偶发故障</td><td>#26 fast 死循环<br>#27 deep 无限加载</td><td><span class="tag tag-p2">P2</span></td></tr>
@@ -1216,12 +1244,12 @@
 
     <h3>6.2 按优先级汇总</h3>
     <div class="highlight highlight-red">
-        <strong>P0 — 阻塞上线（必须在 8.7 前解决）：</strong>
+        <strong>P0 — 阻塞试运行或必须明确降级：</strong>
         <ol>
-            <li><strong>#1</strong> MCP APPS 支持租户级自定义开发与发布</li>
+            <li><strong>#1 / #1b</strong> MCP Apps 规范、SDK 与租户级 Console 上传/管理入口</li>
             <li><strong>#2 / #2b</strong> APPS 卡片内容作为上下文 + 精简传递机制</li>
-            <li><strong>#10</strong> Build 应用支持部署到非苍穹环境，解除对苍穹身份与许可的强依赖</li>
-            <li><strong>#31</strong> 灵基平台消息与事件能力（MCP Server 主动推送、路由、自定义卡片、可靠投递）</li>
+            <li><strong>#10</strong> Build 应用支持非苍穹部署，解除对苍穹身份与许可的强依赖</li>
+            <li><strong>#31</strong> 消息与事件能力不作为 8/31 已具备项；以 Work 待办/主动查询/邮件明确降级</li>
         </ol>
     </div>
     <div class="highlight highlight-yellow">
@@ -1245,7 +1273,7 @@
             <li><strong>#26 / #27</strong> 模型服务稳定性</li>
         </ol>
     </div>
-    <p>👉 完整问题清单（31 项）详见 <a href="灵基Build生产化问题清单.html" style="color:var(--primary);font-weight:500;">《灵基Build生产化问题清单》</a></p>
+    <p>👉 最新生产化问题清单按 <strong>39 项</strong>管理（含 #1b、#8b、#8c、#33、#35 等拆项）；仅有本地实现或方案推进不等于问题已在生产解决。详见 <a href="灵基Build生产化问题清单.html" style="color:var(--primary);font-weight:500;">《灵基Build生产化问题清单》</a></p>
 </div>
 
 <!-- Section 7: 项目计划 -->
@@ -1314,26 +1342,24 @@
     <ol>
         <li>知识检索卡</li><li>工单草稿卡（含附件）</li><li>附件确认卡</li><li>工单回执卡</li><li>员工工单列表卡</li><li>员工工单详情卡（含进度）</li><li>工单评价卡</li><li>工单答复卡</li><li>处理人工单列表卡</li><li>处理人工单详情卡（含转派）</li><li>知识产物卡</li>
     </ol>
-    <p>11 类是业务验收类型，不等同参考工程 26 个原子组件；每类需映射 appCode/view、依赖 Tool、责任人和验收结果。</p>
+    <p>11 类是业务验收类型，不等同参考工程当前 28 个原子组件；每类需映射 appCode/view、复用原子组件、依赖 Tool、责任人和验收结果。</p>
     <div class="highlight highlight-yellow">
         <strong>一键会话边界：</strong>入口纳入 8/14 目标；是否携带 ticketId、描述和附件等受控上下文待 8/13 对齐。若未确认，只交付明确提示“不携带当前工单上下文”的通用新会话，不得把敏感内容直接拼入 URL。
     </div>
 
     <h3>7.3 详细任务拆解</h3>
     
-    <h4>第一阶段</h4>
+    <h4>第一阶段：当前证据台账</h4>
     <table>
-        <tr><th>任务</th><th>依赖</th><th>状态</th></tr>
-        <tr><td>典型文档准备（从 SharePoint 获取）</td><td>—</td><td><span class="tag tag-done">已完成</span></td></tr>
-        <tr><td>需求设计与评审（PRD）</td><td>—</td><td><span class="tag tag-done">已完成</span></td></tr>
-        <tr><td>技能开发与自测</td><td>—</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>MCP APPS 开发与自测</td><td>APPS 标品能力</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>智能体开发与自测</td><td>技能就绪</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>工单后台应用开发</td><td>—</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>工单 MCP Server 开发</td><td>—</td><td><span class="tag tag-doing">进行中</span></td></tr>
-        <tr><td>DC 海外部署及 HelpDesk 连通验证</td><td>—</td><td><span class="tag tag-doing">部署完成，8/13 待验收</span></td></tr>
-        <tr><td>上传 DC 初始化知识</td><td>DC 海外就绪</td><td><span class="tag tag-todo">待启动</span></td></tr>
-        <tr><td>端到端联调测试</td><td>全部就绪</td><td><span class="tag tag-todo">待启动</span></td></tr>
+        <tr><th>工作项</th><th>当前证据</th><th>不能据此宣称</th><th>下一验收</th></tr>
+        <tr><td>需求/计划文档</td><td>PRD、会议纪要、冲刺计划及专项规格已形成</td><td>客户已最终签字或范围已冻结</td><td>8/13 checklist，8/14/8/18 验收范围</td></tr>
+        <tr><td>四场景 Demo</td><td>员工智能体、我的工单、处理人智能体、我的任务已有脚本化交互原型</td><td>真实智能体、真实 Tool、权限或生产链路已完成</td><td>8/20 前使用目标环境数据演示</td></tr>
+        <tr><td>MCP Apps 参考工程</td><td>React 共用运行时、28 个原子组件定义、Tool 映射、Schema、双语与失败关闭逻辑已有源码</td><td>已上传 Console、Host 集成完成、11 类业务组件已验收</td><td>8/14 形成 11 类映射并逐项取真实回执</td></tr>
+        <tr><td>员工/处理人 Skill</td><td>目标和能力清单已明确</td><td>已在目标租户发布并通过 UAT</td><td>员工 8/14；处理人 8/17</td></tr>
+        <tr><td>工单系统/MCP Server</td><td>接口与基础流程已设计</td><td>部署、用户初始化、权限和端到端链路已完成</td><td>8/13 部署沟通；8/14 工单范围验收</td></tr>
+        <tr><td>海外 DC</td><td>新加坡节点基础部署已有记录</td><td>HelpDesk 已连通或知识检索可用</td><td>8/13 目标环境连通回执</td></tr>
+        <tr><td>企业知识写入</td><td>Foundation + DC 方案与 8/21 计划已确认</td><td>已上线、已索引、已授权检索或完整知识飞轮已形成</td><td>8/21 后按有/无智能体 × 产物/附件验收</td></tr>
+        <tr><td>端到端 UAT/试运行</td><td>计划节点已明确</td><td>UAT 已签字或 8/31 必然正式上线</td><td>8/20 明确范围；8/31 验收、部署并上线试运行</td></tr>
     </table>
 
     <h4>第二阶段</h4>
@@ -1499,7 +1525,25 @@
             <td>知识时效性无法满足</td>
             <td><span class="tag tag-p1">中</span> AI 服务质量下降</td>
             <td>低</td>
-            <td>第一阶段 IT 域文档量小，手动上传可控。长期方案由 DC 团队专项保障</td>
+            <td>第一阶段 IT 域文档量小，手动上传可控；长期方案由 DC 团队专项保障</td>
+        </tr>
+        <tr>
+            <td><strong>把本地 Demo/源码误当生产证据</strong></td>
+            <td><span class="tag tag-p0">高</span> 演示可运行但目标租户、权限、Tool 或数据链路失败</td>
+            <td>高</td>
+            <td>所有“完成”必须关联环境、版本、真实回执、责任人和 UAT 结果；生产模式禁止回退模拟成功数据</td>
+        </tr>
+        <tr>
+            <td>组件生成物与源码清单不一致</td>
+            <td><span class="tag tag-p1">中</span> 组件数量、appCode 或验收范围错误</td>
+            <td>中</td>
+            <td>当前以 scripts/components.mjs 的 28 个原子组件为准，重新生成 components/index.html，并建立 11 类业务映射</td>
+        </tr>
+        <tr>
+            <td>知识产物触发与选单规则未定</td>
+            <td><span class="tag tag-p1">中</span> 8/17 处理人 Skill 无法形成可复核验收口径</td>
+            <td>高</td>
+            <td>明确定时/对话/组合触发、eligible ticket、PII/ACL、去重和人工确认规则</td>
         </tr>
     </table>
 </div>
@@ -1507,6 +1551,20 @@
 <!-- Section 10: 验收标准 -->
 <div class="section" id="sec10">
     <h2>10 验收标准</h2>
+
+    <h3>10.0 8/31 试运行门禁</h3>
+    <div class="highlight highlight-red">
+        <strong>上线判定：</strong>8/31 是“验收、部署并上线试运行”的目标，不是无条件正式上线。必须同时具备目标环境版本、部署/回滚方案、真实用户与权限、真实 Tool 回执、11 类业务组件映射、UAT 记录、已知问题与降级清单、试运行人员及支持责任人。
+    </div>
+    <table>
+        <tr><th>门禁</th><th>必须提供的证据</th><th>未满足时处理</th></tr>
+        <tr><td>身份与权限</td><td>SSO、数据权限、工单用户初始化、跨用户越权测试</td><td>用户初始化仍 TBD 时不得扩大试运行范围</td></tr>
+        <tr><td>真实业务链路</td><td>员工提问/建单/查单、处理人查单/回复/转派的真实 Tool 请求与回执</td><td>接口失败必须失败关闭，不显示模拟成功</td></tr>
+        <tr><td>业务组件</td><td>11 类业务组件到 appCode/view、原子组件、Tool、责任人、结果的映射</td><td>本地 28 个原子组件不能替代业务验收</td></tr>
+        <tr><td>附件</td><td>会话附件发布记录、Host 传递、追加/删除、上传失败与草稿保留 UAT</td><td>能力未发布时禁用或明确降级含附件场景</td></tr>
+        <tr><td>部署与连通</td><td>海外 DC 连通回执、工单部署环境、监控与回滚</td><td>部署完成但未连通不得标记可用</td></tr>
+        <tr><td>条件能力</td><td>8/21 DC 写入若纳入试运行，需归属、权限、回执、索引和授权检索证据</td><td>未通过则保持 PLANNED，从 8/31 范围移除</td></tr>
+    </table>
     
     <h3>10.1 HelpDesk 1.0 验收标准</h3>
     
@@ -1528,16 +1586,16 @@
     <h4>处理人端（Agent Workbench）</h4>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
-        <tr><td>11</td><td>工单接收通知</td><td>新工单分配后，处理人在灵基工作台实时收到工单通知卡片（含标题/分类/提问人/SLA 时限）</td></tr>
-        <tr><td>12</td><td>工单详情查看</td><td>处理人可查看完整工单信息：提问人信息、问题描述、对话上下文摘要、附件</td></tr>
-        <tr><td>13</td><td>答复与推送</td><td>处理人编写答复后，答复内容实时推送给提问人，提问人在灵基收到答复消息</td></tr>
-        <tr><td>14</td><td>权限隔离</td><td>处理人只能看到分配给自己的工单，不可跨组查看</td></tr>
+        <tr><td>11</td><td>处理人任务入口</td><td>处理人可在“我的任务”或主动查询中看到授权范围工单；实时分配通知依赖消息中心，不作为当前必过项</td></tr>
+        <tr><td>12</td><td>工单详情查看</td><td>处理人可查看授权工单的提问人、描述、允许传递的上下文摘要和附件引用</td></tr>
+        <tr><td>13</td><td>答复与通知降级</td><td>Reply_Ticket 真实成功后更新工单；通知至少通过已确认的邮件/待办路径送达，不要求未就绪的灵基实时主动推送</td></tr>
+        <tr><td>14</td><td>权限隔离</td><td>处理人只能看到分配给自己或授权共享池的工单，不可跨组查看</td></tr>
     </table>
 
     <h4>后台工单服务</h4>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
-        <tr><td>15</td><td>自动分配</td><td>工单提交后按 IT 分类自动 Round-robin 分配到对应工作组的处理人</td></tr>
+        <tr><td>15</td><td>工单分派降级</td><td>1.0 可通过人工或固定规则把工单分配给授权处理人；分类 Round-robin 自动分配移至 2.0</td></tr>
         <tr><td>16</td><td>状态流转</td><td>工单状态：待分配→待处理→处理中→待确认→已关闭，流转正确</td></tr>
         <tr><td>17</td><td>邮件通知</td><td>工单创建/答复时发送邮件通知（SMTP）</td></tr>
         <tr><td>18</td><td>接口错误处理</td><td>所有接口返回统一结构化错误（参数错误/未认证/无权限/限流/故障/重复），便于判断可否重试</td></tr>
@@ -1546,13 +1604,24 @@
     <h4>平台基础能力</h4>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
-        <tr><td>19</td><td>DC 知识检索</td><td>海外节点可用，检索延迟可接受（<3s）</td></tr>
-        <tr><td>20</td><td>MCP APPS 交互</td><td>工单确认卡/成功卡/列表卡正常渲染，提交内容可回显</td></tr>
-        <tr><td>21</td><td>消息推送</td><td>MCP Server 可向指定灵基用户推送自定义格式消息，处理人和提问人均可收到</td></tr>
-        <tr><td>22</td><td>多语言</td><td>英文配置下界面和 AI 回复均为英文，无中英夹杂</td></tr>
+        <tr><td>19</td><td>DC 海外连通</td><td>新加坡节点使用目标租户和身份取得真实检索回执；仅有部署记录不算通过</td></tr>
+        <tr><td>20</td><td>MCP Apps 业务验收</td><td>11 类业务组件逐项映射 appCode/view、依赖 Tool 和责任人；渲染、回显、失败关闭和生产不回退 Demo 数据通过</td></tr>
+        <tr><td>21</td><td>Work/SSO/权限</td><td>“我的工单/我的任务”可访问，SSO 与数据权限真实生效；工单用户初始化方案和结果可追溯</td></tr>
+        <tr><td>22</td><td>一键会话</td><td>入口与上下文能力分别验收；未确认安全 contextRef/附件契约时，只提供明确提示“不携当前工单上下文”的通用新会话</td></tr>
+        <tr><td>23</td><td>多语言</td><td>英文配置下界面和 AI 回复均为英文，无中英夹杂</td></tr>
     </table>
 
-    <h3>10.2 HelpDesk 2.0 验收标准</h3>
+    <h3>10.2 8/21 企业知识写入条件验收</h3>
+    <table>
+        <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
+        <tr><td>1</td><td>发布状态</td><td>有 Foundation + DC 的实际发布记录和目标环境版本；日期到达不自动算完成</td></tr>
+        <tr><td>2</td><td>四条路径</td><td>有智能体/无智能体 × 产物/附件均返回真实状态；有智能体正确归属，无智能体明确 unbound/游离</td></tr>
+        <tr><td>3</td><td>治理与检索</td><td>权限、幂等、游离知识管理、解析/索引、授权检索和审计通过</td></tr>
+        <tr><td>4</td><td>知识产物边界</td><td>触发方式、eligible ticket、PII/ACL、重复知识和人工确认规则已明确；知识产物卡不自行发布</td></tr>
+        <tr><td>5</td><td>失败处理</td><td>接收中、部分失败、超时和写入失败不展示完整成功，可查询、重试或从 8/31 范围降级移除</td></tr>
+    </table>
+
+    <h3>10.3 HelpDesk 2.0 验收标准</h3>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
         <tr><td>1</td><td>多领域知识覆盖</td><td>HR/行政/财务分类知识可检索，工单分类覆盖完整 75 项二级分类</td></tr>
