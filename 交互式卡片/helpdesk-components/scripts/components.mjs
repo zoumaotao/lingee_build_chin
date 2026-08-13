@@ -13,15 +13,6 @@ const componentPriorities = {
   "agent/queue": "P0",
   "agent/ticket-detail": "P0",
   "agent/sla-alert": "P1",
-  "manager/dashboard": "P1",
-  "manager/team-tickets": "P1",
-  "manager/workload": "P2",
-  "manager/sla": "P1",
-  "manager/reassign": "P1",
-  "approval/approval-list": "P1",
-  "approval/approval-detail": "P1",
-  "approval/decision": "P1",
-  "approval/timeline": "P1",
   "knowledge/publish-result": "P2"
 };
 
@@ -54,16 +45,7 @@ const componentDefinitions = [
   card("agent", "ticket-detail", "HelpDesk处理人工单详情卡", "在 Agent 对话中展示待处理工单详情及下一步处理入口", "处理人工单详情与答复、转派入口", ["Reassign_Ticket"]),
   card("agent", "sla-alert", "HelpDesk处理人SLA告警卡", "在 Agent 对话中展示临期和超时工单摘要", "处理人 SLA 风险提醒", ["Get_Ticket_Detail"]),
 
-  card("manager", "dashboard", "HelpDesk经理运营摘要卡", "在 Agent 对话中展示团队关键指标与风险提示", "团队 KPI 与风险摘要", ["Get_Helpdesk_Metrics"]),
-  card("manager", "team-tickets", "HelpDesk团队风险工单卡", "在 Agent 对话中展示需要经理关注的团队工单摘要", "团队风险工单摘要", ["List_Team_Tickets", "Get_Ticket_Detail"]),
-  card("manager", "workload", "HelpDesk团队负载建议卡", "在 Agent 对话中展示成员负载并提供调配建议", "团队工作负载与人员选择"),
-  card("manager", "sla", "HelpDesk团队SLA摘要卡", "在 Agent 对话中展示团队 SLA 指标和风险分类", "团队 SLA 摘要", ["Get_Helpdesk_Metrics"]),
-  card("manager", "reassign", "HelpDesk经理快速转派卡", "在 Agent 对话中由经理确认工单转派", "经理工单转派确认", ["Reassign_Ticket"]),
 
-  card("approval", "approval-list", "HelpDesk审批待办卡", "在 Agent 对话中展示当前用户的审批待办摘要", "审批待办摘要与详情入口", ["Get_Approval_Detail"]),
-  card("approval", "approval-detail", "HelpDesk审批申请详情卡", "在 Agent 对话中展示单个申请的审批信息与风险", "审批申请详情与决策入口"),
-  card("approval", "decision", "HelpDesk审批决策卡", "在 Agent 对话中收集审批意见并执行同意或驳回", "审批决策确认", ["Approve_Ticket_Request", "Reject_Ticket_Request"]),
-  card("approval", "timeline", "HelpDesk审批轨迹卡", "在 Agent 对话中展示申请的审批审计轨迹", "审批流程与审计轨迹展示"),
 
 ];
 
@@ -95,15 +77,6 @@ function createDataSchema(definition) {
     "agent/queue": { properties: { tickets: { type: "array", items: ticketSchema }, resolvedToday: numberField("今日已解决数量") }, required: ["tickets"] },
     "agent/ticket-detail": { properties: { ticket: ticketSchema, requester: stringField("提单人"), description: stringField("问题描述"), attachments: { type: "array", items: attachmentSchema }, timeline: { type: "array", items: { type: "object" } } }, required: ["ticket"] },
     "agent/sla-alert": { properties: { tickets: { type: "array", items: ticketSchema } }, required: ["tickets"] },
-    "manager/dashboard": { properties: { teamName: stringField("团队名称"), period: stringField("统计周期"), metrics: metricsSchema, riskCategory: stringField("风险分类"), riskSummary: stringField("风险摘要") }, required: ["metrics", "period"] },
-    "manager/team-tickets": { properties: { tickets: { type: "array", items: ticketSchema } }, required: ["tickets"] },
-    "manager/workload": { properties: { members: { type: "array", items: memberSchema }, recommendedAssigneeId: stringField("推荐处理人稳定标识"), confidence: numberField("推荐置信度 0-100"), recommendationReason: stringField("推荐依据") }, required: ["members"] },
-    "manager/sla": { properties: { metrics: metricsSchema, categories: { type: "array", items: { type: "object", properties: { name: stringField("分类名称"), value: numberField("达标率"), tone: { type: "string", enum: ["success", "warning", "danger"] } }, required: ["name", "value"] } }, summary: stringField("SLA 摘要") }, required: ["metrics", "categories"] },
-    "manager/reassign": { properties: { tickets: { type: "array", items: ticketSchema }, members: { type: "array", items: memberSchema }, ticketId: stringField("默认工单"), assigneeId: stringField("默认处理人稳定标识") }, required: ["tickets", "members"] },
-    "approval/approval-list": { properties: { approvals: { type: "array", items: { type: "object" } } }, required: ["approvals"] },
-    "approval/approval-detail": { properties: { approval: { type: "object" }, description: stringField("申请说明"), timeLeft: stringField("审批剩余时间"), timeline: { type: "array", items: { type: "object" } } }, required: ["approval"] },
-    "approval/decision": { properties: { approval: { type: "object" }, checks: { type: "object", properties: { policy: booleanField("政策符合性"), businessNeed: booleanField("业务必要性"), requiresL2: booleanField("是否需要 L2") } } }, required: ["approval"] },
-    "approval/timeline": { properties: { approval: { type: "object" }, timeline: { type: "array", items: { type: "object" } } }, required: ["approval", "timeline"] },
   };
   const selected = schemas[definition.id] ?? { properties: common };
   return { ...selected, type: "object", description: `${definition.support}所需的当前业务数据；生产环境不使用演示回退`, properties: { ...common, ...(selected.properties ?? {}) }, required: selected.required ?? [], additionalProperties: true };
