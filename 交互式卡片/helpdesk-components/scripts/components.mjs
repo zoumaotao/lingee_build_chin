@@ -12,7 +12,6 @@ const componentPriorities = {
   "agent/notification": "P1",
   "agent/queue": "P0",
   "agent/ticket-detail": "P0",
-  "agent/reassign": "P1",
   "agent/sla-alert": "P1",
   "manager/dashboard": "P1",
   "manager/team-tickets": "P1",
@@ -53,7 +52,6 @@ const componentDefinitions = [
   card("agent", "notification", "HelpDesk新单通知卡", "在 Agent 对话中向处理人展示新分配工单并收集接单或转派意图", "新单摘要、接单与转派入口", ["Get_Ticket_Detail", "Reassign_Ticket"]),
   card("agent", "queue", "HelpDesk处理人工单列表", "在 Agent 对话中展示处理人的工单列表", "处理人工单列表查询", ["Get_Ticket_Detail"]),
   card("agent", "ticket-detail", "HelpDesk处理人工单详情卡", "在 Agent 对话中展示待处理工单详情及下一步处理入口", "处理人工单详情与答复、转派入口", ["Reassign_Ticket"]),
-  card("agent", "reassign", "HelpDesk处理人转派卡", "在 Agent 对话中确认目标工作组、处理人与转派原因", "处理人工单转派", ["Reassign_Ticket"]),
   card("agent", "sla-alert", "HelpDesk处理人SLA告警卡", "在 Agent 对话中展示临期和超时工单摘要", "处理人 SLA 风险提醒", ["Get_Ticket_Detail"]),
 
   card("manager", "dashboard", "HelpDesk经理运营摘要卡", "在 Agent 对话中展示团队关键指标与风险提示", "团队 KPI 与风险摘要", ["Get_Helpdesk_Metrics"]),
@@ -96,7 +94,6 @@ function createDataSchema(definition) {
     "agent/notification": { properties: { ticket: ticketSchema, requester: stringField("提单人"), description: stringField("问题摘要") }, required: ["ticket"] },
     "agent/queue": { properties: { tickets: { type: "array", items: ticketSchema }, resolvedToday: numberField("今日已解决数量") }, required: ["tickets"] },
     "agent/ticket-detail": { properties: { ticket: ticketSchema, requester: stringField("提单人"), description: stringField("问题描述"), attachments: { type: "array", items: attachmentSchema }, timeline: { type: "array", items: { type: "object" } } }, required: ["ticket"] },
-    "agent/reassign": { properties: { ticket: ticketSchema, teams: { type: "array", items: { oneOf: [{ type: "string" }, optionSchema] } }, assignees: { type: "array", items: { oneOf: [{ type: "string" }, optionSchema] } }, teamId: stringField("默认目标组稳定标识"), assigneeId: stringField("默认处理人稳定标识") }, required: ["ticket", "teams", "assignees"] },
     "agent/sla-alert": { properties: { tickets: { type: "array", items: ticketSchema } }, required: ["tickets"] },
     "manager/dashboard": { properties: { teamName: stringField("团队名称"), period: stringField("统计周期"), metrics: metricsSchema, riskCategory: stringField("风险分类"), riskSummary: stringField("风险摘要") }, required: ["metrics", "period"] },
     "manager/team-tickets": { properties: { tickets: { type: "array", items: ticketSchema } }, required: ["tickets"] },
