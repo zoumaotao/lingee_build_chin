@@ -24,11 +24,6 @@ const componentPriorities = {
   "approval/approval-detail": "P1",
   "approval/decision": "P1",
   "approval/timeline": "P1",
-  "knowledge/knowledge-ingestion": "P1",
-  "knowledge/knowledge-candidate": "P1",
-  "knowledge/knowledge-draft": "P1",
-  "knowledge/source-ticket": "P1",
-  "knowledge/review": "P2",
   "knowledge/publish-result": "P2"
 };
 
@@ -74,12 +69,6 @@ const componentDefinitions = [
   card("approval", "decision", "HelpDesk审批决策卡", "在 Agent 对话中收集审批意见并执行同意或驳回", "审批决策确认", ["Approve_Ticket_Request", "Reject_Ticket_Request"]),
   card("approval", "timeline", "HelpDesk审批轨迹卡", "在 Agent 对话中展示申请的审批审计轨迹", "审批流程与审计轨迹展示"),
 
-  card("knowledge", "knowledge-ingestion", "HelpDesk对话式知识摄取确认卡", "在 Agent 对话中核对附件、目标智能体、权限和治理策略后创建待审核知识摄取任务", "自然语言/附件写知识的受控确认", ["Create_Knowledge_Ingestion"]),
-  card("knowledge", "knowledge-candidate", "HelpDesk智能体内驱知识候选卡", "展示智能体基于高频问题、解决确认和反馈信号发现的知识候选", "内驱候选解释、证据与转草稿", ["Create_Knowledge_Draft"]),
-  card("knowledge", "knowledge-draft", "HelpDesk知识草稿确认卡", "在 Agent 对话中编辑并确认由工单生成的知识草稿", "知识草稿编辑与提交", ["Create_Knowledge_Draft"]),
-  card("knowledge", "source-ticket", "HelpDesk知识来源工单卡", "在 Agent 对话中展示适合沉淀知识的来源工单摘要", "知识来源工单核对与草稿生成", ["Create_Knowledge_Draft"]),
-  card("knowledge", "review", "HelpDesk知识发布审核卡", "在 Agent 对话中执行知识质量、冲突检查和发布确认", "知识质量审核与发布", ["Check_Knowledge_Conflict", "Publish_Knowledge"]),
-  card("knowledge", "publish-result", "HelpDesk知识发布结果卡", "在 Agent 对话中展示知识发布成功结果", "知识发布结果反馈")
 ];
 
 const stringField = (description) => ({ type: "string", description });
@@ -121,12 +110,6 @@ function createDataSchema(definition) {
     "approval/approval-detail": { properties: { approval: { type: "object" }, description: stringField("申请说明"), timeLeft: stringField("审批剩余时间"), timeline: { type: "array", items: { type: "object" } } }, required: ["approval"] },
     "approval/decision": { properties: { approval: { type: "object" }, checks: { type: "object", properties: { policy: booleanField("政策符合性"), businessNeed: booleanField("业务必要性"), requiresL2: booleanField("是否需要 L2") } } }, required: ["approval"] },
     "approval/timeline": { properties: { approval: { type: "object" }, timeline: { type: "array", items: { type: "object" } } }, required: ["approval", "timeline"] },
-    "knowledge/knowledge-ingestion": { properties: { targetAgentId: stringField("目标智能体稳定标识"), targetAgentName: stringField("目标智能体名称"), knowledgeSpaceId: stringField("企业级 DC 知识域"), sourceType: { type: "string", enum: ["conversation", "ticket", "file", "manual"] }, conversationId: stringField("来源会话"), ticketId: stringField("来源工单"), attachments: { type: "array", items: attachmentSchema }, audience: stringField("可见范围"), reviewMode: { type: "string", enum: ["manual", "policy"] }, piiStatus: stringField("脱敏检查状态"), conflictStatus: stringField("冲突检查状态") }, required: ["targetAgentId", "knowledgeSpaceId", "sourceType", "attachments", "audience", "reviewMode"] },
-    "knowledge/knowledge-candidate": { properties: { candidateId: stringField("候选编号"), trigger: stringField("内驱触发规则"), triggerReason: stringField("触发原因"), evidenceRefs: { type: "array", items: { type: "string" } }, qualityScore: numberField("候选质量分"), similarTickets30d: numberField("近30天相似工单"), targetAgentId: stringField("目标智能体"), audience: stringField("候选可见范围") }, required: ["candidateId", "trigger", "triggerReason", "evidenceRefs", "targetAgentId"] },
-    "knowledge/knowledge-draft": { properties: { sourceTicket: stringField("来源工单"), title: stringField("知识标题"), answer: stringField("标准处理方法"), tags: stringField("知识标签"), piiRemoved: booleanField("脱敏检查是否通过") }, required: ["sourceTicket", "title", "answer", "piiRemoved"] },
-    "knowledge/source-ticket": { properties: { sourceTicket: stringField("来源工单"), summary: stringField("来源摘要"), steps: { type: "array", items: { type: "string" } }, rating: numberField("来源服务评分"), similarTickets30d: numberField("近 30 天相似工单数"), estimatedDeflection: stringField("预计分流量") }, required: ["sourceTicket", "summary", "steps"] },
-    "knowledge/review": { properties: { sourceTicket: stringField("来源工单"), qualityScore: numberField("质量评分 0-100"), similarity: numberField("相似度 0-100"), checks: { type: "object" }, conflictSuggestion: stringField("冲突处理建议"), publishMode: stringField("发布模式") }, required: ["sourceTicket", "qualityScore", "checks"] },
-    "knowledge/publish-result": { properties: { sourceTicket: stringField("来源工单"), status: { type: "string", enum: ["success", "published", "failed", "unknown"] }, knowledgeId: stringField("知识编号"), version: stringField("知识版本"), audience: stringField("可见范围") }, required: ["status"], allOf: [{ if: { properties: { status: { enum: ["success", "published"] } }, required: ["status"] }, then: { required: ["knowledgeId"] } }] }
   };
   const selected = schemas[definition.id] ?? { properties: common };
   return { ...selected, type: "object", description: `${definition.support}所需的当前业务数据；生产环境不使用演示回退`, properties: { ...common, ...(selected.properties ?? {}) }, required: selected.required ?? [], additionalProperties: true };
