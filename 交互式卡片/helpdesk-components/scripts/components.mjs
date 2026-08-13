@@ -51,7 +51,7 @@ const componentDefinitions = [
   card("employee", "ticket-detail", "HelpDesk员工工单进度卡", "在 Agent 对话中展示单个工单的处理进度并收集解决确认", "工单进度展示与关闭确认", ["Close_Ticket"]),
 
   card("agent", "notification", "HelpDesk新单通知卡", "在 Agent 对话中向处理人展示新分配工单并收集接单或转派意图", "新单摘要、接单与转派入口", ["Get_Ticket_Detail", "Reassign_Ticket"]),
-  card("agent", "queue", "HelpDesk处理人待办卡", "在 Agent 对话中展示处理人按 SLA 排序的待办摘要", "处理人待办摘要", ["Get_Ticket_Detail"]),
+  card("agent", "queue", "HelpDesk处理人工单列表", "在 Agent 对话中展示处理人的工单列表", "处理人工单列表查询", ["Get_Ticket_Detail"]),
   card("agent", "ticket-detail", "HelpDesk处理人工单详情卡", "在 Agent 对话中展示待处理工单详情及下一步处理入口", "处理人工单详情与答复、转派入口", ["Reassign_Ticket"]),
   card("agent", "reassign", "HelpDesk处理人转派卡", "在 Agent 对话中确认目标工作组、处理人与转派原因", "处理人工单转派", ["Reassign_Ticket"]),
   card("agent", "sla-alert", "HelpDesk处理人SLA告警卡", "在 Agent 对话中展示临期和超时工单摘要", "处理人 SLA 风险提醒", ["Get_Ticket_Detail"]),
