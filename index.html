@@ -420,17 +420,6 @@
         <strong>终态愿景：</strong>灵基取代邮件成为统一服务入口，AI 持续学习形成知识飞轮；该愿景不等于 8/31 试运行范围已全部具备。
     </div>
 
-    <h3>1.4 当前结论与证据口径</h3>
-    <table>
-        <tr><th>状态</th><th>判定标准</th><th>本计划中的用法</th></tr>
-        <tr><td><span class="tag tag-done">本地已实现</span></td><td>仓库中已有可检查的源码、构建产物或脚本化 Demo</td><td>只能证明原型/契约实现，不等于 Console 上传、Host 集成、真实 Tool、UAT 或生产发布</td></tr>
-        <tr><td><span class="tag tag-doing">目标节点</span></td><td>会议计划给出责任人与日期，但尚无真实交付/验收证据</td><td>8/13、8/14、8/17、8/18、8/20、8/31 均按目标管理</td></tr>
-        <tr><td><span class="tag tag-p1">PLANNED</span></td><td>标准能力方案或发布日期已确认，尚未发布或未完成 HelpDesk UAT</td><td>Foundation + DC 产物/附件写入 DC：2026-08-21</td></tr>
-        <tr><td><span class="tag tag-todo">TBD</span></td><td>接口、责任人、日期或产品规则未确认</td><td>用户初始化、Build 培训、知识触发/选单、带上下文会话</td></tr>
-    </table>
-    <div class="highlight highlight-yellow">
-        <strong>当前总判断：</strong>四场景 Demo 和 MCP Apps 参考工程已有本地实现证据；平台发布、海外 HelpDesk 连通、Console/Host 集成、真实 MCP Tool、SSO/用户初始化、UAT 签字与 8/31 试运行尚无完整验收证据，不能标记为已完成。
-    </div>
 </div>
 
 <!-- Section 2: 业务现状 -->
@@ -623,9 +612,9 @@
       <text x="830" y="514" font-size="9" fill="#6b7280">外部数据源</text>
     </svg>
 
-    <h3>3.2 目标端到端时序图（含二期消息与评价能力）</h3>
-    <div class="highlight highlight-red">
-        <strong>非当前完成声明：</strong>图中的消息中心主动推送、自动分配、实时跨角色通知和评分回流是目标流程。8/31 试运行只按实际通过 UAT 的链路纳入；事件推送未就绪时以 Work 待办/主动查询作为当前路径，不得把脚本化 Demo 当作生产闭环证据。
+    <h3>3.2 端到端目标时序图</h3>
+    <div class="highlight highlight-yellow">
+        <strong>说明：</strong>本图展示终态目标流程（含消息中心、自动分配等二期能力）。当前 8/31 试运行通过 Work 应用菜单挂载"我的工单/我的任务"承接通知场景，处理人和员工主动查询即可看到最新状态，不依赖后台主动推送。
     </div>
     <svg viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1100px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
       <defs><marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#374151"/></marker>
@@ -1017,7 +1006,7 @@
     <table>
         <tr><th>层级</th><th>组件</th><th>当前定位</th><th>证据/边界</th></tr>
         <tr><td>用户交互层</td><td>Helpdesk Assistant（员工端）</td><td>8/14 目标：提问、提单、查单、评价入口</td><td>已有本地 Demo/组件源码；真实 Skill、Tool 与 UAT 待验收</td></tr>
-        <tr><td>用户交互层</td><td>Agent Workbench（处理人端）</td><td>8/17 目标：提问、回复、转派、查单、知识产物入口</td><td>知识触发方式与 eligible ticket 未定；主动推送不在当前能力基线</td></tr>
+        <tr><td>用户交互层</td><td>Agent Workbench（处理人端）</td><td>8/17 目标：提问、回复、转派、查单、知识产物入口</td><td>知识触发方式与 eligible ticket 未定；通知场景通过 Work 菜单"我的任务"承接</td></tr>
         <tr><td>Work 应用</td><td>我的工单 / 我的任务、SSO、数据权限、一键会话</td><td>8/14 目标</td><td>带工单/附件上下文能力待对齐；未确认时降级为通用新会话</td></tr>
         <tr><td>业务逻辑层</td><td>工单后台服务 + MCP Server</td><td>基础 CRUD、查询、回复、转派、状态流转</td><td>部署方案 8/13 二次沟通；用户初始化责任和日期 TBD</td></tr>
         <tr><td>知识层</td><td>灵基 DC（新加坡节点）</td><td>基础部署已有；8/13 验证 HelpDesk 连通</td><td>产物/附件写入 DC 为 8/21 PLANNED，发布后再验收</td></tr>
@@ -1048,7 +1037,7 @@
     <p>面向 IT/HR 处理人员（约 20-30 人），当前目标是提问、查单、回复、转派和生成知识产物入口；实时事件推送、完整经理看板及完整知识飞轮不作为当前已具备能力。</p>
     <table>
         <tr><th>组件</th><th>职责</th><th>当前边界</th></tr>
-        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过“我的任务”或主动查询进入；事件推送依赖 #31（Harness 预计 8/21），未就绪时通过待办页面主动查询</td></tr>
+        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过 Work 菜单“我的任务”进入，查看新分配/待处理/SLA 临期工单；后续 Harness 事件能力（预计 8/21）上线后可叠加主动通知</td></tr>
         <tr><td>Ticket Process Skill</td><td>查看与回复工单</td><td>真实 Tool 成功回执后才展示处理成功，不以本地模拟数据冒充</td></tr>
         <tr><td>Ticket Reassign Skill</td><td>工单转派</td><td>需权限校验、目标处理人合法性和真实回执</td></tr>
         <tr><td>Workload / Manager Views</td><td>我的任务、SLA、团队统计</td><td>本地组件参考工程已有页面逻辑；生产数据、权限、Host 集成与 UAT 未证明</td></tr>LANNED</td></tr>
