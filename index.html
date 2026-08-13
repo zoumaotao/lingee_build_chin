@@ -465,7 +465,7 @@
     
     <h3>3.1 目标架构图（包含二期与平台路线图能力）</h3>
     <div class="highlight highlight-yellow">
-        <strong>阅读说明：</strong>本图描述终态部件关系，不代表所有部件都进入 8/31 试运行。员工/处理人 Skill、工单服务、Work 菜单与基础 DC 属当前交付主线；消息中心、后台主动推送、自动分配、SLA/评分/仪表盘和完整知识飞轮按二期或平台路线图管理。
+        <strong>阅读说明：</strong>本图描述终态部件关系，不代表所有部件都进入 8/31 试运行。员工/处理人 Skill、工单服务、Work 菜单与基础 DC 属当前交付主线；消息中心和后台主动推送按平台路线图管理，完整知识飞轮待 8/21 DC 能力发布后验收。
     </div>
     <svg viewBox="0 0 920 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:920px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
       <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7280"/></marker></defs>
@@ -614,7 +614,7 @@
 
     <h3>3.2 端到端目标时序图</h3>
     <div class="highlight highlight-yellow">
-        <strong>说明：</strong>本图展示终态目标流程（含消息中心、自动分配等二期能力）。当前 8/31 试运行通过 Work 应用菜单挂载"我的工单/我的任务"承接通知场景，处理人和员工主动查询即可看到最新状态，不依赖后台主动推送。
+        <strong>说明：</strong>本图展示终态目标流程（含消息中心主动推送等远期能力）。当前 8/31 试运行通过 Work 应用菜单挂载"我的工单/我的任务"承接通知场景，处理人和员工主动查询即可看到最新状态。
     </div>
     <svg viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1100px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
       <defs><marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#374151"/></marker>
@@ -1010,7 +1010,7 @@
         <tr><td>Work 应用</td><td>我的工单 / 我的任务、SSO、数据权限、一键会话</td><td>8/14 目标</td><td>带工单/附件上下文能力待对齐；未确认时降级为通用新会话</td></tr>
         <tr><td>业务逻辑层</td><td>工单后台服务 + MCP Server</td><td>基础 CRUD、查询、回复、转派、状态流转</td><td>部署方案 8/13 二次沟通；用户初始化责任和日期 TBD</td></tr>
         <tr><td>知识层</td><td>灵基 DC（新加坡节点）</td><td>基础部署已有；8/13 验证 HelpDesk 连通</td><td>产物/附件写入 DC 为 8/21 PLANNED，发布后再验收</td></tr>
-        <tr><td>平台路线图</td><td>消息中心、主动推送、SLA、评分、仪表盘、完整知识飞轮</td><td>二期/后续</td><td>不得作为 8/31 无条件试运行前置完成项或既成能力</td></tr>
+        <tr><td>平台路线图</td><td>消息中心主动推送、完整知识飞轮</td><td>远期</td><td>不影响 8/31 试运行，当前通过 Work 菜单"我的工单/我的任务"闭环</td></tr>
     </table>
 
     <h3>4.2 员工端智能体（Helpdesk Assistant）</h3>
@@ -1037,7 +1037,7 @@
     <p>面向 IT/HR 处理人员（约 20-30 人），当前目标是提问、查单、回复、转派和生成知识产物入口；实时事件推送、完整经理看板及完整知识飞轮不作为当前已具备能力。</p>
     <table>
         <tr><th>组件</th><th>职责</th><th>当前边界</th></tr>
-        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过 Work 菜单“我的任务”进入，查看新分配/待处理/SLA 临期工单；后续 Harness 事件能力（预计 8/21）上线后可叠加主动通知</td></tr>
+        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过 Work 菜单“我的任务”进入，查看新分配/待处理/SLA 临期工单</td></tr>
         <tr><td>Ticket Process Skill</td><td>查看与回复工单</td><td>真实 Tool 成功回执后才展示处理成功，不以本地模拟数据冒充</td></tr>
         <tr><td>Ticket Reassign Skill</td><td>工单转派</td><td>需权限校验、目标处理人合法性和真实回执</td></tr>
         <tr><td>Workload / Manager Views</td><td>我的任务、SLA、团队统计</td><td>本地组件参考工程已有页面逻辑；生产数据、权限、Host 集成与 UAT 未证明</td></tr>LANNED</td></tr>
@@ -1047,36 +1047,12 @@
     <ul>
         <li>处理人只能看到分配给自己或授权共享池的工单；经理视角另做权限验收</li>
         <li>回复、转派和知识写入均以真实 Tool/DC 回执为成功依据</li>
-        <li>消息中心未就绪时，不承诺灵基内实时跨角色通知</li>
+        <li>通知场景通过 Work 菜单"我的任务"承接，处理人主动查询看到新工单和状态变化</li>
         <li>知识产物卡只负责展示/确认，不自行决定触发规则或可生成知识的工单</li>
     </ul>
 
-    <h3>4.4 消息中心（灵基平台级能力 — 目标架构，当前不具备）</h3>
-    <div class="highlight highlight-yellow">
-        <strong>核心定位：</strong>灵基平台级的消息中枢，承接后台应用事件、智能体间通信、系统通知的统一路由与投递。不仅服务于 HelpDesk，也是灵基作为"唯一工作台"的基础设施。
-    </div>
-    <div class="highlight highlight-red">
-        <strong>⚠️ 当前状态：灵基标品尚不具备完整消息中心能力（问题 #31）。</strong>以下仅为目标架构，8/31 试运行不以后台主动事件推送为已具备能力；当前采用 Work 待办/主动查询。Work 一键会话入口已纳入 8/14 目标，但是否携带安全工单/附件上下文须单独验收，不能与消息主动推送混为一项。
-    </div>
-    <h4>职责</h4>
-    <table>
-        <tr><th>能力</th><th>说明</th></tr>
-        <tr><td>消息路由</td><td>后台事件触发后，根据规则确定推送目标（指定用户/工作组/角色）</td></tr>
-        <tr><td>格式适配</td><td>将后台事件转为灵基可渲染的自定义格式消息（卡片/通知/操作项）</td></tr>
-        <tr><td>可靠投递</td><td>用户离线时消息不丢失，上线后补发。支持已读/未读状态</td></tr>
-        <tr><td>跨智能体通信</td><td>员工端和处理人端智能体不直接对话，消息经中心转发路由</td></tr>
-        <tr><td>后台→灵基推送</td><td>后台应用/MCP Server 可通过消息中心主动向灵基用户推送消息（非用户请求触发）</td></tr>
-    </table>
-    <h4>在 HelpDesk 中的消息流转</h4>
-    <div class="flow">
-        <span class="flow-step">后台事件<br><small>（分配/答复/超时）</small></span>
-        <span class="flow-arrow">→</span>
-        <span class="flow-step">消息中心<br><small>（路由+格式适配）</small></span>
-        <span class="flow-arrow">→</span>
-        <span class="flow-step">目标用户灵基工作台<br><small>（处理人/提问人）</small></span>
-    </div>
-    <h4>状态变化在"我的工单/我的任务"中的体现</h4>
-    <p>不依赖后台主动推送，所有变化通过 Work 页面主动查询实时呈现：</p>
+    <h3>4.4 状态变化在"我的工单/我的任务"中的体现</h3>
+    <p>工单后台负责把状态写对，Work 菜单挂载的"我的工单/我的任务"页面负责实时查询展示，闭环不依赖独立推送通道：</p>
     <table>
         <tr><th>业务事件</th><th>用户看到的位置</th><th>展示形式</th></tr>
         <tr><td>新工单分配</td><td>处理人→我的任务</td><td>新工单出现在待办列表顶部（含标题/分类/提问人/SLA 时限）</td></tr>
@@ -1087,12 +1063,9 @@
         <tr><td>工单自动关闭</td><td>员工→我的工单</td><td>状态更新为"已关闭"</td></tr>
         <tr><td>工单转派</td><td>新处理人→我的任务</td><td>新工单出现在待办列表</td></tr>
     </table>
-    <div class="highlight highlight-blue">
-        <strong>闭环逻辑：</strong>工单后台负责把状态写对，Work"我的工单/我的任务"负责实时查询展示。不依赖独立推送通道，Harness 事件能力（预计 8/21）上线后可按需叠加主动通知。
-    </div>
 
     <h3>4.5 后台工单服务（MCP Server）</h3>
-    <p>工单核心业务逻辑层，通过 MCP Server 暴露接口给两个智能体调用。消息推送在 2.0 阶段由消息中心承接。</p>
+    <p>工单核心业务逻辑层，通过 MCP Server 暴露接口给两个智能体调用。</p>
     
     <h4>接口清单</h4>
     <table>
@@ -1116,7 +1089,7 @@
         <tr><td>1</td><td>工单列表与详情</td><td>全量工单管理视图，支持筛选/搜索</td><td>1.0</td></tr>
         <tr><td>2</td><td>工单自动分配</td><td>基于分类 Round-robin 自动派单到对应工作组</td><td>1.0</td></tr>
         <tr><td>3</td><td>状态流转引擎</td><td>待分配→待处理→处理中→待确认→已关闭</td><td>1.0</td></tr>
-        <tr><td>4</td><td>答复与通知</td><td>处理人答复 + 状态更新。当前提问人通过“我的工单”主动查看答复；事件推送就绪后（Harness 8/21+）升级为灵基内实时通知</td><td>1.0</td></tr>
+        <tr><td>4</td><td>答复与通知</td><td>处理人答复 + 状态更新。提问人通过“我的工单”主动查看答复</td><td>1.0</td></tr>
                 <tr><td>6</td><td>经理转派</td><td>Helpdesk Manager 可将工单重新分配</td><td>2.0</td></tr>
         <tr><td>7</td><td>SLA 考核引擎</td><td>按分类设定响应/解决时间，超时自动告警升级</td><td>1.0</td></tr>
         <tr><td>8</td><td>评分系统</td><td>1-5 星满意度评价 + KPI 统计</td><td>1.0</td></tr>
@@ -1400,7 +1373,7 @@
         <tr><td>Foundation：Console 级 MCP 服务实例和业务组件</td><td>8/14</td><td>目标环境、目标租户真实链路验收；既有 release 记录不替代 HelpDesk 可用性</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
         <tr><td>Build：构建业务组件</td><td>8/14</td><td>11 类业务组件使用 Build 构建并在 Console 管理，逐项映射和验收</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
         <tr><td>MCP Apps 使用会话附件</td><td>8/13 对齐；原计划 8/14 发布</td><td>平台发布记录 + HelpDesk 附件 UAT；未取得证据前不得标记已解决</td><td><span class="tag tag-p1">待对齐/验收</span></td></tr>
-        <tr><td>Foundation + DC：智能体产物/附件写入 DC</td><td>2026-08-21 计划发布</td><td>有/无智能体归属、权限、真实回执、解析/索引和授权检索</td><td><span class="tag tag-p1">PLANNED</span></td></tr>
+        <tr><td>Foundation + DC：智能体产物/附件写入 DC</td><td>08/21 计划发布</td><td>有/无智能体归属、权限、真实回执、解析/索引和授权检索</td><td><span class="tag tag-p1">PLANNED</span></td></tr>
     </table>
     <div class="highlight highlight-red">
         <strong>⚠️ 完成判定：</strong>上述日期均为目标节点，不能以日期、方案确认、release 或对话式开发记录直接宣称 HelpDesk 已完成。
@@ -1576,7 +1549,7 @@
     <h4>处理人端（Agent Workbench）</h4>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
-        <tr><td>11</td><td>处理人任务入口</td><td>处理人可在“我的任务”或主动查询中看到授权范围工单；实时分配通知依赖消息中心，不作为当前必过项</td></tr>
+        <tr><td>11</td><td>处理人任务入口</td><td>处理人可在 Work 菜单“我的任务”中看到授权范围内的新分配/待处理工单</td></tr>
         <tr><td>12</td><td>工单详情查看</td><td>处理人可查看授权工单的提问人、描述、允许传递的上下文摘要和附件引用</td></tr>
         <tr><td>13</td><td>答复与通知降级</td><td>Reply_Ticket 真实成功后更新工单；通知当前通过待办/主动查询路径送达；事件推送未就绪时不要求灵基实时主动通知</td></tr>
         <tr><td>14</td><td>权限隔离</td><td>处理人只能看到分配给自己或授权共享池的工单，不可跨组查看</td></tr>
