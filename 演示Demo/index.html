@@ -575,15 +575,17 @@ body { background: #e9ebf2; }
   
   <div class="prototype-stage" id="dashboardDemoStage" aria-label="HelpDesk 运营仪表盘" hidden>
     <div class="prototype-stage-label"><span>Dashboard</span><strong>运营仪表盘 · SLA · 评分 · 处理人负载</strong></div>
-    <div class="app-shell dashboard-shell">
+    <div class="app-shell">
       <aside class="global-nav" aria-label="灵基功能导航">
         <div class="brand"><span class="brand-mark">L</span><strong>Lingee</strong></div>
         <nav class="product-nav" aria-label="产品区"><button class="product-link active" type="button"><span>⌁</span>Work</button><button class="product-link" type="button"><span>▣</span>Manage</button><button class="product-link" type="button"><span>◇</span>Build</button></nav>
-        <div class="nav-section"><p>工单服务</p>
-          <button class="assistant-link" type="button"><span class="assistant-icon employee-icon">员</span><span><b>我的工单</b><small>自助与进度跟踪</small></span></button>
-          <button class="assistant-link" type="button"><span class="assistant-icon agent-icon">处</span><span><b>我的任务</b><small>队列与处理协同</small></span></button>
+        <div class="nav-section">
+          <p>工单服务</p>
+          <button class="assistant-link" type="button" data-role-select="employee" aria-pressed="false"><span class="assistant-icon employee-icon">员</span><span><b>我的工单</b><small>自助与进度跟踪</small></span></button>
+          <button class="assistant-link" type="button" data-role-select="agent" aria-pressed="false"><span class="assistant-icon agent-icon">处</span><span><b>我的任务</b><small>队列与处理协同</small></span></button>
           <button class="assistant-link active" type="button"><span class="assistant-icon" style="color:#1f8f63;background:#e8f6ef">板</span><span><b>运营仪表盘</b><small>SLA · 评分 · 负载</small></span></button>
         </div>
+        <div class="nav-section history-section"><div class="section-title"><p>最近工单</p></div><button class="history-item" type="button">VPN 连接后无法访问系统</button><button class="history-item" type="button">财务共享盘访问权限异常</button><button class="history-item" type="button">Power BI 安装申请</button><button class="history-item" type="button">Outlook 同步问题</button></div>
         <div class="nav-footer"><span class="user-avatar">M</span><span><strong>Manager</strong><small>IT Service Desk Lead</small></span></div>
       </aside>
       <main class="workspace dashboard-workspace" aria-label="运营仪表盘">
