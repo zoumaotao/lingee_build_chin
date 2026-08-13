@@ -514,6 +514,7 @@
       <text x="430" y="165" font-size="7" fill="#6b7280" text-anchor="middle">交互卡片/表单</text>
 
       <rect x="495" y="130" width="110" height="40" rx="6" fill="white" stroke="#93c5fd" stroke-width="1" stroke-dasharray="4"/>
+
       <text x="550" y="154" font-size="9" fill="#9ca3af" text-anchor="middle" font-weight="500">待办/主动查询</text>
       <text x="550" y="165" font-size="7" fill="#9ca3af" text-anchor="middle">事件推送为二期目标</text>
 
@@ -1050,7 +1051,7 @@
         <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过“我的任务”或主动查询进入；事件推送依赖 #31（Harness 预计 8/21），未就绪时通过待办页面主动查询</td></tr>
         <tr><td>Ticket Process Skill</td><td>查看与回复工单</td><td>真实 Tool 成功回执后才展示处理成功，不以本地模拟数据冒充</td></tr>
         <tr><td>Ticket Reassign Skill</td><td>工单转派</td><td>需权限校验、目标处理人合法性和真实回执</td></tr>
-        <tr><td>Knowledge Contribute Skill</td><td>生成知识产物入口</td><td>8/17 Skill 目标不等于已写入 DC；定时/对话触发、选单规则待定，8/21 DC 仍为 PLANNED</td></tr>
+        <tr><td>Workload / Manager Views</td><td>我的任务、SLA、团队统计</td><td>本地组件参考工程已有页面逻辑；生产数据、权限、Host 集成与 UAT 未证明</td></tr>LANNED</td></tr>
         <tr><td>Workload / Manager Views</td><td>队列、SLA、团队统计</td><td>本地组件参考工程已有页面逻辑；生产数据、权限、Host 集成与 UAT 未证明</td></tr>
     </table>
     <h4>关键规则</h4>
@@ -1073,7 +1074,7 @@
         <tr><th>能力</th><th>说明</th></tr>
         <tr><td>消息路由</td><td>后台事件触发后，根据规则确定推送目标（指定用户/工作组/角色）</td></tr>
         <tr><td>格式适配</td><td>将后台事件转为灵基可渲染的自定义格式消息（卡片/通知/操作项）</td></tr>
-        <tr><td>可靠投递</td><td>消息队列机制，用户离线时消息不丢失，上线后补发。支持已读/未读状态</td></tr>
+        <tr><td>可靠投递</td><td>用户离线时消息不丢失，上线后补发。支持已读/未读状态</td></tr>
         <tr><td>跨智能体通信</td><td>员工端和处理人端智能体不直接对话，消息经中心转发路由</td></tr>
         <tr><td>后台→灵基推送</td><td>后台应用/MCP Server 可通过消息中心主动向灵基用户推送消息（非用户请求触发）</td></tr>
     </table>
@@ -1085,19 +1086,20 @@
         <span class="flow-arrow">→</span>
         <span class="flow-step">目标用户灵基工作台<br><small>（处理人/提问人）</small></span>
     </div>
-    <h4>需推送的消息场景</h4>
+    <h4>状态变化在"我的工单/我的任务"中的体现</h4>
+    <p>不依赖后台主动推送，所有变化通过 Work 页面主动查询实时呈现：</p>
     <table>
-        <tr><th>触发事件</th><th>推送对象</th><th>消息格式</th></tr>
-        <tr><td>新工单分配</td><td>处理人</td><td>工单卡片（标题/分类/提问人/SLA 时限）+ 操作按钮</td></tr>
-        <tr><td>处理人答复</td><td>提问人</td><td>答复内容 + 操作按钮（确认解决/继续追问）</td></tr>
-        <tr><td>工单状态变更</td><td>提问人</td><td>状态更新通知</td></tr>
-        <tr><td>SLA 即将超时</td><td>处理人</td><td>告警提醒卡片</td></tr>
-        <tr><td>工单关闭邀评</td><td>提问人</td><td>评价打分卡片（1-5 星）</td></tr>
-        <tr><td>工单自动关闭</td><td>提问人</td><td>超时自动关闭通知</td></tr>
-        <tr><td>工单转派</td><td>新处理人</td><td>转派通知 + 工单卡片</td></tr>
+        <tr><th>业务事件</th><th>用户看到的位置</th><th>展示形式</th></tr>
+        <tr><td>新工单分配</td><td>处理人→我的任务</td><td>新工单出现在待办列表顶部（含标题/分类/提问人/SLA 时限）</td></tr>
+        <tr><td>处理人答复</td><td>员工→我的工单→工单详情</td><td>答复记录更新，状态变为"待确认"</td></tr>
+        <tr><td>工单状态变更</td><td>员工→我的工单</td><td>工单列表状态列实时更新</td></tr>
+        <tr><td>SLA 即将超时</td><td>处理人→我的任务</td><td>SLA 标红/排序前置</td></tr>
+        <tr><td>工单关闭邀评</td><td>员工→我的工单→工单详情</td><td>展示评价入口</td></tr>
+        <tr><td>工单自动关闭</td><td>员工→我的工单</td><td>状态更新为"已关闭"</td></tr>
+        <tr><td>工单转派</td><td>新处理人→我的任务</td><td>新工单出现在待办列表</td></tr>
     </table>
     <div class="highlight highlight-blue">
-        <strong>1.0 阶段过渡方案：</strong>事件推送就绪前，上述推送场景通过 Work 待办/主动查询实现；Harness 事件触发基础能力预计 8/21 上线后逐步升级为灵基内实时推送+卡片交互。
+        <strong>闭环逻辑：</strong>工单后台负责把状态写对，Work"我的工单/我的任务"负责实时查询展示。不依赖独立推送通道，Harness 事件能力（预计 8/21）上线后可按需叠加主动通知。
     </div>
 
     <h3>4.5 后台工单服务（MCP Server）</h3>
@@ -1123,14 +1125,14 @@
     <table>
         <tr><th>#</th><th>功能模块</th><th>说明</th><th>阶段</th></tr>
         <tr><td>1</td><td>工单列表与详情</td><td>全量工单管理视图，支持筛选/搜索</td><td>1.0</td></tr>
-        <tr><td>2</td><td>工单自动分配</td><td>基于分类 Round-robin 自动派单到对应工作组；当前可由人工/固定规则降级</td><td>2.0</td></tr>
+        <tr><td>2</td><td>工单自动分配</td><td>基于分类 Round-robin 自动派单到对应工作组</td><td>1.0</td></tr>
         <tr><td>3</td><td>状态流转引擎</td><td>待分配→待处理→处理中→待确认→已关闭</td><td>1.0</td></tr>
         <tr><td>4</td><td>答复与通知</td><td>处理人答复 + 状态更新。当前提问人通过“我的工单”主动查看答复；事件推送就绪后（Harness 8/21+）升级为灵基内实时通知</td><td>1.0</td></tr>
                 <tr><td>6</td><td>经理转派</td><td>Helpdesk Manager 可将工单重新分配</td><td>2.0</td></tr>
-        <tr><td>7</td><td>SLA 考核引擎</td><td>按分类设定响应/解决时间，超时自动告警升级</td><td>2.0</td></tr>
-        <tr><td>8</td><td>评分系统</td><td>1-5 星满意度评价 + KPI 统计</td><td>2.0</td></tr>
-        <tr><td>9</td><td>仪表盘</td><td>已解决/未解决/SLA 超时/满意度等统计大屏</td><td>2.0</td></tr>
-        <tr><td>10</td><td>自动关单</td><td>超时无回复自动关闭 + 通知提问人</td><td>2.0</td></tr>
+        <tr><td>7</td><td>SLA 考核引擎</td><td>按分类设定响应/解决时间，超时自动告警升级</td><td>1.0</td></tr>
+        <tr><td>8</td><td>评分系统</td><td>1-5 星满意度评价 + KPI 统计</td><td>1.0</td></tr>
+        <tr><td>9</td><td>仪表盘</td><td>已解决/未解决/SLA 超时/满意度等统计大屏</td><td>1.0</td></tr>
+        <tr><td>10</td><td>自动关单</td><td>超时无回复自动关闭 + 通知提问人</td><td>1.0</td></tr>
         <tr><td>11</td><td>企业知识一键上传</td><td>处理产物/附件上传 DC；有智能体自动归属，无智能体游离。标准能力计划 2026-08-21 发布，是否进入 1.0 以联调/UAT 为准</td><td>PLANNED</td></tr>
         <tr><td>12</td><td>业务线隔离</td><td>Tech GBS / People GBS / BP 三线独立管理</td><td>2.0</td></tr>
         <tr><td>13</td><td>审批流程</td><td>IT Service Request 部分需 L1/L2 审批</td><td>2.0</td></tr>
@@ -1184,7 +1186,7 @@
         <tr><td>Incident Request</td><td>IT</td><td>8</td><td>29</td><td>1 天</td><td>5 天</td><td>否</td></tr>
         <tr><td>Service Request</td><td>IT</td><td>8</td><td>27</td><td>1 天</td><td>5 天</td><td>部分需要</td></tr>
     </table>
-    <p><strong>共计 75 条二级分类</strong>，分类目录作为目标配置基线；Round-robin 自动分配属于二期，8/31 试运行可采用人工/固定规则分派降级。</p>
+    <p><strong>共计 75 条二级分类</strong>，全部启用自动分配（Round-robin），纳入 8/31 试运行范围。</p>
 
     <h3>5.2 SLA 规则</h3>
     <h4>Agent 侧 SLA</h4>
@@ -1594,7 +1596,7 @@
     <h4>后台工单服务</h4>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
-        <tr><td>15</td><td>工单分派降级</td><td>1.0 可通过人工或固定规则把工单分配给授权处理人；分类 Round-robin 自动分配移至 2.0</td></tr>
+        <tr><td>15</td><td>自动分配</td><td>工单提交后按分类 Round-robin 自动分配到对应工作组处理人</td></tr>
         <tr><td>16</td><td>状态流转</td><td>工单状态：待分配→待处理→处理中→待确认→已关闭，流转正确</td></tr>
         <tr><td>17</td><td>答复可查</td><td>处理人答复后提问人可通过“我的工单”查看最新回复</td></tr>
         <tr><td>18</td><td>接口错误处理</td><td>所有接口返回统一结构化错误（参数错误/未认证/无权限/限流/故障/重复），便于判断可否重试</td></tr>
