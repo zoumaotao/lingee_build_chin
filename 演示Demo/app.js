@@ -234,9 +234,8 @@ const agentConversationScripts = {
       { kind: "assistant", text: "你好，我是 Agent Workbench。我可以基于你有权查看的工单形成摘要、排查建议和答复草稿；任何发送或转派都必须由处理人确认。" }
     ],
     turns: [
-      { user: "分析工单 HD-2026-0811-0238，先不要发送任何回复。", replies: [{ kind: "assistant", text: "好的，我来看一下这张工单：\n\n员工已重新导入 VPN 配置、完成 MFA 并重启电脑，但 ERP 和内部文件服务器仍无法访问，当前影响财务月结。\n\n建议优先核对 VPN 客户端配置版本、分割路由和 DNS 设置。如果只有该员工受影响，再检查账号对应的访问策略。\n\n需要我帮你草拟答复吗？" }] },
-      { user: "生成一版给员工的排查回复，我确认后再发送。", replies: [{ kind: "iframe", component: "agent/ticket-detail", title: "工单详情与答复" }] },
-      { user: "HD-0811-0227 新员工登录问题转派给 Mei Ling 处理。", replies: [{ kind: "iframe", component: "agent/reassign", title: "工单转派确认" }] },
+      { user: "看下 VPN 那张工单", replies: [{ kind: "iframe", component: "agent/ticket-detail", title: "工单详情" }] },
+      { user: "帮我草拟一个答复给员工", replies: [{ kind: "assistant", text: "好的，我根据工单信息和处理建议帮你草拟了答复，已填入答复框：\n\n「你好 Michelle，经排查确认是 VPN 分割路由配置未包含内部网段。请按以下步骤操作：1. 删除当前 VPN 配置 2. 从 IT Portal 导入最新配置 3. 完成 MFA 后重新连接 4. 运行 ipconfig /flushdns 刷新 DNS。如仍有问题请附上 route print 截图。」\n\n你可以在详情卡的答复框中编辑后发送。" }] },
       { user: "VPN 工单处理完毕后帮我总结一下解决方法，生成知识产物。", replies: [{ kind: "assistant", text: "好的，已根据工单处理记录生成知识产物文件《VPN 连接后无法访问内部系统的排查步骤》。\n\n产物已出现在右侧面板，你可以悬停文件图标点击「上传智能体知识」将其写入 Console 知识管理并同步至智能体知识库。" }] }
     ]
   }
