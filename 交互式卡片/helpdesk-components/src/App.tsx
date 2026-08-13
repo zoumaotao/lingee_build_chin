@@ -286,7 +286,7 @@ function EmployeeCard({ view, locale, data, emit, previewMode }: ViewProps) {
 function AgentCard({ view, locale, data, emit, previewMode }: ViewProps) {
   const ticketItems = ticketsFromData(data, previewMode);
   const ticket = ticketItems[0];
-  const [reply, setReply] = useState(asString(data.reply, previewMode ? l(locale, "你好 Michelle，请重新导入最新 VPN 配置并完成 MFA。若仍有问题，请附上诊断日志。", "Hi Michelle, please import the latest VPN profile and complete MFA. If the issue remains, attach the diagnostic log.") : ""));
+  const [reply, setReply] = useState(asString(data.reply, ""));
   const [internalNote, setInternalNote] = useState(asString(data.internalNote));
   const [agentAction, setAgentAction] = useState<"" | "reply">("");
   const [reason, setReason] = useState("");
