@@ -366,7 +366,6 @@
     <a href="振兴HelpDesk客户沟通会议纪要.html" style="color:var(--primary);">📋 客户沟通会议纪要</a>
     <a href="灵基Build生产化问题清单.html" style="color:var(--primary);">🔧 标品生产化问题清单</a>
     <div class="sidebar-title" style="margin-top:20px;">重难点问题推进</div>
-    <a href="重难点问题推进/灵基消息与事件推送能力方案设计.html" style="color:var(--primary);">📨 消息与事件推送方案</a>
     <a href="重难点问题推进/Build构建MCPAPPS方案设计.html" style="color:var(--primary);">🧩 Build构建MCP APPS方案</a>
     <a href="重难点问题推进/Build统一版本管理能力方案设计.html" style="color:var(--primary);">🔄 Build统一版本管理方案</a>
 </nav>
@@ -463,9 +462,9 @@
 <div class="section" id="sec3">
     <h2>03 解决方案蓝图</h2>
     
-    <h3>3.1 目标架构图（包含二期与平台路线图能力）</h3>
+    <h3>3.1 目标架构图（当前确认方案）</h3>
     <div class="highlight highlight-yellow">
-        <strong>阅读说明：</strong>本图描述终态部件关系，不代表所有部件都进入 8/31 试运行。员工/处理人 Skill、工单服务、Work 菜单与基础 DC 属当前交付主线；消息中心和后台主动推送按平台路线图管理，完整知识飞轮待 8/21 DC 能力发布后验收。
+        <strong>阅读说明：</strong>本图按当前确认方案展示部件关系。员工/处理人 Skill、工单服务、Work 内嵌页面与基础 DC 属当前交付主线；工单后台负责生成并保存分配、答复、状态变化和 SLA 等消息事件，“我的工单/我的任务”内嵌页面读取并展示最新数据、未读状态和提醒。灵基原生菜单、角标和消息中心不在可改范围内。
     </div>
     <svg viewBox="0 0 920 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:920px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
       <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7280"/></marker></defs>
@@ -482,7 +481,7 @@
       <!-- Work -->
       <rect x="190" y="55" width="200" height="50" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
       <text x="290" y="78" font-size="11" fill="#1e40af" text-anchor="middle" font-weight="600">Work（工作台）</text>
-      <text x="290" y="93" font-size="8" fill="#6b7280" text-anchor="middle">智能体运行 · APPS 交互 · 消息收发</text>
+      <text x="290" y="93" font-size="8" fill="#6b7280" text-anchor="middle">智能体运行 · APPS 交互 · 任务查询</text>
 
       <!-- Build -->
       <rect x="410" y="55" width="200" height="50" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
@@ -502,10 +501,10 @@
       <text x="430" y="154" font-size="9" fill="#1e40af" text-anchor="middle" font-weight="500">MCP APPS</text>
       <text x="430" y="165" font-size="7" fill="#6b7280" text-anchor="middle">交互卡片/表单</text>
 
-      <rect x="495" y="130" width="110" height="40" rx="6" fill="white" stroke="#93c5fd" stroke-width="1" stroke-dasharray="4"/>
+      <rect x="495" y="130" width="110" height="40" rx="6" fill="white" stroke="#93c5fd" stroke-width="1"/>
 
-      <text x="550" y="154" font-size="9" fill="#9ca3af" text-anchor="middle" font-weight="500">待办/主动查询</text>
-      <text x="550" y="165" font-size="7" fill="#9ca3af" text-anchor="middle">事件推送为二期目标</text>
+      <text x="550" y="154" font-size="9" fill="#1e40af" text-anchor="middle" font-weight="500">我的工单/我的任务</text>
+      <text x="550" y="165" font-size="7" fill="#6b7280" text-anchor="middle">后台消息机制 + 内嵌页面</text>
 
       <!-- DC -->
       <rect x="50" y="200" width="570" height="70" rx="8" fill="#fae8ff" stroke="#d8b4fe" stroke-width="1.5"/>
@@ -538,7 +537,7 @@
       <text x="410" y="357" font-size="8" fill="#065f46" text-anchor="middle">运营管理</text>
 
       <rect x="465" y="338" width="90" height="30" rx="5" fill="white" stroke="#6ee7b7"/>
-      <text x="510" y="357" font-size="8" fill="#065f46" text-anchor="middle">消息通信</text>
+      <text x="510" y="357" font-size="8" fill="#065f46" text-anchor="middle">配置管理</text>
 
       <rect x="65" y="380" width="90" height="30" rx="5" fill="white" stroke="#6ee7b7"/>
       <text x="110" y="399" font-size="8" fill="#065f46" text-anchor="middle">租户管理</text>
@@ -580,28 +579,25 @@
       <text x="837" y="323" font-size="9" fill="#9f1239" text-anchor="middle">ERP 等</text>
 
       <!-- 连接线 -->
-      <!-- Work → 外部应用 (MCP) -->
+      <!-- Work 内嵌页面 → 工单后台：查询数据与消息事件 -->
       <line x1="640" y1="150" x2="670" y2="150" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrowhead)"/>
       <text x="655" y="142" font-size="7" fill="#fb923c" text-anchor="middle" transform="rotate(-90,655,142)">MCP</text>
-
-      <!-- 外部应用 → Work (推送) -->
-      <line x1="670" y1="165" x2="640" y2="165" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrowhead)" stroke-dasharray="4"/>
 
       <!-- DC → 外部数据源 
       <line x1="300" y1="245" x2="670" y2="310" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
       <text x="480" y="268" font-size="8" fill="#6b7280" text-anchor="middle">数据同步</text>-->
 
-      <!-- 处理人 Skill → DC (一键上传企业知识 8/21 PLANNED) -->
+      <!-- 处理人 Skill → DC（仅加工后的对话知识产物，待联调/UAT） -->
       <path d="M 292 170 L 292 195 L 245 195 L 245 225" fill="none" stroke="#6b21a8" stroke-width="1.2" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
-      <text x="268" y="190" font-size="7" fill="#6b21a8" text-anchor="middle">Skill→DC 一键上传</text>
+      <text x="268" y="190" font-size="7" fill="#6b21a8" text-anchor="middle">对话产物→DC</text>
 
       <!-- 图例 -->
       <rect x="20" y="470" width="880" height="70" rx="8" fill="white" stroke="#e5e7eb" stroke-width="1"/>
       <text x="40" y="492" font-size="10" fill="#6b7280" font-weight="600">图例</text>
       <line x1="40" y1="510" x2="75" y2="510" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrowhead)"/>
       <text x="82" y="514" font-size="9" fill="#6b7280">MCP 实时调用</text>
-      <line x1="200" y1="510" x2="235" y2="510" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
-      <text x="242" y="514" font-size="9" fill="#6b7280">待办/主动查询（二期升级为事件推送）</text>
+      <line x1="200" y1="510" x2="235" y2="510" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+      <text x="242" y="514" font-size="9" fill="#6b7280">后台消息事件 → 内嵌页面展示</text>
       <line x1="380" y1="510" x2="415" y2="510" stroke="#6b21a8" stroke-width="1.2" stroke-dasharray="4" marker-end="url(#arrowhead)"/>
       <text x="422" y="514" font-size="9" fill="#6b7280">Skill→DC 标准上传(8/21)</text>
       <rect x="560" y="502" width="14" height="14" rx="3" fill="#f8fafc" stroke="#3b82f6" stroke-dasharray="4"/>
@@ -614,7 +610,7 @@
 
     <h3>3.2 端到端目标时序图</h3>
     <div class="highlight highlight-yellow">
-        <strong>说明：</strong>本图展示终态目标流程（含消息中心主动推送等远期能力）。当前 8/31 试运行通过 Work 应用菜单挂载"我的工单/我的任务"承接通知场景，处理人和员工主动查询即可看到最新状态。
+        <strong>说明：</strong>本图按当前确认方案展示完整流程。灵基原生菜单、角标和消息中心不可修改，因此不依赖后台向灵基原生能力推送；工单后台建立独立消息机制，“我的任务/我的工单”作为嵌入 Work 的后台页面，在打开时增量加载消息，并可通过轮询或长连接刷新任务、未读状态和提醒。邮件、企业微信等外部通知仍由工单后台按需发送。
     </div>
     <svg viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1100px;margin:16px auto;display:block;font-family:-apple-system,sans-serif;">
       <defs><marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0, 7 2.5, 0 5" fill="#374151"/></marker>
@@ -645,9 +641,9 @@
       <text x="585" y="25" font-size="8" fill="#c2410c" text-anchor="middle" font-weight="600">工单后台</text>
       <text x="585" y="38" font-size="7" fill="#6b7280" text-anchor="middle">业务逻辑+分配</text>
 
-      <rect x="655" y="8" width="85" height="38" rx="4" fill="#ecfdf5" stroke="#10b981"/>
-      <text x="697" y="25" font-size="8" fill="#065f46" text-anchor="middle" font-weight="600">消息中心</text>
-      <text x="697" y="38" font-size="7" fill="#6b7280" text-anchor="middle">路由+推送</text>
+      <rect x="655" y="8" width="85" height="38" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
+      <text x="697" y="25" font-size="8" fill="#1e40af" text-anchor="middle" font-weight="600">Work 内嵌页面</text>
+      <text x="697" y="38" font-size="7" fill="#6b7280" text-anchor="middle">消息列表/未读状态</text>
 
       <rect x="760" y="8" width="105" height="38" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
       <text x="812" y="25" font-size="8" fill="#1e40af" text-anchor="middle" font-weight="600">Agent Workbench</text>
@@ -663,7 +659,7 @@
       <line x1="370" y1="46" x2="370" y2="800" stroke="#a78bfa" stroke-width="0.8" stroke-dasharray="3"/>
       <line x1="470" y1="46" x2="470" y2="800" stroke="#fb923c" stroke-width="0.8" stroke-dasharray="3"/>
       <line x1="585" y1="46" x2="585" y2="800" stroke="#fb923c" stroke-width="0.8" stroke-dasharray="3"/>
-      <line x1="697" y1="46" x2="697" y2="800" stroke="#10b981" stroke-width="0.8" stroke-dasharray="3"/>
+      <line x1="697" y1="46" x2="697" y2="800" stroke="#3b82f6" stroke-width="0.8" stroke-dasharray="3"/>
       <line x1="812" y1="46" x2="812" y2="800" stroke="#3b82f6" stroke-width="0.8" stroke-dasharray="3"/>
       <line x1="920" y1="46" x2="920" y2="800" stroke="#3b82f6" stroke-width="0.8" stroke-dasharray="3"/>
 
@@ -757,73 +753,79 @@
 
       <!-- ⑳ 后台自动分配 -->
       <rect x="555" y="450" width="60" height="18" rx="3" fill="#fef3c7" stroke="#f59e0b"/>
-      <text x="585" y="462" font-size="7" fill="#92400e" text-anchor="middle">自动分配</text>
+      <text x="585" y="462" font-size="7" fill="#92400e" text-anchor="middle">分配+写事件</text>
 
-      <!-- ㉑ 后台→消息中心 -->
-      <line x1="585" y1="478" x2="695" y2="478" stroke="#059669" stroke-width="1" marker-end="url(#arr-green)"/>
-      <text x="640" y="472" font-size="7.5" fill="#059669" text-anchor="middle">㉑ 投递分配事件</text>
+      <!-- ㉑ 处理人主动打开我的任务 -->
+      <line x1="920" y1="478" x2="699" y2="478" stroke="#3b82f6" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="810" y="472" font-size="7.5" fill="#1e40af" text-anchor="middle">㉑ 打开“我的任务”</text>
 
-      <!-- ㉒ 消息中心→Workbench -->
-      <line x1="697" y1="493" x2="810" y2="493" stroke="#059669" stroke-width="1" marker-end="url(#arr-green)"/>
-      <text x="753" y="487" font-size="7.5" fill="#059669" text-anchor="middle">㉒ 推送工单通知</text>
+      <!-- ㉒ 内嵌页面查询后台 -->
+      <line x1="697" y1="493" x2="587" y2="493" stroke="#3b82f6" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="642" y="487" font-size="7.5" fill="#1e40af" text-anchor="middle">㉒ 加载任务+未读消息</text>
 
-      <!-- ㉓ Workbench→Work渲染→处理人 -->
-      <line x1="812" y1="508" x2="918" y2="508" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
-      <text x="865" y="502" font-size="7.5" fill="#374151" text-anchor="middle">㉓ 渲染新工单卡（APPS）</text>
+      <!-- ㉓ 后台返回任务与消息 -->
+      <line x1="587" y1="508" x2="695" y2="508" stroke="#3b82f6" stroke-width="1" stroke-dasharray="3" marker-end="url(#arr)"/>
+      <text x="641" y="502" font-size="7.5" fill="#1e40af" text-anchor="middle">㉓ 返回任务/消息事件</text>
 
-      <!-- ㉔ 处理人查看并答复 -->
-      <line x1="920" y1="530" x2="814" y2="530" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
-      <text x="867" y="524" font-size="7.5" fill="#374151" text-anchor="middle">㉔ 编写答复</text>
+      <!-- ㉔ 页面向处理人展示任务与提醒 -->
+      <line x1="697" y1="523" x2="918" y2="523" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="807" y="517" font-size="7.5" fill="#374151" text-anchor="middle">㉔ 展示任务+页面提醒</text>
 
-      <!-- ㉕ Workbench→MCP 提交答复 -->
-      <line x1="812" y1="548" x2="472" y2="548" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
-      <text x="642" y="542" font-size="7.5" fill="#ea580c" text-anchor="middle">㉕ Reply_Ticket</text>
+      <!-- ㉕ 处理人进入 Workbench 编写答复 -->
+      <line x1="920" y1="540" x2="814" y2="540" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="867" y="534" font-size="7.5" fill="#374151" text-anchor="middle">㉕ 编写答复</text>
 
-      <!-- ㉖ MCP→后台更新 -->
-      <line x1="470" y1="563" x2="583" y2="563" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
-      <text x="526" y="557" font-size="7.5" fill="#ea580c" text-anchor="middle">㉖ 更新工单状态</text>
+      <!-- ㉖ Workbench→MCP 提交答复 -->
+      <line x1="812" y1="555" x2="472" y2="555" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="642" y="549" font-size="7.5" fill="#ea580c" text-anchor="middle">㉖ Reply_Ticket</text>
 
-      <!-- ㉗ 后台→消息中心 推送答复 -->
-      <line x1="585" y1="580" x2="695" y2="580" stroke="#059669" stroke-width="1" marker-end="url(#arr-green)"/>
-      <text x="640" y="574" font-size="7.5" fill="#059669" text-anchor="middle">㉗ 投递答复事件</text>
+      <!-- ㉗ MCP→后台更新 -->
+      <line x1="470" y1="570" x2="583" y2="570" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="526" y="564" font-size="7.5" fill="#ea580c" text-anchor="middle">㉗ 更新工单+写消息</text>
 
-      <!-- ㉘ 消息中心→Assistant -->
-      <line x1="697" y1="595" x2="264" y2="595" stroke="#059669" stroke-width="1" marker-end="url(#arr-green)"/>
-      <text x="480" y="589" font-size="7.5" fill="#059669" text-anchor="middle">㉘ 推送答复给员工端</text>
+      <!-- ㉘ 员工主动打开我的工单 -->
+      <line x1="50" y1="590" x2="145" y2="590" stroke="#3b82f6" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="97" y="584" font-size="7.5" fill="#1e40af" text-anchor="middle">㉘ 打开“我的工单”</text>
 
-      <!-- ㉙ Assistant→Work渲染→员工 -->
-      <line x1="262" y1="610" x2="149" y2="610" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
-      <line x1="147" y1="623" x2="52" y2="623" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
-      <text x="99" y="617" font-size="7.5" fill="#374151" text-anchor="middle">㉙ 渲染答复消息</text>
+      <!-- ㉙ Work通过MCP查询 -->
+      <line x1="147" y1="605" x2="468" y2="605" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="307" y="599" font-size="7.5" fill="#ea580c" text-anchor="middle">㉙ 查询工单+未读消息</text>
 
-      <!-- Phase 4: 评价 -->
-      <rect x="5" y="640" width="1090" height="16" rx="2" fill="#fdf2f8" opacity="0.6"/>
-      <text x="15" y="652" font-size="7" fill="#9f1239" font-weight="600">确认与评价阶段</text>
+      <!-- ㉚ MCP查询后台 -->
+      <line x1="470" y1="620" x2="583" y2="620" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="526" y="614" font-size="7.5" fill="#ea580c" text-anchor="middle">㉚ 读取状态/答复/未读</text>
 
-      <!-- ㉚ 员工确认解决 -->
-      <line x1="50" y1="672" x2="145" y2="672" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
-      <text x="97" y="666" font-size="7.5" fill="#374151" text-anchor="middle">㉚ "已解决"→关闭工单</text>
+      <!-- ㉛ 后台返回Work -->
+      <line x1="583" y1="635" x2="149" y2="635" stroke="#ea580c" stroke-width="1" stroke-dasharray="3" marker-end="url(#arr-orange)"/>
+      <text x="366" y="629" font-size="7.5" fill="#ea580c" text-anchor="middle">㉛ 返回详情+消息事件</text>
 
-      <!-- ㉛ 推送评价卡 -->
-      <line x1="147" y1="690" x2="52" y2="690" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
-      <text x="99" y="684" font-size="7.5" fill="#374151" text-anchor="middle">㉛ 渲染评价打分卡（APPS）</text>
+      <!-- Phase 4: 确认与评价 -->
+      <rect x="5" y="650" width="1090" height="16" rx="2" fill="#fdf2f8" opacity="0.6"/>
+      <text x="15" y="662" font-size="7" fill="#9f1239" font-weight="600">确认与评价阶段</text>
 
-      <!-- ㉜ 员工评分 -->
-      <line x1="50" y1="710" x2="145" y2="710" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
-      <text x="97" y="704" font-size="7.5" fill="#059669" text-anchor="middle">㉜ 提交 4 星评价</text>
+      <!-- ㉜ Work展示答复与评价入口 -->
+      <line x1="147" y1="680" x2="52" y2="680" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="99" y="674" font-size="7.5" fill="#374151" text-anchor="middle">㉜ 展示答复与评价入口</text>
 
-      <!-- ㉝ Work→Assistant→MCP -->
-      <line x1="147" y1="725" x2="260" y2="725" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
-      <line x1="262" y1="740" x2="468" y2="740" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
-      <text x="365" y="734" font-size="7.5" fill="#ea580c" text-anchor="middle">㉝ Rate_Ticket(4星)</text>
+      <!-- ㉝ 员工确认并评分 -->
+      <line x1="50" y1="700" x2="145" y2="700" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="97" y="694" font-size="7.5" fill="#059669" text-anchor="middle">㉝ 确认解决并提交 4 星</text>
 
-      <!-- ㉞ MCP→后台记录 -->
-      <line x1="470" y1="755" x2="583" y2="755" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
-      <text x="526" y="749" font-size="7.5" fill="#ea580c" text-anchor="middle">㉞ 记录 KPI 数据</text>
+      <!-- ㉞ Work→Assistant -->
+      <line x1="147" y1="715" x2="260" y2="715" stroke="#374151" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="203" y="709" font-size="7.5" fill="#374151" text-anchor="middle">㉞ 提交评价</text>
+
+      <!-- ㉟ Assistant→MCP -->
+      <line x1="262" y1="730" x2="468" y2="730" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="365" y="724" font-size="7.5" fill="#ea580c" text-anchor="middle">㉟ Rate_Ticket(4星)</text>
+
+      <!-- ㊱ MCP→后台记录 -->
+      <line x1="470" y1="745" x2="583" y2="745" stroke="#ea580c" stroke-width="1" marker-end="url(#arr-orange)"/>
+      <text x="526" y="739" font-size="7.5" fill="#ea580c" text-anchor="middle">㊱ 记录 KPI 数据</text>
 
       <!-- 完成标记 -->
-      <rect x="300" y="775" width="500" height="22" rx="4" fill="#ecfdf5" stroke="#6ee7b7"/>
-      <text x="550" y="790" font-size="9" fill="#065f46" text-anchor="middle" font-weight="500">目标全闭环（含二期能力）：问询 → 检索 → 提单 → 分配 → 推送 → 处理 → 答复 → 评价</text>
+      <rect x="270" y="775" width="560" height="22" rx="4" fill="#ecfdf5" stroke="#6ee7b7"/>
+      <text x="550" y="790" font-size="9" fill="#065f46" text-anchor="middle" font-weight="500">当前闭环：问询 → 提单 → 后台消息事件 → 内嵌页面处理/查看 → 评价</text>
     </svg>
 
     <h3>3.3 知识生命周期图</h3>
@@ -865,9 +867,9 @@
       <!-- 路径3: 工单沉淀 -->
       <rect x="670" y="50" width="180" height="50" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
       <text x="760" y="72" font-size="10" fill="#065f46" text-anchor="middle" font-weight="600">③ 工单处理沉淀</text>
-      <text x="760" y="88" font-size="8" fill="#6b7280" text-anchor="middle">产物/附件一键上传企业知识</text>
+      <text x="760" y="88" font-size="8" fill="#6b7280" text-anchor="middle">对话产物入库 · 原文件走界面上传</text>
       <rect x="673" y="103" width="80" height="14" rx="3" fill="#fef3c7" stroke="#f59e0b"/>
-      <text x="713" y="113" font-size="7" fill="#92400e" text-anchor="middle">8/21 PLANNED</text>
+      <text x="713" y="113" font-size="7" fill="#92400e" text-anchor="middle">边界确认 · 待 UAT</text>
 
       <!-- ===== DC 加工层 ===== -->
       <rect x="250" y="225" width="580" height="80" rx="10" fill="#faf5ff" stroke="#a78bfa" stroke-width="1.5"/>
@@ -940,57 +942,100 @@
     </svg>
 
     <h3>3.4 用户旅程</h3>
-    <h4>场景一：员工自助问答</h4>
-    <div class="flow">
-        <span class="flow-step">员工提问</span>
-        <span class="flow-arrow">→</span>
-        <span class="flow-step">智能体检索 DC 知识库</span>
-        <span class="flow-arrow">→</span>
-        <span class="flow-step">AI 回答 + 引用来源</span>
-        <span class="flow-arrow">→</span>
-        <span class="flow-step">确认是否解决</span>
-        <span class="flow-arrow">→</span>
-        <span class="flow-step">✅ 结束</span>
+    <div class="highlight highlight-yellow">
+        <strong>旅程边界：</strong>灵基原生菜单、角标和消息中心不可修改。消息能力由工单后台实现：业务事件写入消息表或事件队列，并按用户维护未读状态；嵌入 Work 的“我的任务/我的工单”页面负责加载和刷新消息、任务及工单变化。页面未打开时不承诺灵基原生提醒，必要时由工单后台通过邮件、企业微信等外部渠道补充通知。
     </div>
 
-    <h4>场景二：未解决 → 自动提单</h4>
+    <h4>阶段一：员工自助问答</h4>
     <div class="flow">
-        <span class="flow-step">未解决</span>
+        <span class="flow-step">员工进入灵基 Work</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">自动生成工单草稿</span>
+        <span class="flow-step">向智能体提问</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">用户确认/编辑</span>
+        <span class="flow-step">智能体检索 DC</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">提交工单</span>
+        <span class="flow-step">返回答案及引用来源</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">后台自动分配</span>
+        <span class="flow-step">员工判断是否解决</span>
     </div>
+    <ul>
+        <li><strong>已解决：</strong>旅程结束，不创建工单。</li>
+        <li><strong>未解决：</strong>进入智能提单阶段。</li>
+    </ul>
 
-    <h4>场景三：工单处理闭环</h4>
+    <h4>阶段二：员工确认提单</h4>
     <div class="flow">
-        <span class="flow-step">处理人收到通知</span>
+        <span class="flow-step">智能体根据对话生成工单草稿</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">在灵基处理工单</span>
+        <span class="flow-step">员工检查、编辑并确认</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">回复送达提问人</span>
+        <span class="flow-step">智能体调用 MCP 创建工单</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">提问人评价打分</span>
+        <span class="flow-step">工单后台返回工单号</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">一键上传企业知识（条件能力）<br><small>8/21 PLANNED；有智能体自动归属，无智能体游离</small></span>
+        <span class="flow-step">Work 展示提交成功回执</span>
     </div>
+    <p><strong>关键规则：</strong>AI 只生成草稿，员工明确确认后才创建工单，不允许“自动建单”。</p>
 
-    <h4>场景四：查询工单进度</h4>
+    <h4>阶段三：后台分配工单</h4>
     <div class="flow">
-        <span class="flow-step">员工询问进度</span>
+        <span class="flow-step">工单后台接收工单</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">智能体查询本人工单</span>
+        <span class="flow-step">按分类、处理组和规则自动分配</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">展示状态/详情/回复记录</span>
+        <span class="flow-step">工单进入“处理中”</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">工单进入对应处理人的“我的任务”</span>
     </div>
+    <p><strong>消息机制：</strong>工单分配成功后，后台同步写入面向处理人的消息事件和未读状态；嵌入 Work 的“我的任务”页面在打开或刷新时获取该事件，并将新任务置顶或高亮。若页面保持打开，可通过轮询或长连接及时刷新；不修改或依赖灵基原生通知能力。</p>
+
+    <h4>阶段四：处理人主动查看并处理</h4>
+    <div class="flow">
+        <span class="flow-step">处理人进入灵基 Work</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">打开“我的任务”</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">查询新分配及待处理工单</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">查看详情并编写答复</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">提交答复，后台记录处理结果</span>
+    </div>
+    <p><strong>状态规则：</strong>处理人答复后，工单仍保持“处理中”，等待员工确认是否解决。</p>
+
+    <h4>阶段五：员工查询答复并确认</h4>
+    <div class="flow">
+        <span class="flow-step">员工进入灵基 Work</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">打开“我的工单”</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">查看最新状态和人工答复</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">判断问题是否解决</span>
+    </div>
+    <ul>
+        <li><strong>未解决：</strong>员工补充说明，工单保持“处理中”，处理人后续通过“我的任务”继续处理。</li>
+        <li><strong>已解决：</strong>员工确认关闭工单并提交评价，工单后台记录评分及 KPI。</li>
+    </ul>
+    <p><strong>消息机制：</strong>处理人答复、状态变化和关闭邀评等事件由工单后台写入面向提交人的消息记录；嵌入 Work 的“我的工单”页面展示未读数量、新答复标识和状态变化，用户查看后更新已读状态。</p>
+
+    <h4>条件分支：知识沉淀</h4>
+    <div class="flow">
+        <span class="flow-step">筛选符合知识沉淀条件的已处理工单</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">处理人整理知识产物</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">处理人确认后上传 DC</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">完成权限、解析与索引</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">供后续智能问答检索使用</span>
+    </div>
+    <p><strong>能力状态：</strong>知识产物一键上传计划于 2026-08-21 发布，发布后需完成权限、回执、解析、索引和检索验收；该分支不是每张工单的必经步骤。</p>
 
     <h3>3.5 知识流转说明</h3>
     <p>当前方案：1、初始化：手动上传政策类文档（20-25 份 PDF）到 DC，完成知识初始化<br>
-    持续沉淀（计划 2026-08-21）：产物和附件可一键上传企业知识；有智能体上下文时自动进入/关联该智能体知识，无智能体时作为租户企业知识游离。当前为 PLANNED，须在发布后完成权限、回执、解析/索引和检索验收<br>
+    持续沉淀（Foundation 最新边界）：对话过程只支持加工后的知识产物写入 DC，对话附件不能直接入库；未加工原文件如需作为知识源，走智能体详情/DC 管理界面点击上传，以减少不必要的对话点数消耗。HelpDesk 工单附件默认仅生成脱敏摘要并并入知识产物<br>
     <!--长期（3.0）：SharePoint MCP 自动增量同步，知识飞轮自动运转，新知识可选归档回 SharePoint</p>-->
 </div>
 
@@ -1005,11 +1050,11 @@
     <table>
         <tr><th>层级</th><th>组件</th><th>当前定位</th><th>证据/边界</th></tr>
         <tr><td>用户交互层</td><td>Helpdesk Assistant（员工端）</td><td>8/14 目标：提问、提单、查单、评价入口</td><td>已有本地 Demo/组件源码；真实 Skill、Tool 与 UAT 待验收</td></tr>
-        <tr><td>用户交互层</td><td>Agent Workbench（处理人端）</td><td>8/17 目标：提问、回复、转派、查单、知识产物入口</td><td>知识触发方式与 eligible ticket 未定；通知场景通过 Work 菜单"我的任务"承接</td></tr>
-        <tr><td>Work 应用</td><td>我的工单 / 我的任务、SSO、数据权限、一键会话</td><td>8/14 目标</td><td>带工单/附件上下文能力待对齐；未确认时降级为通用新会话</td></tr>
+        <tr><td>用户交互层</td><td>Agent Workbench（处理人端）</td><td>8/17 目标：提问、回复、转派、查单、知识产物入口</td><td>知识产物采用定时任务触发，eligible ticket 规则仍待确认；任务消息由工单后台生成，在 Work 内嵌“我的任务”页面展示</td></tr>
+        <tr><td>Work 应用</td><td>我的工单 / 我的任务、SSO、数据权限、工单后台嵌入与会话返回</td><td>8/14 目标</td><td>复杂操作和消息展示均由 Work 内嵌页面承载；工单后台维护事件与未读状态，仅传受控身份/会话/工单引用，回跳协议需联调与 UAT</td></tr>
         <tr><td>业务逻辑层</td><td>工单后台服务 + MCP Server</td><td>基础 CRUD、查询、回复、转派、状态流转</td><td>部署方案 8/13 二次沟通；用户初始化责任和日期 TBD</td></tr>
-        <tr><td>知识层</td><td>灵基 DC（新加坡节点）</td><td>基础部署已有；8/13 验证 HelpDesk 连通</td><td>产物/附件写入 DC 为 8/21 PLANNED，发布后再验收</td></tr>
-        <tr><td>平台路线图</td><td>消息中心主动推送、完整知识飞轮</td><td>远期</td><td>不影响 8/31 试运行，当前通过 Work 菜单"我的工单/我的任务"闭环</td></tr>
+        <tr><td>知识层</td><td>灵基 DC（新加坡节点）</td><td>基础部署已有；8/13 验证 HelpDesk 连通</td><td>Foundation 最新边界：对话只写入加工后的知识产物；对话附件不能直接入 DC。原始文件如需入库，走智能体详情/DC 界面上传；HelpDesk 工单附件默认仅生成脱敏摘要并并入知识产物</td></tr>
+        <tr><td>方案边界</td><td>后台消息机制、Work 内嵌页面、完整知识飞轮</td><td>已确认 / 分阶段</td><td>消息事件、未读数和页面提醒由工单后台及内嵌页面实现；不修改灵基原生菜单、角标或消息中心，页面外提醒由邮件/企业微信等后台渠道补充</td></tr>
     </table>
 
     <h3>4.2 员工端智能体（Helpdesk Assistant）</h3>
@@ -1021,7 +1066,7 @@
         <tr><td>Ticket Draft Skill</td><td>工单草稿生成</td><td>读取 Schema 获取分类/字段规则、基于对话上下文自动生成草稿、校验必填项、展示确认卡（可编辑）</td></tr>
         <tr><td>Ticket Submission Skill</td><td>工单提交（副作用隔离）</td><td>上传附件（全成功才建单）、幂等建单（idempotencyKey）、错误处理、展示工单回执卡</td></tr>
         <tr><td>Ticket History Skill</td><td>工单查询</td><td>查本人工单列表/详情/进度/人工回复记录，只能查本人</td></tr>
-        <tr><td>Ticket Rating</td><td>评价入口</td><td>员工 Skill 8/14 范围；评价卡可本地实现，完整评分/KPI 与主动邀评属于二期闭环</td></tr>
+        <tr><td>Ticket Rating</td><td>评价入口</td><td>员工通过“我的工单”查看已答复/已关闭工单并进入评价，完整评分/KPI 分阶段闭环</td></tr>
     </table>
     <h4>关键规则</h4>
     <ul>
@@ -1033,10 +1078,10 @@
     </ul>
 
     <h3>4.3 处理人端智能体（Agent Workbench，8/17 目标）</h3>
-    <p>面向 IT/HR 处理人员（约 20-30 人），当前目标是提问、查单、回复、转派和生成知识产物入口；实时事件推送、完整经理看板及完整知识飞轮不作为当前已具备能力。</p>
+    <p>面向 IT/HR 处理人员（约 20-30 人），当前目标是提问、查单、回复、转派和生成知识产物入口；新工单和状态变化由工单后台生成消息事件，在嵌入 Work 的“我的任务”页面中展示未读状态和提醒，完整经理看板及完整知识飞轮分阶段建设。</p>
     <table>
         <tr><th>组件</th><th>职责</th><th>当前边界</th></tr>
-        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过 Work 菜单“我的任务”进入，查看新分配/待处理/SLA 临期工单</td></tr>
+        <tr><td><strong>Workbench Agent</strong></td><td>处理人统一入口</td><td>通过 Work 菜单进入工单后台提供的“我的任务”内嵌页面，查看新分配/待处理/SLA 临期工单及页面内未读提醒</td></tr>
         <tr><td>Ticket Process Skill</td><td>查看与回复工单</td><td>真实 Tool 成功回执后才展示处理成功，不以本地模拟数据冒充</td></tr>
         <tr><td>Ticket Reassign Skill</td><td>工单转派</td><td>需权限校验、目标处理人合法性和真实回执</td></tr>
         <tr><td>Workload / Manager Views</td><td>我的任务、SLA、团队统计</td><td>本地组件参考工程已有页面逻辑；生产数据、权限、Host 集成与 UAT 未证明</td></tr>LANNED</td></tr>
@@ -1046,21 +1091,33 @@
     <ul>
         <li>处理人只能看到分配给自己或授权共享池的工单；经理视角另做权限验收</li>
         <li>回复、转派和知识写入均以真实 Tool/DC 回执为成功依据</li>
-        <li>通知场景通过 Work 菜单"我的任务"承接，处理人主动查询看到新工单和状态变化</li>
+        <li>任务消息由工单后台写入事件/消息记录；“我的任务”内嵌页面展示新工单、状态变化、未读数和页面内提醒，不依赖灵基原生通知能力</li>
         <li>知识产物卡只负责展示/确认，不自行决定触发规则或可生成知识的工单</li>
     </ul>
+    <div class="highlight highlight-blue">
+        <strong>复杂工单操作往返：</strong>灵基 <strong>Work</strong> 内嵌由 HelpDesk 工单后台提供的管理页面，承载查看详情、补充信息等复杂操作。用户完成操作后返回发起操作的原灵基会话，由智能体读取最新工单信息并继续澄清；身份、会话和工单仅通过受控引用传递，工单后台仍须独立校验数据与操作权限。
+    </div>
 
     <h3>4.4 状态变化在"我的工单/我的任务"中的体现</h3>
-    <p>工单后台负责把状态写对，Work 菜单挂载的"我的工单/我的任务"页面负责实时查询展示，闭环不依赖独立推送通道：</p>
+    <p>工单后台在业务事务完成后生成面向具体用户的消息事件并维护未读状态；Work 菜单挂载的“我的工单/我的任务”是工单后台提供的内嵌页面，负责加载、刷新和展示这些消息。这里的“消息”属于工单后台页面能力，不修改灵基原生菜单、角标或消息中心：</p>
     <table>
         <tr><th>业务事件</th><th>用户看到的位置</th><th>展示形式</th></tr>
         <tr><td>新工单分配</td><td>处理人→我的任务</td><td>新工单出现在待办列表顶部（含标题/分类/提问人/SLA 时限）</td></tr>
-        <tr><td>处理人答复</td><td>员工→我的工单→工单详情</td><td>答复记录更新，状态变为"待确认"</td></tr>
+        <tr><td>处理人答复</td><td>员工→我的工单→工单详情</td><td>答复记录更新，工单保持“处理中”，等待员工确认</td></tr>
         <tr><td>工单状态变更</td><td>员工→我的工单</td><td>工单列表状态列实时更新</td></tr>
         <tr><td>SLA 即将超时</td><td>处理人→我的任务</td><td>SLA 标红/排序前置</td></tr>
-        <tr><td>工单关闭邀评</td><td>员工→我的工单→工单详情</td><td>展示评价入口</td></tr>
-        <tr><td>工单自动关闭</td><td>员工→我的工单</td><td>状态更新为"已关闭"</td></tr>
-        <tr><td>工单转派</td><td>新处理人→我的任务</td><td>新工单出现在待办列表</td></tr>
+        <tr><td>员工确认解决</td><td>员工→我的工单→工单详情</td><td>展示评价入口，员工确认并提交评价</td></tr>
+        <tr><td>员工完成确认与评价</td><td>员工→我的工单</td><td>状态更新为“已关闭”，后台记录评分及 KPI</td></tr>
+        <tr><td>工单转派</td><td>新处理人→我的任务</td><td>新工单出现在待办列表，并显示未读/新任务标识</td></tr>
+    </table>
+    <h4>内嵌页面消息机制</h4>
+    <table>
+        <tr><th>能力</th><th>实现要求</th><th>边界</th></tr>
+        <tr><td>事件生成</td><td>工单分配、转派、答复、用户补充、状态变化、关闭邀评和 SLA 预警成功后，由工单后台写入消息事件；业务数据与事件写入需保证一致性</td><td>不调用灵基原生消息中心</td></tr>
+        <tr><td>用户路由</td><td>按提交人、当前处理人和授权范围生成接收对象，记录 eventId、ticketId、事件类型、摘要、发生时间和未读状态</td><td>不得向无工单权限用户生成或返回消息</td></tr>
+        <tr><td>页面加载</td><td>“我的任务/我的工单”内嵌页面按当前用户增量读取消息和工单数据，支持未读数、新任务/新答复高亮、按时间排序及已读标记</td><td>未读数只显示在内嵌页面内，不能要求修改 Work 原生菜单角标</td></tr>
+        <tr><td>页面刷新</td><td>页面首次打开必须拉取未读事件；保持打开时优先使用轮询，若部署环境支持可升级为 SSE/WebSocket 长连接</td><td>页面关闭时只保证后台可靠存储，不能承诺灵基原生弹窗或实时提醒</td></tr>
+        <tr><td>失败与补偿</td><td>事件写入失败需重试并可审计；页面使用游标或时间戳增量同步，重复读取按 eventId 去重</td><td>消息展示失败不得影响工单业务事务结果</td></tr>
     </table>
 
     <h3>4.5 后台工单服务（MCP Server）</h3>
@@ -1075,46 +1132,65 @@
         <tr><td>Upload_Ticket_Attachment</td><td>上传附件（PDF/JPG），返回 attachmentId</td><td>员工端</td></tr>
         <tr><td>List_My_Tickets</td><td>查本人工单列表</td><td>两端智能体</td></tr>
         <tr><td>Get_Ticket_Detail</td><td>查指定工单详情/进度/回复记录</td><td>两端智能体</td></tr>
-        <tr><td>Reply_Ticket</td><td>处理人提交答复</td><td>处理人端</td></tr>
-        <tr><td>Reassign_Ticket</td><td>重新分配工单</td><td>处理人端</td></tr>
-        <tr><td>Close_Ticket</td><td>人工关闭工单；自动关单属于二期</td><td>两端/后台服务</td></tr>
-        <tr><td>Rate_Ticket</td><td>提问人评价打分（1-5 星），二期闭环</td><td>员工端</td></tr>
-        <tr><td>Push_Notification</td><td>目标接口：向消息中心投递事件</td><td>二期/平台依赖，当前不作为 1.0 已具备 Tool</td></tr>
+        <tr><td>Reply_Ticket</td><td>提交人或处理人追加回复；只写回复时间线，不改变工单状态</td><td>两端</td></tr>
+        <tr><td>Reassign_Ticket</td><td>部门内转交或由 Manager 执行跨组转派，校验目标权限并记录原因</td><td>处理人端/Manager</td></tr>
+        <tr><td>Submit_Ticket_Resolved</td><td>处理人提交已解决，使工单进入“待提交人确认”，不得直接关闭</td><td>处理人端</td></tr>
+        <tr><td>Confirm_Ticket_Resolution</td><td>提交人确认解决并关闭，或填写原因驳回后返回“处理中”</td><td>员工端</td></tr>
+        <tr><td>Close_Ticket</td><td>仅保留 Admin 管理例外；必须校验权限并写入审计，不作为普通处理闭环</td><td>Admin</td></tr>
+        <tr><td>Rate_Ticket</td><td>评价能力仅在后续明确启用后提供，不属于当前客户后台需求基线</td><td>待确认</td></tr>
     </table>
 
-    <h3>4.6 后台工单应用功能清单</h3>
+    <h3>4.6 后台工单应用功能清单（客户需求基线）</h3>
     <div class="highlight highlight-blue">
-        <strong>角色模型：</strong>Requester（提交者）、Agent（处理专员）、Manager（部门经理）、Admin（系统管理员）。Manager 只分配/转派，不处理工单。工单最终关闭必须由提交人确认。
+        <strong>基线来源：</strong>本节严格摘要自客户文件 <code>helpdesk-工单系统需求清单-客户给的不要更新md</code>，不把消息机制、知识沉淀、评分或业务线隔离等项目补充方案混入客户需求。客户原文件保持不修改。
     </div>
-    <h4>工单状态（4 状态）</h4>
+
+    <h4>角色与权限边界</h4>
     <table>
-        <tr><th>状态</th><th>说明</th><th>进入条件</th></tr>
-        <tr><td>新建</td><td>刚创建，尚未完成路由</td><td>用户或 AI 创建工单</td></tr>
-        <tr><td>待分配</td><td>已识别处理组，未指定处理人</td><td>路由到组但未匹配到人、Agent 修改分类后</td></tr>
-        <tr><td>处理中</td><td>已指定具体处理人</td><td>自动分配、Manager 分配、转派、提交人驳回</td></tr>
-        <tr><td>已关闭</td><td>员工确认问题已解决</td><td>员工执行"已解决"</td></tr>
+        <tr><th>角色</th><th>主要权限</th><th>关键限制</th></tr>
+        <tr><td>Requester（提交者）</td><td>创建并查看本人提交的工单、多次回复、确认解决或驳回</td><td>不能分配、转派或修改系统配置</td></tr>
+        <tr><td>Agent（处理专员）</td><td>查看分配给本人或明确授权范围内的工单、多次回复、提交已解决、部门内转派、修改类别</td><td>不能直接关闭工单；不能跨组直接转派；修改类别后必须提交本组 Manager</td></tr>
+        <tr><td>Manager（部门经理）</td><td>查看所属部门/处理组，分配处理人、跨组转派、触发自动分配</td><td>只负责分配和转派，不得回复、提交已解决、关闭工单或实际处理工单</td></tr>
+        <tr><td>Admin（系统管理员）</td><td>全局查看、基础资料和系统配置，必要时执行管理例外</td><td>管理例外必须留痕并受审计</td></tr>
     </table>
-    <p><strong>关键规则：</strong>回复不改变状态；处理人只管答复不操作状态；员工决定是否关闭（已解决+评价 或 驳回）。</p>
+
+    <h4>工单状态（5 状态）</h4>
+    <table>
+        <tr><th>状态</th><th>说明</th><th>进入条件</th><th>主要操作</th></tr>
+        <tr><td>新建</td><td>工单刚创建，尚未完成路由</td><td>用户或 AI 创建工单</td><td>AI 识别、规则匹配</td></tr>
+        <tr><td>待分配</td><td>已识别处理组但尚未指定处理人，或专员修改了类别</td><td>仅路由到处理组、规则匹配失败，或专员保存新类别</td><td>Manager 指定人员、转交其他分组或触发自动分配</td></tr>
+        <tr><td>处理中</td><td>已指定具体处理人</td><td>自动分配、Manager 分配、转派或提交人驳回</td><td>多次回复、部门内转交、提交已解决</td></tr>
+        <tr><td>待提交人确认</td><td>处理人认为问题已解决，等待提交人确认</td><td>处理人执行“提交已解决”</td><td>提交人确认解决或填写原因驳回</td></tr>
+        <tr><td>已关闭</td><td>提交人确认问题已解决</td><td>提交人执行“确认解决”</td><td>查看；评价仅在后续明确启用时提供</td></tr>
+    </table>
+    <p><strong>关键规则：</strong>回复和转派不自动改变状态；处理人可执行独立的“提交已解决”操作，使工单进入“待提交人确认”，但不能直接关闭；提交人确认后关闭，驳回后返回“处理中”。第一期不自动关单。</p>
+
     <h4>功能清单</h4>
     <table>
-        <tr><th>#</th><th>功能模块</th><th>说明</th><th>阶段</th></tr>
-        <tr><td>1</td><td>工单列表与详情</td><td>按角色权限展示工单，支持筛选/搜索</td><td>1.0</td></tr>
-        <tr><td>2</td><td>AI 路由与自动分配</td><td>AI 识别部门/分类/优先级 → 按一级分类匹配规则 → 负载均衡分配处理人</td><td>1.0</td></tr>
-        <tr><td>3</td><td>状态流转引擎</td><td>新建→待分配→处理中→已关闭；员工确认解决或驳回回到处理中</td><td>1.0</td></tr>
-        <tr><td>4</td><td>多次回复</td><td>提交人和处理人均可多次回复；回复不改变状态，按时间线展示</td><td>1.0</td></tr>
-                <tr><td>6</td><td>确认解决/驳回</td><td>提交人确认关闭或驳回（回到处理中，需填原因）</td><td>1.0</td></tr>
-        <tr><td>7</td><td>部门内转派</td><td>Agent 选本组目标人 + 填原因；状态不变</td><td>1.0</td></tr>
-        <tr><td>8</td><td>跨组转派</td><td>Agent 改分类 → 清除处理人 → 流转本组 Manager → Manager 决定</td><td>1.0</td></tr>
-        <tr><td>9</td><td>Manager 分配</td><td>从待分配队列指定人员、转交其他组或触发自动分配</td><td>1.0</td></tr>
-        <tr><td>10</td><td>SLA 考核</td><td>绑定一级分类，只计工作时间（排除周末/节假日），首次响应 + 解决时限</td><td>1.0</td></tr>
-        <tr><td>11</td><td>评分系统</td><td>1-5 星满意度评价 + KPI 统计</td><td>1.0</td></tr>
-        <tr><td>12</td><td>仪表盘</td><td>按业务处理组/处理人/公司/分类筛选；工单量、SLA 达标率、满意度</td><td>1.0</td></tr>
-        <tr><td>13</td><td>邮件通知</td><td>覆盖创建/分配/转派/回复/待确认/驳回/关闭/SLA 预警/休假自动回复</td><td>1.0</td></tr>
-        <tr><td>14</td><td>休假自动回复</td><td>休假人员不参与分配；用户回复时自动告知并通知 Manager</td><td>1.0</td></tr>
-        <tr><td>15</td><td>审计日志</td><td>全链路不可篡改，记录所有状态变化和操作前后值</td><td>1.0</td></tr>
-        <tr><td>16</td><td>企业知识一键上传</td><td>产物/附件上传 DC；计划 2026-08-21 发布，以联调/UAT 为准</td><td>PLANNED</td></tr>
-        <tr><td>17</td><td>业务线隔离</td><td>Tech GBS / People GBS / BP 三线独立管理</td><td>2.0</td></tr>
+        <tr><th>客户编号</th><th>功能模块</th><th>客户需求摘要</th><th>阶段</th></tr>
+        <tr><td>HD-01</td><td>分配与接收</td><td>取消处理人手动接收/领取；指定具体处理人后自动进入“处理中”</td><td>P0</td></tr>
+        <tr><td>HD-02～04</td><td>回复、状态与关单确认</td><td>支持双方多次回复；回复与状态操作分离；处理人提交已解决，提交人最终确认关闭或填写原因驳回</td><td>P0</td></tr>
+        <tr><td>HD-05～07、HD-10</td><td>转交与跨组转派</td><td>部门内转交保持“处理中”；普通专员不能跨组直转；修改类别后清除处理人并提交本组 Manager，由 Manager 决定指定其他组人员、转组或自动分配</td><td>P0</td></tr>
+        <tr><td>HD-08、HD-11</td><td>自动分配与兜底</td><td>规则绑定一级分类，支持分配到个人或处理组；按未完成工单数或轮询分配；无匹配规则时进入对应 Manager 的异常待分配队列</td><td>P1</td></tr>
+        <tr><td>HD-09</td><td>AI 路由</td><td>AI 识别部门、一级/二级分类、优先级和置信度，用户不手工选择优先级</td><td>P1</td></tr>
+        <tr><td>HD-12</td><td>休假自动回复</td><td>维护休假时间和自动回复；休假人员不参与新分配；存量工单由 Manager 人工调整；用户追加回复时发送邮件并通知 Manager</td><td>P1</td></tr>
+        <tr><td>HD-13</td><td>多公司处理</td><td>用户只归属一个行政组织，但处理人可加入多个跨公司业务处理组；权限按处理组和工单分配控制</td><td>P1</td></tr>
+        <tr><td>HD-14</td><td>用户同步</td><td>从灵基导出后批量导入用户和基础角色，支持新增、更新、停用、失败反馈及幂等更新</td><td>P1</td></tr>
+        <tr><td>HD-15</td><td>组织架构</td><td>预置 BG、BU、部门三级组织层级，并与问题分类、业务处理组保持独立</td><td>依赖客户组织资料</td></tr>
+        <tr><td>HD-16</td><td>问题分类维护</td><td>维护一级/二级分类，支持新增、编辑、排序、启停；已引用分类不得物理删除</td><td>P0</td></tr>
+        <tr><td>HD-17～19</td><td>SLA、工作日与节假日</td><td>SLA 绑定一级分类和 AI 优先级；仅计算有效工作时间；维护公共节假日并计算首次响应及解决截止时间</td><td>P1</td></tr>
+        <tr><td>HD-20、HD-21</td><td>工单字段与编辑权限</td><td>列表/详情展示公司、部门、子部门、处理组、处理人、分类、优先级、状态、时间、附件、对话上下文、回复和审计；核心字段默认只读，授权后才可编辑</td><td>P0</td></tr>
+        <tr><td>HD-22</td><td>UI 颜色</td><td>仅状态、SLA 风险和异常使用状态色，普通字段与卡片使用中性色</td><td>P0</td></tr>
+        <tr><td>HD-23、HD-24</td><td>Dashboard</td><td>按公司、业务处理组、处理人、一级/二级分类、状态和时间范围统一筛选，并展示工单量、状态分布、SLA、平均响应/解决时间和人员负载</td><td>P1</td></tr>
+        <tr><td>HD-25</td><td>邮件通知</td><td>第一期仅使用邮件，覆盖创建、分配、转派、回复、进入待确认、驳回、关闭、SLA 预警和休假自动回复</td><td>P1</td></tr>
+        <tr><td>HD-27</td><td>审计日志</td><td>全链路不可篡改，记录 AI 识别与校正、分配、回复、状态、转派、SLA、处理人和分类变化及操作前后值</td><td>P0</td></tr>
+        <tr><td>HD-29</td><td>国际化</td><td>本次新增角色、状态、分类、SLA、节假日、看板和邮件模板同步支持中英文</td><td>本次新增范围</td></tr>
+        <tr><td>HD-26</td><td>邮件链接补充资料</td><td>仅支持登录用户通过邮件链接进入系统补充资料；不支持回复邮件写入工单或无账号邮件建单</td><td>P2</td></tr>
+        <tr><td>HD-28</td><td>IT Requisition</td><td>电脑、License 等固定申请作为独立模块，模板和审批流程另行确认，不与通用工单硬编码</td><td>P2</td></tr>
     </table>
+
+    <h4>项目补充方案（不属于客户原始清单）</h4>
+    <p>Work 内嵌页面消息机制见 4.4，知识产物与 DC 沉淀见 4.7；评分/KPI、Tech GBS / People GBS / BP 业务线隔离等内容必须取得独立确认后再纳入后台开发范围。</p>
 
     <h3>4.7 知识中心（灵基 DC）</h3>
     <table>
@@ -1122,9 +1198,12 @@
         <tr><td>知识初始化</td><td>手动上传 SharePoint 文档（PDF），自动解析+向量化</td><td>1.0</td></tr>
         <tr><td>语义检索</td><td>智能体调用 DC 进行语义搜索，返回匹配内容+来源</td><td>1.0</td></tr>
         <tr><td>权限管控</td><td>按部门/角色/智能体实例控制知识访问权限</td><td>2.0</td></tr>
-        <tr><td>企业知识一键上传</td><td>产物和附件上传 DC；有智能体上下文时自动进入/关联该智能体知识，无智能体时作为租户企业知识游离</td><td>PLANNED 2026-08-21</td></tr>
-        <tr><td>知识归属与状态回执</td><td>返回真实知识标识、归属类型及处理/索引状态；游离知识可后续查看并关联智能体</td><td>8/21 后验收</td></tr>
-        <tr><td>智能体主动沉淀</td><td>基于高频问题和已确认解决方案生成受治理候选，补齐审核、冲突和效果回流</td><td>后续飞轮能力</td></tr>
+        <tr><td>对话知识产物入库</td><td>Foundation 仅支持把对话过程中生成的加工产物写入 DC；对话附件不能作为文件随产物上传。存在智能体上下文时关联该智能体，无智能体时按平台规则进入租户企业知识池</td><td>最新确认，待联调/UAT</td></tr>
+        <tr><td>原始文件界面上传</td><td>PDF、图片、压缩包等未加工原文件如确需作为知识源，由有权限用户在智能体详情或 DC 管理界面点击上传；该路径更经济，可避免为文件搬运消耗对话点数</td><td>现有界面能力/待权限验收</td></tr>
+        <tr><td>知识归属与状态回执</td><td>对话产物入库必须返回真实知识标识、归属类型及处理/索引状态；界面文件上传按 DC 自身解析、权限和发布状态管理</td><td>待联调/UAT</td></tr>
+        <tr><td>已完成工单定时沉淀</td><td>定时任务可筛选已完成工单并生成待检查候选；候选需进入处理人对话并形成可确认的知识产物后，才能使用 Foundation 对话产物入库能力，不能把后台任务输出或附件直接写入 DC</td><td>流程待联调/UAT</td></tr>
+        <tr><td>工单附件处理边界</td><td>HelpDesk 原始附件是未加工证据，不通过对话进入 DC。AI 可经有权限、有效期的附件 URL 理解内容并生成脱敏摘要，摘要作为知识产物内容；若业务明确要求保留原文件，由有权限用户在 DC/智能体详情界面另行上传</td><td>待安全评审/UAT</td></tr>
+        <tr><td>智能体主动沉淀</td><td>基于高频问题和已确认解决方案生成受治理候选，补齐审核、冲突和效果回流；最终仍需形成对话知识产物或转入界面上传/审核路径</td><td>后续飞轮能力</td></tr>
        <!--<tr><td>SharePoint 同步</td><td>增量同步 SharePoint 文档到 DC（推拉结合）</td><td>3.0</td></tr>-->
         <tr><td>知识质量管理</td><td>新旧知识冲突检测、知识更新版本化</td><td>后续</td></tr>
     </table>
@@ -1145,7 +1224,7 @@
         <tr><td>8</td><td>工单答复卡</td><td>处理人权限和 Reply_Ticket 真实回执</td></tr>
         <tr><td>9</td><td>处理人工单列表卡</td><td>本人/授权共享池范围</td></tr>
         <tr><td>10</td><td>处理人工单详情卡（含转派）</td><td>转派权限、目标处理人和真实回执</td></tr>
-        <tr><td>11</td><td>知识产物卡</td><td>只承载展示/确认；触发方式和 eligible ticket 待定，DC 写入为 8/21 PLANNED</td></tr>
+        <tr><td>11</td><td>知识产物卡</td><td>只承载加工后产物的展示、检查与确认；定时任务仅发现符合条件的已完成工单候选，eligible ticket 规则待确认；确认后的对话产物写入 DC 待联调/UAT，附件文件不得随产物入库</td></tr>
     </table>
     <p><strong>映射要求：</strong>6 个业务组件必须逐项映射到 <code>appCode/view → 复用原子组件 → 依赖 Tool → 责任人 → 验收结果</code>。不能用“本地已有 6 个组件”替代 6 个 HelpDesk 业务组件验收；组件数量统一以当前构建清单为准。</p>
     <div class="highlight highlight-yellow">
@@ -1173,11 +1252,12 @@
         <li>超时触发告警并升级</li>
         <li>具体标准遵循客户提供的 Category Catalog 文档</li>
     </ul>
-    <h4>提单人侧 SLA</h4>
+    <h4>提单人侧 SLA（当前客户基线）</h4>
     <ul>
-        <li>基于分类的 SLA 超时后，若用户无回复 → 工单自动关闭</li>
-        <li>Agent 要求补充信息后，若用户无回复 → 工单自动关闭</li>
-        <li>关闭前发送通知提醒</li>
+        <li>第一期不自动关单；工单最终关闭必须由提交人明确确认。</li>
+        <li>等待用户补充资料期间第一期暂不暂停 SLA，但 SLA 超时本身不触发自动关闭。</li>
+        <li>处理人认为问题已解决时执行“提交已解决”，工单进入“待提交人确认”；提交人可确认关闭或填写原因驳回。</li>
+        <li>长期无回复自动关单属于后续待确认方案，只有客户明确修改 Q-06 口径并确认规则、提醒和审计要求后才能启用。</li>
     </ul>
 
     <h3>5.3 审批流程（IT Service Request）</h3>
@@ -1207,11 +1287,11 @@
         <tr><td>APPS 操作对话附件（图片/文件）</td><td>🟡 8/13 对齐方案/效果；8/14 为原计划发布日</td><td>#32 待实际发布与 HelpDesk UAT；未取得证据前不得标记已解决</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>Agent 感知 APPS 逻辑</td><td>❌ 仅知入参出参</td><td>#6 无结构化能力描述</td><td><span class="tag tag-p3">P3</span></td></tr>
         <tr><td>DC 海外可用</td><td>🟡 新加坡节点已部署，8/13 验证 HelpDesk 连通性</td><td>#7 部署完成不等于业务链路已验收</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>企业知识一键上传（知识飞轮基础路径）</td><td>🟡 Foundation + DC 方案已确认，计划 2026-08-21 发布；尚未上线/UAT</td><td>#8 基础上传；#8b 完整知识飞轮；#8c 外部数据源连接器；#9 权限体系</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>企业知识写入（知识飞轮基础路径）</td><td>🟡 Foundation 最新确认：对话过程仅支持加工后的知识产物入 DC，对话附件不能直接入库；原始文件走智能体详情/DC 界面上传</td><td>#8 需按新边界重做联调/UAT；对话产物验证归属与回执，界面文件上传验证权限、解析和成本路径；#8b/#8c/#9 仍分别负责完整飞轮、连接器和权限体系</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>知识权限管控</td><td>❌ 存在越权</td><td>#9 检索越权</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>应用部署（非 ERP 用户可用）</td><td>❌ 仅支持苍穹</td><td>#10 部署强绑苍穹<br>#20 实例创建依赖苍穹</td><td><span class="tag tag-p0">P0</span></td></tr>
         <tr><td>多语言（海外客户）</td><td>❌ 多处 Bug</td><td>#12-#15 翻译错误/AI 中英夹杂/语言切换</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>消息中心（MCP 主动推送）</td><td>❌ 仅支持灵基发起的请求—响应调用，缺少后台主动事件通道</td><td>#31 MCP Server 无法主动推送自定义格式消息</td><td><span class="tag tag-p0">P0</span></td></tr>
+        <tr><td>工单状态获取与通知</td><td>✅ 工单后台消息机制 + Work 内嵌页面</td><td>工单后台生成消息事件和未读状态，“我的任务/我的工单”内嵌页面加载并刷新；不修改灵基原生菜单、角标或消息中心</td><td><span class="tag tag-done">已确认</span></td></tr>
         <tr><td>SSO 身份打通与用户初始化</td><td>🟡 Work/SSO/权限为 8/14 目标；工单用户初始化仍 TBD</td><td>灵基用户无 ERP 账号；初始化接口、字段映射、批次、责任人和日期未确认</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>Work 一键会话</td><td>🟡 8/14 入口目标；上下文能力待 8/13 对齐</td><td>#35 候选 URL 只能打开通用新会话，不能证明携带 ticketId/描述/附件</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>开发效率（端到端）</td><td>🟡 本地 MCP Apps 参考工程已形成；Build 标准能力仍为方案/评审稿</td><td>#28 端到端流程断裂；#33 Build 内无法完整构建调试 MCP Apps；#16/#17/#19 测试与版本问题</td><td><span class="tag tag-p2">P2</span></td></tr>
@@ -1228,13 +1308,12 @@
             <li><strong>#1 / #1b</strong> MCP Apps 规范、SDK 与租户级 Console 上传/管理入口</li>
             <li><strong>#2 / #2b</strong> APPS 卡片内容作为上下文 + 精简传递机制</li>
             <li><strong>#10</strong> Build 应用支持非苍穹部署，解除对苍穹身份与许可的强依赖</li>
-            <li><strong>#31</strong> 消息与事件能力不作为 8/31 已具备项；以 Work 待办/主动查询降级</li>
         </ol>
     </div>
     <div class="highlight highlight-yellow">
         <strong>P1 — 影响交付质量（按最新节点持续验收）：</strong>
         <ol>
-            <li><strong>#8</strong> 企业知识一键上传标准能力（计划 8/21，发布后完成归属/权限/回执/检索验收）</li>
+            <li><strong>#8</strong> 对话知识产物写入与原文件界面上传（最新边界已确认，待联调/UAT）</li>
             <li><strong>#9</strong> 知识检索权限管控（安全底线）</li>
             <li><strong>#3 / #4</strong> APPS 渲染稳定性 + 提交内容回显</li>
             <li><strong>#32</strong> APPS 操作对话附件能力（截图+描述→提单场景）</li>
@@ -1271,7 +1350,7 @@
                     <li><strong>8/17：</strong>处理人 Skill（提问、回复、转派、查单、生成知识产物入口）</li>
                     <li><strong>8/18：</strong>明确灵基交互验收范围与要求</li>
                     <li><strong>8/20：</strong>明确 UAT 时间和试运行范围，完成客户上线前演示与汇报</li>
-                    <li><strong>8/21：</strong>Foundation + DC 智能体产物/附件写入 DC 计划发布，保持 PLANNED，发布后验收归属、权限、回执、索引与检索</li>
+                    <li><strong>Foundation 最新反馈：</strong>对话只写入加工后的知识产物，对话附件不可入库；原文件走智能体详情/DC 界面上传，相关链路待联调/UAT</li>
                     <li><strong>8/31：</strong>验收、部署并上线试运行，不表述为无条件正式上线</li>
                 </ul>
                 <p style="margin-top:12px;font-size:0.85rem;color:var(--danger);">⚠️ 未决边界：工单用户按灵基用户初始化为 TBD；一键会话是否携带 ticketId/描述/附件待 8/13 对齐；知识产物触发方式与 eligible ticket 未定；Build 能力交接培训负责人和日期 TBD。</p>
@@ -1284,7 +1363,7 @@
                 <ul>
                     <li>扩展 HR、行政、财务等业务线</li>
                     <li>上线 SLA 考核 + 评分系统 + 仪表盘</li>
-                    <li>上线自动关单 + 经理转派</li>
+                    <li>上线经理转派；自动关单仅作为待客户确认的后续选项</li>
                     <li>处理人工作台迁入灵基</li>
                     <li>面向 1000+ 员工推广</li>
                 </ul>
@@ -1323,7 +1402,7 @@
     </ol>
     <p>11 类是业务验收类型，不等同参考工程当前 6 个业务组件；每类需映射 appCode/view、复用原子组件、依赖 Tool、责任人和验收结果。</p>
     <div class="highlight highlight-yellow">
-        <strong>一键会话边界：</strong>入口纳入 8/14 目标；是否携带 ticketId、描述和附件等受控上下文待 8/13 对齐。若未确认，只交付明确提示“不携带当前工单上下文”的通用新会话，不得把敏感内容直接拼入 URL。
+        <strong>一键会话边界：</strong>入口纳入 8/14 目标。复杂工单处理采用“Work 内嵌工单后台 → 完成查看/补充信息 → 返回原灵基会话继续澄清”的往返方案；只传递受控的用户、会话和工单引用，不得把工单描述、附件内容等敏感信息直接拼入 URL。若回跳协议或原会话恢复未完成，必须明确降级，不得无提示打开不携带上下文的新会话。
     </div>
 
     <h3>7.3 详细任务拆解</h3>
@@ -1337,7 +1416,7 @@
         <tr><td>员工/处理人 Skill</td><td>目标和能力清单已明确</td><td>已在目标租户发布并通过 UAT</td><td>员工 8/14；处理人 8/17</td></tr>
         <tr><td>工单系统/MCP Server</td><td>接口与基础流程已设计</td><td>部署、用户初始化、权限和端到端链路已完成</td><td>8/13 部署沟通；8/14 工单范围验收</td></tr>
         <tr><td>海外 DC</td><td>新加坡节点基础部署已有记录</td><td>HelpDesk 已连通或知识检索可用</td><td>8/13 目标环境连通回执</td></tr>
-        <tr><td>企业知识写入</td><td>Foundation + DC 方案与 8/21 计划已确认</td><td>已上线、已索引、已授权检索或完整知识飞轮已形成</td><td>8/21 后按有/无智能体 × 产物/附件验收</td></tr>
+        <tr><td>企业知识写入</td><td>Foundation 最新边界已确认：对话仅支持加工产物写入，附件阻断，原文件走界面上传</td><td>对应路径已上线、已索引、已授权检索或完整知识飞轮已形成</td><td>按对话产物、对话附件阻断、界面原文件上传分别联调/UAT</td></tr>
         <tr><td>端到端 UAT/试运行</td><td>计划节点已明确</td><td>UAT 已签字或 8/31 必然正式上线</td><td>8/20 明确范围；8/31 验收、部署并上线试运行</td></tr>
     </table>
 
@@ -1348,7 +1427,7 @@
         <tr><td>后台 SLA 考核功能</td><td>按 Category Catalog 配置</td></tr>
         <tr><td>评分系统</td><td>1-5 星 + KPI 统计</td></tr>
         <tr><td>仪表盘</td><td>已解决/未解决/SLA 超时</td></tr>
-        <tr><td>自动关单逻辑</td><td>超时无回复自动关闭+通知</td></tr>
+        <tr><td>自动关单评估（待客户确认）</td><td>当前 Q-06 明确第一期不自动关单；后续如启用需另行确认触发、提醒、恢复和审计规则</td></tr>
         <tr><td>经理转派功能</td><td>Manager 可重新分配工单</td></tr>
         <tr><td>处理人工作台迁入灵基</td><td>依赖 MCP 自定义消息能力</td></tr>
         <tr><td>全员推广计划</td><td>培训 + 推广策略</td></tr>
@@ -1389,7 +1468,7 @@
         <tr><td>Foundation：Console 级 MCP 服务实例和业务组件</td><td>8/14</td><td>目标环境、目标租户真实链路验收；既有 release 记录不替代 HelpDesk 可用性</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
         <tr><td>Build：构建业务组件</td><td>8/14</td><td>6 个业务组件使用 Build 构建并在 Console 管理，逐项映射和验收</td><td><span class="tag tag-p1">待交付/验收</span></td></tr>
         <tr><td>MCP Apps 使用会话附件</td><td>8/13 对齐；原计划 8/14 发布</td><td>平台发布记录 + HelpDesk 附件 UAT；未取得证据前不得标记已解决</td><td><span class="tag tag-p1">待对齐/验收</span></td></tr>
-        <tr><td>Foundation + DC：智能体产物/附件写入 DC</td><td>08/21 计划发布</td><td>有/无智能体归属、权限、真实回执、解析/索引和授权检索</td><td><span class="tag tag-p1">PLANNED</span></td></tr>
+        <tr><td>Foundation + DC：对话知识产物写入</td><td>最新边界已确认，联调时间待定</td><td>验证产物真实回执、对话附件阻断、原文件界面上传、权限、解析/索引和授权检索</td><td><span class="tag tag-p1">待联调/UAT</span></td></tr>
     </table>
     <div class="highlight highlight-red">
         <strong>⚠️ 完成判定：</strong>上述日期均为目标节点，不能以日期、方案确认、release 或对话式开发记录直接宣称 HelpDesk 已完成。
@@ -1565,9 +1644,9 @@
     <h4>处理人端（Agent Workbench）</h4>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
-        <tr><td>11</td><td>处理人任务入口</td><td>处理人可在 Work 菜单“我的任务”中看到授权范围内的新分配/待处理工单</td></tr>
+        <tr><td>11</td><td>处理人任务入口</td><td>处理人可通过 Work 菜单进入“我的任务”内嵌页面，看到授权范围内的新分配/待处理工单、未读数及页面内提醒</td></tr>
         <tr><td>12</td><td>工单详情查看</td><td>处理人可查看授权工单的提问人、描述、允许传递的上下文摘要和附件引用</td></tr>
-        <tr><td>13</td><td>答复与通知降级</td><td>Reply_Ticket 真实成功后更新工单；通知当前通过待办/主动查询路径送达；事件推送未就绪时不要求灵基实时主动通知</td></tr>
+        <tr><td>13</td><td>答复与状态查看</td><td>Reply_Ticket 真实成功后更新工单并写入消息事件；“我的工单”内嵌页面展示新答复、最新状态和未读标识</td></tr>
         <tr><td>14</td><td>权限隔离</td><td>处理人只能看到分配给自己或授权共享池的工单，不可跨组查看</td></tr>
     </table>
 
@@ -1590,14 +1669,15 @@
         <tr><td>23</td><td>多语言</td><td>英文配置下界面和 AI 回复均为英文，无中英夹杂</td></tr>
     </table>
 
-    <h3>10.2 8/21 企业知识写入条件验收</h3>
+    <h3>10.2 企业知识写入条件验收（Foundation 最新边界）</h3>
     <table>
         <tr><th>#</th><th>验收项</th><th>验收标准</th></tr>
-        <tr><td>1</td><td>发布状态</td><td>有 Foundation + DC 的实际发布记录和目标环境版本；日期到达不自动算完成</td></tr>
-        <tr><td>2</td><td>四条路径</td><td>有智能体/无智能体 × 产物/附件均返回真实状态；有智能体正确归属，无智能体明确 unbound/游离</td></tr>
-        <tr><td>3</td><td>治理与检索</td><td>权限、幂等、游离知识管理、解析/索引、授权检索和审计通过</td></tr>
-        <tr><td>4</td><td>知识产物边界</td><td>触发方式、eligible ticket、PII/ACL、重复知识和人工确认规则已明确；知识产物卡不自行发布</td></tr>
-        <tr><td>5</td><td>失败处理</td><td>接收中、部分失败、超时和写入失败不展示完整成功，可查询、重试或从 8/31 范围降级移除</td></tr>
+        <tr><td>1</td><td>对话产物路径</td><td>仅对话过程中生成并经用户确认的加工产物可写入 DC；取得真实知识标识、归属及处理/索引状态，不以“产物已生成”冒充入库成功</td></tr>
+        <tr><td>2</td><td>对话附件阻断</td><td>对话中的 PDF、图片、压缩包等附件不能随产物直接写入 DC；界面明确提示能力边界，不消耗点数执行注定失败的附件上传</td></tr>
+        <tr><td>3</td><td>原文件界面上传</td><td>原始文件如确需入库，由有权限用户在智能体详情或 DC 管理界面点击上传，并验证文件安全、权限、解析、索引和授权检索；该路径不经过对话文件搬运</td></tr>
+        <tr><td>4</td><td>HelpDesk 附件摘要</td><td>AI 通过受控附件 URL 读取工单附件并生成脱敏摘要；摘要可进入知识产物，原始附件不随对话产物进入 DC</td></tr>
+        <tr><td>5</td><td>成本与提示</td><td>界面说明对话处理会消耗点数；原文件优先走直接界面上传以减少不必要的对话点数消耗，不宣称任何未经 Foundation 确认的免费额度</td></tr>
+        <tr><td>6</td><td>失败与治理</td><td>权限、幂等、审核、归属、超时、写入失败、解析/索引和审计均有真实状态；失败不得显示成功，重试不得产生重复知识</td></tr>
     </table>
 
     <h3>10.3 HelpDesk 2.0 验收标准</h3>
@@ -1606,9 +1686,9 @@
         <tr><td>1</td><td>多领域知识覆盖</td><td>HR/行政/财务分类知识可检索，工单分类覆盖完整 75 项二级分类</td></tr>
         <tr><td>2</td><td>业务线隔离</td><td>Tech GBS / People GBS / Tech & People BP 三条线独立管理，工单和知识按业务线隔离</td></tr>
         <tr><td>3</td><td>SLA 考核生效</td><td>按 Category Catalog 配置的 SLA 标准自动计时，超时自动告警并在仪表盘标红</td></tr>
-        <tr><td>4</td><td>评分闭环</td><td>工单关闭后向提问人推送评价打分卡（1-5 星），评分数据纳入仪表盘和 KPI 统计</td></tr>
-        <tr><td>5</td><td>经理转派</td><td>Helpdesk Manager 可将工单重新分配给其他处理人，转派后新处理人收到通知</td></tr>
-        <tr><td>6</td><td>自动关单</td><td>SLA 超时后用户无回复 → 系统自动关闭工单并通知。Agent 要求补充信息后用户无回复 → 同样自动关闭</td></tr>
+        <tr><td>4</td><td>评分闭环</td><td>员工通过 Work“我的工单”查看答复，确认解决并提交评价（1-5 星）；评分数据纳入仪表盘和 KPI 统计</td></tr>
+        <tr><td>5</td><td>经理转派</td><td>Helpdesk Manager 可将工单重新分配给其他处理人；转派后工单出现在新处理人的 Work“我的任务”中，外部提醒由工单后台按配置发送</td></tr>
+        <tr><td>6</td><td>自动关单（待客户确认）</td><td>当前客户基线 Q-06 明确第一期不自动关单。若 HelpDesk 2.0 拟启用长期无回复自动关闭，须先由客户确认触发条件、提醒渠道、恢复机制和审计规则，再另行验收</td></tr>
         <tr><td>7</td><td>仪表盘</td><td>可视化展示：已解决/未解决工单数、SLA 超时数量及占比、平均处理时长、满意度分布</td></tr>
         <tr><td>8</td><td>审批流程</td><td>IT Service Request 中需审批的分类（新设备/新软件/权限变更等）触发 L1/L2 审批流</td></tr>
         <tr><td>9</td><td>全员可用</td><td>1000+ 员工可正常访问使用，系统承载无明显性能问题</td></tr>

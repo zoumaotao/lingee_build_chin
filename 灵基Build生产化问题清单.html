@@ -96,7 +96,7 @@
         <tbody>
             <tr><td>Console</td><td>#1b</td><td>1 项</td><td>组件上传入口未对租户开放</td></tr>
             <tr><td>MCP APPS</td><td>#1, #2–#6, #32</td><td>8 项</td><td>交互层能力未开放、上下文/附件传递不足</td></tr>
-            <tr><td>DC 知识平台</td><td>#7–#9</td><td>5 项</td><td>一键上传方案已确认、计划 8/21；生产验收 / 权限 / 智能体内驱 / 外部拉取仍待补齐</td></tr>
+            <tr><td>DC 知识平台</td><td>#7–#9</td><td>5 项</td><td>对话产物可写入、对话附件不可入库、原文件走界面上传；生产验收 / 权限 / 智能体内驱 / 外部拉取仍待补齐</td></tr>
             <tr><td>待讨论</td><td>#10, #34, #35</td><td>3 项</td><td>部署绑定苍穹；苍穹二开应用无法透出 MCP；一键会话上下文契约待确认</td></tr>
             <tr><td>消息与事件</td><td>#31</td><td>1 项</td><td>MCP 无主动推送 / 缺事件驱动</td></tr>
             <tr><td>国际化</td><td>#12–#15</td><td>4 项</td><td>翻译错误 / AI 语言不遵循配置</td></tr>
@@ -146,9 +146,9 @@
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#7</span>DC 海外部署与 HelpDesk 连通性</span><span class="tag tag-p1">部署完成 · 8/13 待验收</span></div><div class="issue-card-body"><dt>现状</dt><dd>海外 DC 基础部署已在新加坡节点完成；最新计划要求 8/13 由 @邹茂桃验证 HelpDesk 实际连通性。部署完成不等于目标租户、网络和身份链路业务可用。</dd><dt>验收</dt><dd>使用目标环境身份完成 DC 调用，取得真实成功或错误回执，并记录网络、租户、权限和环境差异。</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8</span>企业知识（DC）一键上传标准能力</span><span class="tag tag-p1">P1 · PLANNED 8/21</span></div><div class="issue-card-body"><dt>最新结论</dt><dd><strong>方案已确认，计划 2026-08-21 发布：</strong>产物和附件可一键上传为企业知识；有智能体上下文时自动进入/关联该智能体知识，无智能体时作为当前租户企业知识游离。当前没有上线/UAT 证据，不能标记已解决。</dd><dt>HelpDesk 价值</dt><dd>可承接“工单处理 → 处理人确认产物/附件 → 上传 DC → 后续检索复用”的基础闭环。</dd><dt>验收边界</dt><dd>需验证有智能体/无智能体 × 产物/附件四条路径、权限、幂等、真实回执、游离知识管理、解析/索引和授权检索。“自动进入”只表示归属/挂载，不等于已发布或检索成功。</dd><dt>仍需补齐</dt><dd>高级自然语言/工单候选、冲突去重、审核运营、版本回滚、效果回流及与 #9 权限体系的闭环。</dd><dt>责任与时间</dt><dd>@武晨曦 @陆阳 支持推进；目标 2026-08-21。发布后须联调/UAT，未通过时保持 PLANNED。</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8</span>DC 对话产物写入与原文件上传路径</span><span class="tag tag-p1">P1 · 边界已确认/待 UAT</span></div><div class="issue-card-body"><dt>最新结论</dt><dd><strong>Foundation 最新反馈：</strong>对话过程只能把加工后的知识产物写入 DC；对话中的 PDF、图片、压缩包等附件不能直接入库。原始文件如需作为知识源，应由有权限用户在智能体详情或 DC 管理界面点击上传。</dd><dt>HelpDesk 价值</dt><dd>采用“定时发现候选 → Agent 对话生成并确认知识产物 → 写入 DC”的闭环；工单附件仅通过受控 URL 生成脱敏摘要，原件不随对话产物入库。</dd><dt>成本边界</dt><dd>对话处理会消耗点数，不应用于单纯搬运原文件；原文件直接走界面上传更经济。不得宣称未经确认的免费额度或具体价格。</dd><dt>验收边界</dt><dd>验证对话产物真实回执、附件阻断、界面原文件上传、文件安全、权限、幂等、解析/索引、授权检索和审计。</dd><dt>仍需补齐</dt><dd>高级候选发现、冲突去重、审核运营、版本回滚、效果回流及与 #9 权限体系的闭环。</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8b</span>智能体运行时知识内化与完整知识飞轮</span><span class="tag tag-p1">P1 · 部分基础路径已确认</span></div><div class="issue-card-body"><dt>现状</dt><dd>8/21 计划能力补齐“上传 + 自动归属/游离”的基础路径，但尚不能证明智能体可主动识别高频问题、低命中、已验证方案和反馈并生成受治理候选，效果回流也未闭环。</dd><dt>应有能力</dt><dd>知识消费 → 服务执行 → 候选提炼 → 脱敏/去重/权限/审核 → DC 发布 → 再次检索 → 命中率和解决反馈持续优化。</dd><dt>边界</dt><dd>一键上传不等于智能体内驱候选、自动发布或完整知识飞轮已上线；高级能力仍依赖 #9 权限、审核、审计和效果度量。</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8b</span>智能体运行时知识内化与完整知识飞轮</span><span class="tag tag-p1">P1 · 基础边界已确认</span></div><div class="issue-card-body"><dt>现状</dt><dd>Foundation 已明确“对话知识产物可写入、对话附件不可写入、原文件走界面上传”的基础路径；但尚不能证明智能体可主动识别高频问题、低命中、已验证方案和反馈并生成受治理候选，效果回流也未闭环。</dd><dt>应有能力</dt><dd>知识消费 → 服务执行 → 候选提炼 → 脱敏/去重/权限/审核 → DC 发布 → 再次检索 → 命中率和解决反馈持续优化。</dd><dt>边界</dt><dd>基础双路径不等于智能体内驱候选、自动发布或完整知识飞轮已上线；高级能力仍依赖 #9 权限、审核、审计和效果度量。</dd></div></div>
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#8c</span>DC 缺少主动拉取外部数据源的连接器框架</span><span class="tag tag-p2">P2</span></div><div class="issue-card-body"><dt>现状</dt><dd>DC 无法主动从外部数据源（如 SharePoint、Confluence、Google Drive）拉取文档并增量同步。唯一方式是人工下载后手动上传</dd><dt>应有能力</dt><dd>通用连接器框架：① 对接主流文档平台（SharePoint/Confluence 等）；② OAuth 等标准认证；③ 增量变更检测（仅同步新增/修改）；④ 定时调度或 Webhook 触发；⑤ 同步后自动进入 DC 加工流程</dd><dt>为什么是标品问题</dt><dd>企业知识大量存在 SharePoint 等平台且持续更新。DC 不能主动拉取 = 知识只能一次性搬运 = 时效性无法保障。振兴 2TB SharePoint 是 Phase 3 核心需求，但连接器是通用平台能力</dd></div></div>
 
@@ -258,7 +258,7 @@
     <div class="priority-group">
         <h3><span class="tag tag-p1">P1</span> 影响交付质量（8 项）</h3>
         <table><thead><tr><th>#</th><th>问题</th><th>一句话理由</th></tr></thead><tbody>
-            <tr><td>#8</td><td>企业知识一键上传（PLANNED 8/21）</td><td>方案已确认，待生产验收与治理闭环</td></tr>
+            <tr><td>#8</td><td>对话知识产物写入与原文件界面上传</td><td>边界已确认，待产物回执、附件阻断和界面上传 UAT</td></tr>
             <tr><td>#8b</td><td>智能体运行时自动沉淀</td><td>知识飞轮闭环最后一环</td></tr>
             <tr><td>#9</td><td>知识检索越权</td><td>安全底线</td></tr>
             <tr><td>#3</td><td>APPS 渲染白屏</td><td>破坏用户操作</td></tr>

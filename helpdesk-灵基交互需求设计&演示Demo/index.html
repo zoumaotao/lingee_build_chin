@@ -853,6 +853,7 @@ const agentConversationScripts = {
       { kind: "assistant", text: "你好，我是 Agent Workbench。我可以基于你有权查看的工单形成摘要、排查建议和答复草稿；任何发送或转派都必须由处理人确认。" }
     ],
     turns: [
+      { user: "看看我的待办工单", replies: [{ kind: "iframe", component: "agent/queue", title: "处理人工单列表" }] },
       { user: "看下 VPN 那张工单", replies: [{ kind: "iframe", component: "agent/ticket-detail", title: "工单详情" }] },
       { user: "帮我草拟一个答复给员工", replies: [{ kind: "iframe", component: "agent/ticket-detail", title: "工单详情（含AI草拟答复）" }] },
       { user: "VPN 工单处理完毕后帮我总结一下解决方法，生成知识产物。", replies: [{ kind: "assistant", text: "好的，已根据工单处理记录生成知识产物文件《VPN 连接后无法访问内部系统的排查步骤》。\n\n产物已出现在右侧面板，你可以悬停文件图标点击「上传智能体知识」将其写入 Console 知识管理并同步至智能体知识库。" }] }
