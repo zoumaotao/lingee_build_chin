@@ -97,7 +97,7 @@
             <tr><td>Console</td><td>#1b</td><td>1 项</td><td>组件上传入口未对租户开放</td></tr>
             <tr><td>MCP APPS</td><td>#1, #2–#6, #32</td><td>8 项</td><td>交互层能力未开放、上下文/附件传递不足</td></tr>
             <tr><td>DC 知识平台</td><td>#7–#9</td><td>5 项</td><td>对话产物可写入、对话附件不可入库、原文件走界面上传；生产验收 / 权限 / 智能体内驱 / 外部拉取仍待补齐</td></tr>
-            <tr><td>待讨论</td><td>#10, #34, #35</td><td>3 项</td><td>部署绑定苍穹；苍穹二开应用无法透出 MCP；一键会话上下文契约待确认</td></tr>
+            <tr><td>待讨论</td><td>#10, #34, #35</td><td>3 项</td><td>部署绑定苍穹；苍穹二开应用无法透出 MCP；#35 基础 Deep Link 已具备，结构化业务上下文契约待完善</td></tr>
             <tr><td>消息与事件</td><td>#31</td><td>1 项</td><td>MCP 无主动推送 / 缺事件驱动</td></tr>
             <tr><td>国际化</td><td>#12–#15</td><td>4 项</td><td>翻译错误 / AI 语言不遵循配置</td></tr>
             <tr><td>开发范式</td><td>#16–#25, #28–#30, #33, #11</td><td>15 项</td><td>端到端断裂 / APPS 开发割裂 / 无版本管理 / 无协同</td></tr>
@@ -108,7 +108,7 @@
         <strong>核心结论：</strong>APPS 交互层 + DC 知识 + 平台消息能力 + Build 开发范式——四个维度共同构成灵基从“可演示”迈向“可生产、可协作、可持续运行”的关键缺口。
     </div>
     <div class="highlight highlight-blue">
-        <strong>2026-08-12 最新项目口径：</strong>#7 海外 DC 基础部署已完成，但 HelpDesk 连通性 8/13 待验收；#32 会话附件 8/13 对齐方案/效果、8/14 为原计划发布日；#35 一键会话入口目标为 8/14，上下文能力需单独验收并保留通用会话降级。
+        <strong>2026-08-14 最新项目口径：</strong>#35 已验证可通过 Deep Link 指定智能体或 Skill，并使用 prompt 预填新会话初始提示词；结构化 ticketId、附件引用、contextRef、returnUrl 及安全上下文契约仍需独立验收。#7 海外 DC 基础部署已完成但 HelpDesk 连通性待验收；#32 会话附件仍需以实际发布和 UAT 为准。
     </div>
 </div>
 
@@ -163,7 +163,7 @@
 
     <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#34</span>苍穹不支持客户二开应用透出 MCP 供灵基调用</span><span class="tag tag-p0">待讨论</span></div><div class="issue-card-body"><dt>现状</dt><dd>客户在苍穹上有二次开发的业务应用（自定义接口），但苍穹不支持将这些接口暴露为 MCP。灵基智能体只能连接标品预置的 MCP，无法调用客户在苍穹上已有的业务能力</dd><dt>应有能力</dt><dd>苍穹应支持客户将二开接口注册/透出为标准 MCP Server，使灵基智能体可直接连接调用。或灵基侧提供适配网关对接苍穹非 MCP 接口并转换为 MCP 协议</dd><dt>为什么是标品问题</dt><dd>大量企业客户在苍穹上已有定制化业务应用。这些已有能力无法被灵基调用 = 客户要么重新开发（重复建设），要么放弃智能体连接已有业务——两者都不可接受</dd><dt>待讨论</dt><dd>推动方向需确认：① 苍穹提供“自定义 MCP 透出”？② 灵基提供“苍穹接口→MCP”适配网关？③ 两者结合？</dd></div></div>
 
-    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#35</span>Work 一键发起会话缺少正式业务上下文契约</span><span class="tag tag-p1">8/14 入口目标 · 8/13 待对齐</span></div><div class="issue-card-body"><dt>最新计划</dt><dd>Work“我的工单 / 我的任务”一键发起会话纳入 8/14 目标；是否携带 ticketId、描述、附件引用和初始意图，需在 8/13 会话附件/上下文方案对齐后确认。</dd><dt>当前边界</dt><dd>候选地址 <code>/session/new?skillName=IT%20Knowledge%20Skill</code> 只能证明可尝试按 Skill 打开新会话，不能证明支持安全业务上下文。</dd><dt>降级</dt><dd>若 8/13 未确认正式契约，8/14 只交付“打开 IT 智能体”的通用新会话，并明确提示“不携带当前工单上下文”。不得称为“就此工单发起会话”，不得把敏感工单正文或附件地址直接拼入 URL。</dd><dt>验收要求</dt><dd>入口存在与上下文携带分别验收；正式方案需稳定 agent/skill 标识、签名或受控 contextRef、租户/权限校验、附件引用、审计和失败回执。</dd></div></div>
+    <div class="issue-card"><div class="issue-card-header"><span class="issue-card-title"><span class="issue-num">#35</span>一键新会话已支持目标选择与 prompt，结构化上下文契约待完善</span><span class="tag tag-p1">部分具备</span></div><div class="issue-card-body"><dt>已验证能力</dt><dd>UAT 已支持两类 Deep Link：<code>/ai-partners/{agentSlug}?prompt=...</code> 可指定智能体，<code>/session/new?skillName=...&amp;prompt=...</code> 可指定 Skill；两者均可把 prompt 作为新会话初始提示词。第二个及后续查询参数必须使用 <code>&amp;</code>。</dd><dt>当前边界</dt><dd>现有示例不能证明结构化 ticketId、附件引用、受控 contextRef、returnUrl、权限换取、过期机制或失败回执。prompt 会进入 URL、浏览器历史和访问日志，不得拼接工单正文、员工信息、附件地址或 PII。</dd><dt>验收要求</dt><dd>分别验证智能体目标、Skill 目标、prompt 编解码、特殊字符和长度、登录与权限行为；后续结构化上下文需稳定 agentId/skillId、签名或短时 contextRef、租户/工单权限校验、审计与失败关闭。</dd></div></div>
 </div>
 
 <!-- ===== 05 消息与多模态 ===== -->

@@ -63,7 +63,8 @@ let selectedTicketId = null;
 let toastTimer;
 
 const byId = (id) => document.getElementById(id);
-const IT_AGENT_SESSION_URL = "https://www.test.lingeeglobal.ai/session/new?skillName=IT%20Knowledge%20Skill";
+const IT_AGENT_SESSION_PROMPT = "请协助我处理 HelpDesk 工单";
+const IT_AGENT_SESSION_URL = `https://kworkuat.kingdee.com:83/ai-partners/helpdesk-assistant_gommeb?prompt=${encodeURIComponent(IT_AGENT_SESSION_PROMPT)}`;
 const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 const currentConfig = () => roleConfigs[currentRole];
 const currentTickets = () => currentConfig().tickets;
@@ -149,7 +150,7 @@ function renderDetail() {
     byId("detailPanel").innerHTML = `<div class="empty-detail"><span>▤</span><strong>选择一张工单</strong><p>在左侧列表中选择工单后查看详情和可执行操作。</p></div>`;
     return;
   }
-  const openAgentAction = `<a class="secondary-button session-launch-button" href="${IT_AGENT_SESSION_URL}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" aria-label="打开 IT 智能体新会话；不会携带工单 ${escapeHtml(ticket.id)} 的上下文">打开 IT 智能体 ↗</a>`;
+  const openAgentAction = `<a class="secondary-button session-launch-button" href="${IT_AGENT_SESSION_URL}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" aria-label="打开 Helpdesk Assistant 新会话并预填通用处理意图；不会携带工单 ${escapeHtml(ticket.id)} 的业务上下文">打开 Helpdesk Assistant ↗</a>`;
   const employeeActions = `${openAgentAction}<button class="secondary-button" type="button" data-backend-action="补充信息">补充信息</button><button class="primary-button" type="button" data-backend-action="确认解决">确认解决</button>`;
   const agentActions = `${openAgentAction}<button class="secondary-button" type="button" data-backend-action="转派工单">转派</button><button class="primary-button" type="button" data-backend-action="发送答复">编辑并发送答复</button>`;
   byId("detailPanel").innerHTML = `
@@ -157,7 +158,7 @@ function renderDetail() {
     <div class="detail-grid"><div class="detail-field"><span>分类</span><strong>${escapeHtml(ticket.category)}</strong></div><div class="detail-field"><span>${currentRole === "employee" ? "处理人" : "当前归属"}</span><strong>${escapeHtml(ticket.owner)}</strong></div><div class="detail-field"><span>处理团队</span><strong>${escapeHtml(ticket.team)}</strong></div><div class="detail-field"><span>SLA</span><strong>${escapeHtml(ticket.sla)}</strong></div></div>
     <div class="timeline"><h4>最新进展</h4>${ticket.timeline.map(([time, title]) => `<div class="timeline-item"><i></i><div><strong>${escapeHtml(title)}</strong><small>${escapeHtml(time)}</small></div></div>`).join("")}</div>
     <div class="detail-actions">${currentRole === "employee" ? employeeActions : agentActions}</div>
-    <div class="session-launch-note"><strong>新会话边界</strong><span>当前仅打开 IT Knowledge Skill 通用新会话，不会携带该工单的编号、描述或处理上下文。</span></div>
+    <div class="session-launch-note"><strong>新会话边界</strong><span>已通过智能体 Deep Link 打开 Helpdesk Assistant 并预填通用处理意图；不会把当前工单编号、描述、附件或其他敏感上下文拼入 URL。</span></div>
     <div class="integration-note">工单查询与写操作需真实 MCP Tool、权限与审计。</div>`;
   byId("detailPanel").querySelectorAll("[data-backend-action]").forEach((button) => button.addEventListener("click", () => showToast(`${button.dataset.backendAction}失败关闭：未连接获准的工单 MCP Tool，未执行任何真实写操作。`)));
 }

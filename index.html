@@ -1051,7 +1051,7 @@
         <tr><th>层级</th><th>组件</th><th>当前定位</th><th>证据/边界</th></tr>
         <tr><td>用户交互层</td><td>Helpdesk Assistant（员工端）</td><td>8/14 目标：提问、提单、查单、评价入口</td><td>已有本地 Demo/组件源码；真实 Skill、Tool 与 UAT 待验收</td></tr>
         <tr><td>用户交互层</td><td>Agent Workbench（处理人端）</td><td>8/17 目标：提问、回复、转派、查单、知识产物入口</td><td>知识产物采用定时任务触发，eligible ticket 规则仍待确认；任务消息由工单后台生成，在 Work 内嵌“我的任务”页面展示</td></tr>
-        <tr><td>Work 应用</td><td>我的工单 / 我的任务、SSO、数据权限、工单后台嵌入与会话返回</td><td>8/14 目标</td><td>复杂操作和消息展示均由 Work 内嵌页面承载；工单后台维护事件与未读状态，仅传受控身份/会话/工单引用，回跳协议需联调与 UAT</td></tr>
+        <tr><td>Work 应用</td><td>我的工单 / 我的任务、SSO、数据权限、工单后台嵌入与一键新会话</td><td>深链接能力已确认，业务上下文待完善</td><td>UAT 已支持通过 URL 指定智能体或 Skill，并用 <code>prompt</code> 预填新会话提示词；复杂操作和消息展示由 Work 内嵌页面承载。结构化 ticketId、附件引用、contextRef 与 returnUrl 仍需联调和 UAT</td></tr>
         <tr><td>业务逻辑层</td><td>工单后台服务 + MCP Server</td><td>基础 CRUD、查询、回复、转派、状态流转</td><td>部署方案 8/13 二次沟通；用户初始化责任和日期 TBD</td></tr>
         <tr><td>知识层</td><td>灵基 DC（新加坡节点）</td><td>基础部署已有；8/13 验证 HelpDesk 连通</td><td>Foundation 最新边界：对话只写入加工后的知识产物；对话附件不能直接入 DC。原始文件如需入库，走智能体详情/DC 界面上传；HelpDesk 工单附件默认仅生成脱敏摘要并并入知识产物</td></tr>
         <tr><td>方案边界</td><td>后台消息机制、Work 内嵌页面、完整知识飞轮</td><td>已确认 / 分阶段</td><td>消息事件、未读数和页面提醒由工单后台及内嵌页面实现；不修改灵基原生菜单、角标或消息中心，页面外提醒由邮件/企业微信等后台渠道补充</td></tr>
@@ -1095,7 +1095,13 @@
         <li>知识产物卡只负责展示/确认，不自行决定触发规则或可生成知识的工单</li>
     </ul>
     <div class="highlight highlight-blue">
-        <strong>复杂工单操作往返：</strong>灵基 <strong>Work</strong> 内嵌由 HelpDesk 工单后台提供的管理页面，承载查看详情、补充信息等复杂操作。用户完成操作后返回发起操作的原灵基会话，由智能体读取最新工单信息并继续澄清；身份、会话和工单仅通过受控引用传递，工单后台仍须独立校验数据与操作权限。
+        <strong>复杂工单操作往返：</strong>灵基 <strong>Work</strong> 内嵌由 HelpDesk 工单后台提供的管理页面，承载查看详情、补充信息等复杂操作。用户可从工单页面通过深链接发起新会话，由智能体读取最新工单信息并继续澄清；工单后台仍须独立校验身份、数据与操作权限。
+        <ul style="margin:8px 0 0 16px;">
+            <li><strong>指定智能体并预填提示词：</strong><code>https://kworkuat.kingdee.com:83/ai-partners/helpdesk-assistant_gommeb?prompt=测试</code></li>
+            <li><strong>指定 Skill 并预填提示词：</strong><code>https://kworkuat.kingdee.com:83/session/new?skillName=IT%20Knowledge%20Skill&amp;prompt=测试</code></li>
+            <li><strong>参数规则：</strong>第一个查询参数使用 <code>?</code>，后续参数使用 <code>&amp;</code>；因此 <code>prompt</code> 前不能再使用第二个 <code>?</code>。</li>
+            <li><strong>安全边界：</strong><code>prompt</code> 会出现在 URL、浏览器历史和访问日志中，只允许传递最小化、非敏感的初始意图，不得直接拼接工单正文、员工信息、附件地址或其他 PII。结构化 <code>ticketId</code>、附件引用、受控 <code>contextRef</code> 和 <code>returnUrl</code> 尚未由这两个示例证明。</li>
+        </ul>
     </div>
 
     <h3>4.4 状态变化在"我的工单/我的任务"中的体现</h3>
@@ -1293,7 +1299,7 @@
         <tr><td>多语言（海外客户）</td><td>❌ 多处 Bug</td><td>#12-#15 翻译错误/AI 中英夹杂/语言切换</td><td><span class="tag tag-p1">P1</span></td></tr>
         <tr><td>工单状态获取与通知</td><td>✅ 工单后台消息机制 + Work 内嵌页面</td><td>工单后台生成消息事件和未读状态，“我的任务/我的工单”内嵌页面加载并刷新；不修改灵基原生菜单、角标或消息中心</td><td><span class="tag tag-done">已确认</span></td></tr>
         <tr><td>SSO 身份打通与用户初始化</td><td>🟡 Work/SSO/权限为 8/14 目标；工单用户初始化仍 TBD</td><td>灵基用户无 ERP 账号；初始化接口、字段映射、批次、责任人和日期未确认</td><td><span class="tag tag-p1">P1</span></td></tr>
-        <tr><td>Work 一键会话</td><td>🟡 8/14 入口目标；上下文能力待 8/13 对齐</td><td>#35 候选 URL 只能打开通用新会话，不能证明携带 ticketId/描述/附件</td><td><span class="tag tag-p1">P1</span></td></tr>
+        <tr><td>Work 一键会话</td><td>🟡 已支持指定智能体或 Skill，并通过 <code>prompt</code> 预填新会话</td><td>#35 基础 Deep Link 已验证；结构化 ticketId、描述、附件引用、受控 contextRef、returnUrl 及敏感上下文安全传递仍待契约与 UAT</td><td><span class="tag tag-p1">部分具备</span></td></tr>
         <tr><td>开发效率（端到端）</td><td>🟡 本地 MCP Apps 参考工程已形成；Build 标准能力仍为方案/评审稿</td><td>#28 端到端流程断裂；#33 Build 内无法完整构建调试 MCP Apps；#16/#17/#19 测试与版本问题</td><td><span class="tag tag-p2">P2</span></td></tr>
         <tr><td>团队协作</td><td>❌ 不支持</td><td>#30 无多人协同机制<br>#29 状态检测 Bug</td><td><span class="tag tag-p2">P2</span></td></tr>
         <tr><td>技能发布流程</td><td>❌ 多处不通</td><td>#23 修改不同步<br>#25 同名提交失败<br>#21 缺乏批量发布</td><td><span class="tag tag-p2">P2</span></td></tr>
@@ -1353,7 +1359,7 @@
                     <li><strong>Foundation 最新反馈：</strong>对话只写入加工后的知识产物，对话附件不可入库；原文件走智能体详情/DC 界面上传，相关链路待联调/UAT</li>
                     <li><strong>8/31：</strong>验收、部署并上线试运行，不表述为无条件正式上线</li>
                 </ul>
-                <p style="margin-top:12px;font-size:0.85rem;color:var(--danger);">⚠️ 未决边界：工单用户按灵基用户初始化为 TBD；一键会话是否携带 ticketId/描述/附件待 8/13 对齐；知识产物触发方式与 eligible ticket 未定；Build 能力交接培训负责人和日期 TBD。</p>
+                <p style="margin-top:12px;font-size:0.85rem;color:var(--danger);">⚠️ 未决边界：工单用户按灵基用户初始化为 TBD；一键新会话已支持指定智能体/Skill 与预填 prompt，但结构化 ticketId、描述、附件引用、contextRef 和 returnUrl 仍待契约与 UAT；知识产物触发方式与 eligible ticket 未定；Build 能力交接培训负责人和日期 TBD。</p>
             </div>
         </div>
         <div class="timeline-item milestone">
@@ -1510,7 +1516,7 @@
     <div class="highlight highlight-yellow">
         <strong>待拍板：</strong>
         <ul style="margin:8px 0 0 16px;">
-            <li>一键会话是否携带 ticketId、描述和附件上下文；未确认时只提供明确标注的通用会话降级</li>
+            <li>一键新会话已支持指定智能体或 Skill，并通过 prompt 预填初始提示词；仍需拍板结构化 ticketId、附件引用、受控 contextRef、returnUrl 及敏感上下文安全契约</li>
             <li>知识产物采用定时、对话触发还是组合触发，以及哪些工单可生成</li>
             <li>Build 能力交接培训负责人和日期</li>
         </ul>
@@ -1544,10 +1550,10 @@
             <td>每日跟踪标品进度，提前识别延期风险。准备降级方案（如先用研发环境演示）</td>
         </tr>
         <tr>
-            <td>一键会话缺少正式上下文契约</td>
-            <td><span class="tag tag-p1">中</span> 用户误以为自动携带工单/附件，或产生敏感信息风险</td>
-            <td>高</td>
-            <td>8/13 对齐；若未确认，8/14 仅交付明确提示“不携当前工单上下文”的通用新会话入口</td>
+            <td>一键会话缺少结构化业务上下文契约</td>
+            <td><span class="tag tag-p1">中</span> 基础 Deep Link 已可指定智能体/Skill 和 prompt，但直接拼接敏感工单信息仍有泄露风险</td>
+            <td>中</td>
+            <td>使用已验证入口承载非敏感初始意图；结构化 ticketId、附件引用、contextRef、returnUrl 另行制定契约并做权限、安全与 UAT 验收</td>
         </tr>
         <tr>
             <td>Foundation + DC 8/21 能力未通过生产验收</td>
@@ -1665,7 +1671,7 @@
         <tr><td>19</td><td>DC 海外连通</td><td>新加坡节点使用目标租户和身份取得真实检索回执；仅有部署记录不算通过</td></tr>
         <tr><td>20</td><td>MCP Apps 业务验收</td><td>6 个业务组件逐项映射 appCode/view、依赖 Tool 和责任人；渲染、回显、失败关闭和生产不回退 Demo 数据通过</td></tr>
         <tr><td>21</td><td>Work/SSO/权限</td><td>“我的工单/我的任务”可访问，SSO 与数据权限真实生效；工单用户初始化方案和结果可追溯</td></tr>
-        <tr><td>22</td><td>一键会话</td><td>入口与上下文能力分别验收；未确认安全 contextRef/附件契约时，只提供明确提示“不携当前工单上下文”的通用新会话</td></tr>
+        <tr><td>22</td><td>一键会话</td><td>分别验收按智能体路径和 skillName 指定新会话目标，以及 prompt 预填；结构化 ticketId、附件引用、contextRef、returnUrl 另行验收，URL 不得包含敏感工单正文或 PII</td></tr>
         <tr><td>23</td><td>多语言</td><td>英文配置下界面和 AI 回复均为英文，无中英夹杂</td></tr>
     </table>
 
